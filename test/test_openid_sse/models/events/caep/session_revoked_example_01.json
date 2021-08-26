@@ -1,0 +1,15 @@
+{
+    "iss": "https://idp.example.com/123456789/",
+    "jti": "24c63fb56e5a2d77a6b512616ca9fa24",
+    "iat": 1615305159,
+    "aud": "https://sp.example.com/caep",
+    "events": {
+        "https://schemas.openid.net/secevent/caep/event-type/session-revoked": {
+            "subject": {
+                "format": "opaque",
+                "id": "dMTlD|1600802906337.16|16008.16"
+            },
+            "event_timestamp": 1615304991643
+        }
+    }
+}
