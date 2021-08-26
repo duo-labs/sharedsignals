@@ -1,8 +1,8 @@
 # py-openid-sse
 
 Python tools for working with OpenID's
-[Shared Signals and Events Framework|https://openid.net/specs/openid-sse-framework-1_0-01.html]
-as well as the [CAEP standard|https://openid.net/specs/openid-caep-specification-1_0-02.html].
+[Shared Signals and Events Framework](https://openid.net/specs/openid-sse-framework-1_0-01.html)
+as well as the [CAEP standard](https://openid.net/specs/openid-caep-specification-1_0-02.html).
 
 ## Installing
 Download this code and run `pip install .` from the root directory.
@@ -11,7 +11,7 @@ Download this code and run `pip install .` from the root directory.
 For easy creation and parsing of CAEP and RISC events, you can use the classes
 available at the root of the `openid_sse`
 
-For instance, to parse the [SessionRevoked example|https://openid.net/specs/openid-caep-specification-1_0-02.html#rfc.section.3.1.2]
+For instance, to parse the [SessionRevoked example](https://openid.net/specs/openid-caep-specification-1_0-02.html#rfc.section.3.1.2)
 provided in the CAEP standard, you would do as follows
 
 ```python
