@@ -1,4 +1,3 @@
-from re import S
 # flake8: noqa
 
 # imports for easy access
