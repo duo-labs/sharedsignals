@@ -11,19 +11,19 @@ info:
     name: MIT
 paths:
   /.well-known/sse-configuration:
-    $ref: "./paths/configuration.yml"
+    $ref: "./paths/configuration.yaml"
   /status:
-    $ref: "./paths/status.yml"
+    $ref: "./paths/status.yaml"
   /add-subject:
-    $ref: "./paths/add-subject.yml"
+    $ref: "./paths/add-subject.yaml"
   /remove-subject:
-    $ref: "./paths/remove-subject.yml"
+    $ref: "./paths/remove-subject.yaml"
   /verification:
-    $ref: "./paths/verification.yml"
+    $ref: "./paths/verification.yaml"
 components:
   parameters:
-    $ref: "./parameters/_index.yml"
+    $ref: "./parameters/_index.yaml"
   schemas:
-    $ref: "./schemas/_index.yml"
+    $ref: "./schemas/_index.yaml"
   responses:
-    $ref: "./responses/_index.yml"
+    $ref: "./responses/_index.yaml"
