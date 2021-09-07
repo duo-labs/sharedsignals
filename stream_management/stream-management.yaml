@@ -1,0 +1,29 @@
+# https://openid.net/specs/openid-sse-framework-1_0.html#management
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: Stream Management API for OpenID Shared Security Events
+  description: >
+    HTTP API to be implemented by Event Transmitters and that can be used by
+    Event Receivers to query and update the Event Stream configuration and
+    status, to add and remove subjects and to trigger verification.
+  license:
+    name: MIT
+paths:
+  /.well-known/sse-configuration:
+    $ref: "./paths/configuration.yaml"
+  /status:
+    $ref: "./paths/status.yaml"
+  /add-subject:
+    $ref: "./paths/add-subject.yaml"
+  /remove-subject:
+    $ref: "./paths/remove-subject.yaml"
+  /verification:
+    $ref: "./paths/verification.yaml"
+components:
+  parameters:
+    $ref: "./parameters/_index.yaml"
+  schemas:
+    $ref: "./schemas/_index.yaml"
+  responses:
+    $ref: "./responses/_index.yaml"
