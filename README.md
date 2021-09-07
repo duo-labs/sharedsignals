@@ -43,3 +43,11 @@ dev requirements via `pip install -r dev-requirements.txt`. This will install
 
 You can test the code by running `pytest` from the root directory.
 And you can check the static typing by running `mypy` from the root directory.
+
+## Dockerfile
+Build the Docker image with
+```
+docker build . -t py-openid-sse
+```
+This allows us to use py-openid-sse for development in our other containers.
+Once the library is public we can remove this workaround and rely on normal `pip install`.
