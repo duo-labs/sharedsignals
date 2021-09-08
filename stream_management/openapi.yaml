@@ -30,3 +30,41 @@ components:
     TransmitterConfiguration:
       $ref: "./schemas/TransmitterConfiguration.yaml"
   responses:
+    BadRequest:
+      # 400
+      description: Request body cannot be parsed or the request is otherwise invalid
+      schema:
+        $ref: '#/definitions/Error'
+    Unauthenticated:
+      # 401
+      description: Authentication failed or is missing
+      schema:
+        $ref: '#/definitions/Error'
+    Unauthorized:
+      # 403
+      description: User not authorized to access resource
+      schema:
+        $ref: '#/definitions/Error'
+    NotFound:
+      # 404
+      description: Resource not found
+      schema:
+        $ref: '#/definitions/Error'
+    TooManyRequests:
+      # 429
+      description: Event Receiver is sending too many requests
+      schema:
+        $ref: '#/definitions/Error'
+
+definitions:
+  # Schema for error response body
+  Error:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    required:
+      - code
+      - message
