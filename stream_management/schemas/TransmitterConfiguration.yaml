@@ -1,6 +1,6 @@
 type: object
 title: "Transmitter Configuration Response"
-description: >
+description: |
   Transmitters have metadata describing their configuration.
   [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0-01.html#discovery-meta)"
 required:
@@ -9,15 +9,15 @@ required:
 properties:
   issuer:
     type: string
-    description: >
+    description: |
       URL using the https scheme with no query or fragment component that the Transmitter asserts as its
-      Issuer Identifier. This MUST be identical to the iss claim value in Security Event Tokens issued from this
-      Transmitter.
+      Issuer Identifier.
+      This MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter.
 #    pattern: TODO: URL regex
     example: "https://tr.example.com"
   jwks_uri:
     type: string
-    description: >
+    description: |
       URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0-01.html#RFC7517)
       document. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter.
     #    pattern: TODO: URL regex
@@ -61,7 +61,7 @@ properties:
     type: array
     items:
       type: string
-    description: >
-      List of member names in a Complex Subject which, if present in a Subject Member in an event, MUST be interpreted
-      by a Receiver.
+    description: |
+      List of member names in a Complex Subject which, if present in a Subject Member in an event,
+      MUST be interpreted by a Receiver.
     example: [ "tenant", "user" ]
