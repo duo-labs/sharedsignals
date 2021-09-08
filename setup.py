@@ -23,7 +23,7 @@ setup(
         "shared signals and events",
         "continuous access evaluation profile"
     ],
-    requires=[
+    install_requires=[
         "pydantic",
     ]
 )
