@@ -13,7 +13,7 @@ paths:
   /.well-known/sse-configuration:
     $ref: "./paths/configuration.yaml"
   /.well-known/sse-configuration/{issuer}:
-    $ref: "./paths/configuration.yaml"
+    $ref: "./paths/configuration-with-issuer.yaml"
   /status:
     $ref: "./paths/status.yaml"
   /add-subject:

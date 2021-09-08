@@ -1,17 +1,25 @@
 type: object
-description: "Transmitters have metadata describing their configuration. [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0-01.html#discovery-meta)"
+title: "Transmitter Configuration Response"
+description: >
+  Transmitters have metadata describing their configuration.
+  [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0-01.html#discovery-meta)"
 required:
   - issuer
   - jwks_uri
 properties:
   issuer:
     type: string
-    description: "URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer Identifier. This MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter."
+    description: >
+      URL using the https scheme with no query or fragment component that the Transmitter asserts as its
+      Issuer Identifier. This MUST be identical to the iss claim value in Security Event Tokens issued from this
+      Transmitter.
 #    pattern: TODO: URL regex
     example: "https://tr.example.com"
   jwks_uri:
     type: string
-    description: "URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0-01.html#RFC7517) document. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter."
+    description: >
+      URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0-01.html#RFC7517)
+      document. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter.
     #    pattern: TODO: URL regex
     example: "https://tr.example.com/jwks.json"
   delivery_methods_supported:
@@ -53,5 +61,7 @@ properties:
     type: array
     items:
       type: string
-    description: "List of member names in a Complex Subject which, if present in a Subject Member in an event, MUST be interpreted by a Receiver."
+    description: >
+      List of member names in a Complex Subject which, if present in a Subject Member in an event, MUST be interpreted
+      by a Receiver.
     example: [ "tenant", "user" ]
