@@ -1,2 +1,4 @@
 .mypy_cache
 .pytest_cache
+.idea
+venv
