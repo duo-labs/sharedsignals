@@ -1,0 +1,45 @@
+type: object
+description: "Transmitters have metadata describing their configuration. [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0-01.html#discovery-meta)"
+required:
+  - issuer
+  - jwks_uri
+properties:
+  issuer:
+    type: string
+    description: "URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer Identifier. This MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter."
+#    pattern: TODO: URL regex
+  jwks_uri:
+    type: string
+    description: "URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0-01.html#RFC7517) document. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter."
+    #    pattern: TODO: URL regex
+  delivery_methods_supported:
+    type: array
+    items:
+      type: string
+      #    pattern: TODO: URL regex
+    description: "List of supported delivery method URIs. Recommended."
+  configuration_endpoint:
+    type: string
+    #    pattern: TODO: URL regex
+    description: "The URL of the Configuration Endpoint."
+  status_endpoint:
+    type: string
+    #    pattern: TODO: URL regex
+    description: "The URL of the Status Endpoint."
+  add_subject_endpoint:
+    type: string
+    #    pattern: TODO: URL regex
+    description: "The URL of the Add Subject Endpoint."
+  remove_subject_endpoint:
+    type: string
+    #    pattern: TODO: URL regex
+    description: "The URL of the Remove Subject Endpoint."
+  verification_endpoint:
+    type: string
+    #    pattern: TODO: URL regex
+    description: "The URL of the Verification Endpoint."
+  critical_subject_members:
+    type: array
+    items:
+      type: string
+    description: "List of member names in a Complex Subject which, if present in a Subject Member in an event, MUST be interpreted by a Receiver."

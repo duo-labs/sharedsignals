@@ -1,5 +1,7 @@
 get:
-  description: Return Transmitter Configuration information
+  description: Return Transmitter Configuration information (with support for specifying an issuer)
+  parameters:
+    - $ref: "../openapi.yaml#/components/parameters/issuer"
   responses:
     '200':
       description: A set of Claims about the Transmitter's configuration, including all necessary endpoints and public key location information
