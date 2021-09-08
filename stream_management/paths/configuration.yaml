@@ -3,8 +3,8 @@ get:
   responses:
     '200':
       description: |
-      A set of Claims about the Transmitter's configuration,
-      including all necessary endpoints and public key location information
+        A set of Claims about the Transmitter's configuration,
+        including all necessary endpoints and public key location information
       content:
         application/json:
           schema:
