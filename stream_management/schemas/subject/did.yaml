@@ -17,6 +17,7 @@ properties:
     type: string
   url:
     type: string
+    example: "did:example:123456/did/url/path?versionId=1"
     title: Url
     pattern: ^did:[^\s]+$  # TODO: make this more accurate
 required:

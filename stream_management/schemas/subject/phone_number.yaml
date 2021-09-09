@@ -19,8 +19,8 @@ properties:
   # TODO: pattern this
   phone_number:
     type: string
-    title: Phone Number
     example: "+12065550100"
+    title: Phone Number
 required:
   - format
   - phone_number

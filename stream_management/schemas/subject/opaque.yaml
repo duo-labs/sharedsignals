@@ -17,9 +17,9 @@ properties:
     title: Format
     type: string
   id:
+    type: string
     example: "11112222333344445555"
     title: Id
-    type: string
 required:
   - format
   - id

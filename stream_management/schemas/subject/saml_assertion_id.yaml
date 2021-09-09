@@ -14,12 +14,12 @@ properties:
   # TODO: pattern this
   issuer:
     type: string
-    title: Issuer
     example: "https://idp.example.com/123456789/"
+    title: Issuer
   assertion_id:
     type: string
-    title: Assertion ID
     example: "_8e8dc5f69a98cc4c1ff3427e5ce34606fd672f91e6"
+    title: Assertion ID
 required:
   - format
   - issuer

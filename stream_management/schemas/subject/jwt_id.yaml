@@ -12,14 +12,14 @@ properties:
     type: string
   # TODO: pattern this
   iss:
+    type: string
     example: "https://idp.example.com/123456789/"
     title: iss
-    type: string
   # TODO: pattern this
   jti:
+    type: string
     example: "B70BA622-9515-4353-A866-823539EECBC8"
     title: jti
-    type: string
 required:
   - format
   - iss

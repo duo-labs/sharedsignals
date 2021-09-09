@@ -19,14 +19,14 @@ properties:
     type: string
   # TODO: pattern this
   iss:
+    type: string
     example: "http://issuer.example.com/"
     title: iss
-    type: string
   # TODO: pattern this
   sub:
+    type: string
     example: "145234573"
     title: sub
-    type: string
 required:
   - format
   - iss
