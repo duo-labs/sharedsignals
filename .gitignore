@@ -2,3 +2,5 @@
 .pytest_cache
 .idea
 venv
+__pycache__
+py_openid_sse.egg-info

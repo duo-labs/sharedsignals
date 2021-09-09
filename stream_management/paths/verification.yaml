@@ -1,0 +1,25 @@
+post:
+  summary: Request that a verification event be sent over an Event Stream
+  operationId: verification_request
+  requestBody:
+    description: Optional request parameters
+    required: false
+    content:
+      application/json:
+        schema:
+          $ref: "../openapi.yaml#/components/schemas/VerificationParameters"
+  responses:
+    204:
+      description: |
+        Request for verification event was successfully received. A
+        successful response from a POST to the Verification Endpoint does
+        not indicate that the verification event was transmitted
+        successfully, only that the Event Transmitter has transmitted the
+        event or will do so at some point in the future.
+    400:
+      $ref: '../openapi.yaml#/components/responses/BadRequest'
+    401:
+      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+    429:
+      $ref: '../openapi.yaml#/components/responses/TooManyRequests'
+
