@@ -37,25 +37,35 @@ components:
     BadRequest:
       # 400
       description: Request body cannot be parsed or the request is otherwise invalid
-      schema:
-        $ref: '#/components/schemas/Error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     Unauthenticated:
       # 401
       description: Authentication failed or is missing
-      schema:
-        $ref: '#/components/schemas/Error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     Unauthorized:
       # 403
       description: User not authorized to access resource
-      schema:
-        $ref: '#/components/schemas/Error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     NotFound:
       # 404
       description: Resource not found
-      schema:
-        $ref: '#/components/schemas/Error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     TooManyRequests:
       # 429
       description: Event Receiver is sending too many requests
-      schema:
-        $ref: '#/components/schemas/Error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
