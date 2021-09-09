@@ -9,3 +9,4 @@ oneOf:
   - $ref: '../../openapi.yaml#/components/schemas/SamlAssertionID'
 discriminator:
   propertyName: format
+title: Simple Subject

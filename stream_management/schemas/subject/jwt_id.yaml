@@ -15,11 +15,17 @@ properties:
     type: string
     example: "https://idp.example.com/123456789/"
     title: iss
+    description: |-
+      The "iss" (issuer) claim of the JWT being identified, defined in
+      [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)
   # TODO: pattern this
   jti:
     type: string
     example: "B70BA622-9515-4353-A866-823539EECBC8"
     title: jti
+    description: |-
+      The "jti" (JWT token ID) claim of the JWT being identified, defined in
+      [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)
 required:
   - format
   - iss
