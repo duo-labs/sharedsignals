@@ -1,0 +1,26 @@
+description: |-
+  https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.6
+  The Opaque Identifier Format describes a subject that is identified
+  with a string with no semantics asserted beyond its usage as an
+  identifier for the subject, such as a UUID or hash used as a
+  surrogate identifier for a record in a database.  Subject Identifiers
+  in this format MUST contain an "id" member whose value is a JSON
+  string containing the opaque string identifier for the subject.  The
+  "id" member is REQUIRED and MUST NOT be null or empty.  The Opaque
+  Identifier Format is identified by the name "opaque".
+properties:
+  format:
+    default: opaque
+    enum:
+      - opaque
+    title: Format
+    type: string
+  id:
+    example: "11112222333344445555"
+    title: Id
+    type: string
+required:
+  - format
+  - id
+title: Opaque
+type: object

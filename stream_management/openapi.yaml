@@ -1,14 +1,16 @@
-# https://openid.net/specs/openid-sse-framework-1_0.html#management
 openapi: "3.0.3"
 info:
   version: 1.0.0
   title: Stream Management API for OpenID Shared Security Events
-  description: >
+  description: |
+    [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0.html#management)
+
     HTTP API to be implemented by Event Transmitters and that can be used by
     Event Receivers to query and update the Event Stream configuration and
     status, to add and remove subjects and to trigger verification.
   license:
     name: MIT
+
 paths:
   /.well-known/sse-configuration:
     $ref: "./paths/configuration.yaml"
@@ -22,6 +24,7 @@ paths:
     $ref: "./paths/remove-subject.yaml"
   /verification:
     $ref: "./paths/verification.yaml"
+
 components:
   parameters:
     issuer:
@@ -29,4 +32,33 @@ components:
   schemas:
     TransmitterConfiguration:
       $ref: "./schemas/TransmitterConfiguration.yaml"
+
+    # Simple Subjects
+    Account:
+      $ref: "./schemas/subject/account.yaml"
+    DID:
+      $ref: "./schemas/subject/did.yaml"
+    Email:
+      $ref: "./schemas/subject/email.yaml"
+    IssSub:
+      $ref: "./schemas/subject/iss_sub.yaml"
+    JwtID:
+      $ref: "./schemas/subject/jwt_id.yaml"
+    Opaque:
+      $ref: "./schemas/subject/opaque.yaml"
+    PhoneNumber:
+      $ref: "./schemas/subject/phone_number.yaml"
+    SamlAssertionID:
+      $ref: "./schemas/subject/saml_assertion_id.yaml"
+
+    # Nested Subjects
+    Aliases:
+      $ref: "./schemas/subject/aliases.yaml"
+    ComplexSubject:
+      $ref: "./schemas/subject/complex_subject.yaml"
+
+    # Subject
+    Subject:
+      $ref: "./schemas/subject/subject.yaml"
+
   responses:

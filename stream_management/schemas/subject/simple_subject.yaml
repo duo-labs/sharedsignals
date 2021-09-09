@@ -1,0 +1,11 @@
+oneOf:
+  - $ref: '../../openapi.yaml#/components/schemas/Account'
+  - $ref: '../../openapi.yaml#/components/schemas/DID'
+  - $ref: '../../openapi.yaml#/components/schemas/Email'
+  - $ref: '../../openapi.yaml#/components/schemas/IssSub'
+  - $ref: '../../openapi.yaml#/components/schemas/JwtID'
+  - $ref: '../../openapi.yaml#/components/schemas/Opaque'
+  - $ref: '../../openapi.yaml#/components/schemas/PhoneNumber'
+  - $ref: '../../openapi.yaml#/components/schemas/SamlAssertionID'
+discriminator:
+  propertyName: format

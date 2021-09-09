@@ -1,0 +1,21 @@
+description: |-
+  https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.3.2
+  A Complex Subject Member has a name and a value that is a JSON object that
+  has one or more Simple Subject Members.
+properties:
+  application:
+    $ref: "./simple_subject.yaml"
+  device:
+    $ref: "./simple_subject.yaml"
+  group:
+    $ref: "./simple_subject.yaml"
+  org_unit:
+    $ref: "./simple_subject.yaml"
+  session:
+    $ref: "./simple_subject.yaml"
+  tenant:
+    $ref: "./simple_subject.yaml"
+  user:
+    $ref: "./simple_subject.yaml"
+title: ComplexSubject
+type: object

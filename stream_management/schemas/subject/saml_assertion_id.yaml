@@ -1,0 +1,27 @@
+description: |-
+  https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.3.4.2
+  The "SAML Assertion ID" Subject Identifier Format specifies a SAML 2.0
+  [OASIS.saml-core-2.0-os](https://openid.net/specs/openid-sse-framework-1_0-01.html#OASIS.saml-core-2.0-os)
+  assertion identifier.
+properties:
+  format:
+    default: saml_assertion_id
+    enum:
+      - saml_assertion_id
+    title: Format
+    type: string
+  # TODO: pattern this
+  issuer:
+    type: string
+    title: Issuer
+    example: "https://idp.example.com/123456789/"
+  assertion_id:
+    type: string
+    title: Assertion ID
+    example: "_8e8dc5f69a98cc4c1ff3427e5ce34606fd672f91e6"
+required:
+  - format
+  - issuer
+  - assertion_id
+title: SamlAssertionID
+type: object
