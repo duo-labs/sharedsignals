@@ -7,18 +7,7 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            state:
-              type: string
-              description: |
-                OPTIONAL. An arbitrary string that the Event Transmitter
-                MUST echo back to the Event Receiver in the verification
-                event’s payload. Event Receivers MAY use the value of this
-                parameter to correlate a verification event with a
-                verification request. If the verification event is
-                initiated by the transmitter then this parameter MUST not
-                be set.
+          $ref: "../openapi.yaml#/components/schemas/VerificationParameters"
   responses:
     204:
       description: |
