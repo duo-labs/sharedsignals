@@ -8,24 +8,24 @@ description: |-
 properties:
   application:
     $ref: "./simple_subject.yaml"
-    description: A Subject Identifier that identifies a user.
+    description: A Subject Identifier that identifies an application.
   device:
     $ref: "./simple_subject.yaml"
     description: A Subject Identifier that identifies a device.
   group:
     $ref: "./simple_subject.yaml"
-    description: A Subject Identifier that identifies a session.
+    description: A Subject Identifier that identifies a group.
   org_unit:
     $ref: "./simple_subject.yaml"
-    description: A Subject Identifier that identifies an application.
+    description: A Subject Identifier that identifies an organizational unit.
   session:
     $ref: "./simple_subject.yaml"
-    description: A Subject Identifier that identifies a tenant.
+    description: A Subject Identifier that identifies a session.
   tenant:
     $ref: "./simple_subject.yaml"
-    description: A Subject Identifier that identifies an organizational unit.
+    description: A Subject Identifier that identifies a tenant.
   user:
     $ref: "./simple_subject.yaml"
-    description: A Subject Identifier that identifies a group.
+    description: A Subject Identifier that identifies a user.
 title: ComplexSubject
 type: object
