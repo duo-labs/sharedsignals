@@ -33,6 +33,9 @@ components:
     TransmitterConfiguration:
       $ref: "./schemas/TransmitterConfiguration.yaml"
 
+    # Request Body params
+    AddSubjectParameters:
+      $ref: "./schemas/AddSubjectParameters.yaml"
     VerificationParameters:
       $ref: "./schemas/VerificationParameters.yaml"
 

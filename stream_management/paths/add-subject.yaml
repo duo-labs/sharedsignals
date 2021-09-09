@@ -1,0 +1,38 @@
+post:
+  summary: Request to add a subject to an Event Stream
+  operationId: add_subject
+  requestBody:
+    description: Request parameters
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../openapi.yaml#/components/schemas/AddSubjectParameters"
+  responses:
+    200:
+      description: |-
+        On a successful response, the Event Transmitter responds with an empty 200 OK response.
+        The Event Transmitter MAY choose to silently ignore the request, for example if the subject has previously
+        indicated to the transmitter that they do not want events to be transmitted to the Event Receiver.
+        In this case, the transmitter MAY return an empty 200 OK response or an appropriate error code.
+        See [Security Considerations](https://openid.net/specs/openid-sse-framework-1_0-ID1.html#management-sec).
+    400:
+      $ref: '../openapi.yaml#/components/responses/BadRequest'
+    401:
+      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+    403:
+      description: "The Event Receiver is not allowed to add this particular subject, or not allowed to add in general."
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+    404:
+      description: |-
+        The subject is not recognized by the Event Transmitter,
+        the Event Transmitter may chose to stay silent in this case and respond with 200.
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+    429:
+      $ref: '../openapi.yaml#/components/responses/TooManyRequests'
