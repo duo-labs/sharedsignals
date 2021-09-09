@@ -1,0 +1,27 @@
+description: |-
+  [Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.3)
+
+  The Decentralized Identifier Format identifies a subject using a
+  Decentralized Identifier (DID) URL as defined in [DID](https://www.w3.org/TR/did-core/).
+  Subject Identifiers in this format MUST contain a "url" member whose value is
+  a DID URL for the DID Subject being identified.  The value of the
+  "url" member MUST be a valid DID URL and MAY be a bare DID.  The
+  "url" member is REQUIRED and MUST NOT be null or empty.  The
+  Decentralized Identifier Format is identified by the name "did".
+properties:
+  format:
+    default: did
+    enum:
+      - did
+    title: Format
+    type: string
+  url:
+    type: string
+    example: "did:example:123456/did/url/path?versionId=1"
+    title: Url
+    pattern: ^did:[^\s]+$  # TODO: make this more accurate
+required:
+  - format
+  - url
+title: DID
+type: object

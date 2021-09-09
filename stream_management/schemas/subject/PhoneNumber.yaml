@@ -1,0 +1,28 @@
+description: |-
+  [Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.7)
+
+  The Phone Number Identifier Format identifies a subject using a
+  telephone number.  Subject Identifiers in this format MUST contain a
+  "phone_number" member whose value is a string containing the full
+  telephone number of the subject, including international dialing
+  prefix, formatted according to E.164
+  [E164](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#ref-E164).
+  The "phone_number" member is REQUIRED and MUST NOT be null or empty.
+  The Phone Number Identifier Format is identified by the name "phone_number".
+properties:
+  format:
+    default: phone_number
+    enum:
+      - phone_number
+    title: Format
+    type: string
+  # TODO: pattern this
+  phone_number:
+    type: string
+    example: "+12065550100"
+    title: Phone Number
+required:
+  - format
+  - phone_number
+title: PhoneNumber
+type: object
