@@ -1,5 +1,6 @@
 description: |-
-  https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.7
+  [Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.7)
+
   The Phone Number Identifier Format identifies a subject using a
   telephone number.  Subject Identifiers in this format MUST contain a
   "phone_number" member whose value is a string containing the full

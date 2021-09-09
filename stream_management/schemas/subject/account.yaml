@@ -1,8 +1,10 @@
 description: |-
-  https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.1
+  [Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.1)
+
   The Account Identifier Format identifies a subject using an account
   at a service provider, identified with an "acct" URI as defined in
-  [RFC7565].  Subject Identifiers in this format MUST contain a "uri"
+  [RFC7565](https://datatracker.ietf.org/doc/html/rfc7565).
+  Subject Identifiers in this format MUST contain a "uri"
   member whose value is the "acct" URI for the subject.  The "uri"
   member is REQUIRED and MUST NOT be null or empty.  The Account
   Identifier Format is identified by the name "account".
@@ -16,7 +18,8 @@ properties:
   uri:
     type: string
     title: Uri
-    pattern: ^acct:[^\s]+$  # TODO: make this more accurate
+    # TODO: make this more accurate
+    pattern: ^acct:[^\s]+$
 required:
   - format
   - uri

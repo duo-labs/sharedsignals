@@ -1,10 +1,12 @@
 description: |-
-  https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.5
+  [Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.5)
+
   The Issuer and Subject Identifier Format identifies a subject using a
   pair of "iss" and "sub" members, analagous to how subjects are
   identified using the "iss" and "sub" claims in OpenID Connect
-  [OpenID.Core] ID Tokens.  These members MUST follow the formats of
-  the "iss" member and "sub" member defined by [RFC7519], respectively.
+  [OpenID.Core](http://openid.net/specs/openid-connect-core-1_0.html) ID Tokens.
+  These members MUST follow the formats of the "iss" member and "sub" member
+  defined by [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519), respectively.
   Both the "iss" member and the "sub" member are REQUIRED and MUST NOT
   be null or empty.  The Issuer and Subject Identifier Format is
   identified by the name "iss_sub".

@@ -1,5 +1,6 @@
 description: |-
-  https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.3.4.2
+  [Spec](https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.3.4.2)
+
   The "SAML Assertion ID" Subject Identifier Format specifies a SAML 2.0
   [OASIS.saml-core-2.0-os](https://openid.net/specs/openid-sse-framework-1_0-01.html#OASIS.saml-core-2.0-os)
   assertion identifier.

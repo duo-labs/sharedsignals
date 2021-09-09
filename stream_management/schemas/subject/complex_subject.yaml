@@ -1,5 +1,6 @@
 description: |-
-  https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.3.2
+  [Spec](https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.3.2)
+
   A Complex Subject Member has a name and a value that is a JSON object that
   has one or more Simple Subject Members.
 properties:

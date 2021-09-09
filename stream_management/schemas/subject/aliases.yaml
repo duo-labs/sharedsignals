@@ -1,5 +1,6 @@
 description: |-
-  https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.2
+  [Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.2)
+
   The Aliases Identifier Format describes a subject that is identified
   with a list of different Subject Identifiers.  It is intended for use
   when a variety of identifiers have been shared with the party that

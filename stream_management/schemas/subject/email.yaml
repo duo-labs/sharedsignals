@@ -1,10 +1,12 @@
 description: |-
-  https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.4
+  [Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.4)
+
   The Email Identifier Format identifies a subject using an email
   address.  Subject Identifiers in this format MUST contain an "email"
   member whose value is a string containing the email address of the
   subject, formatted as an "addr-spec" as defined in Section 3.4.1 of
-  [RFC5322].  The "email" member is REQUIRED and MUST NOT be null or
+  [RFC5322](https://datatracker.ietf.org/doc/html/rfc5322).
+  The "email" member is REQUIRED and MUST NOT be null or
   empty.  The value of the "email" member SHOULD identify a mailbox to
   which email may be delivered, in accordance with [RFC5321].  The
   Email Identifier Format is identified by the name "email".
