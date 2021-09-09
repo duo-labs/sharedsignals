@@ -1,5 +1,9 @@
 post:
   summary: Request to add a subject to an Event Stream
+  description: |-
+    [Spec](https://openid.net/specs/openid-sse-framework-1_0-ID1.html#adding-a-subject-to-a-stream)
+
+    Event Receivers can send rquests to an Event Transmitter's Add Subject endpoint to add a subject to an Event Stream.
   operationId: add_subject
   requestBody:
     description: Request parameters
