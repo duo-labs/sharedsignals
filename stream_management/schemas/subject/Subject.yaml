@@ -1,5 +1,5 @@
 oneOf:
-  - $ref: './simple_subject.yaml'
+  - $ref: './SimpleSubject.yaml'
   - $ref: '../../openapi.yaml#/components/schemas/Aliases'
   - $ref: '../../openapi.yaml#/components/schemas/ComplexSubject'
 discriminator:
