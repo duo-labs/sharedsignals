@@ -3,11 +3,10 @@ required:
   - subject
 properties:
   subject:
-    $ref: "./subject/SimpleSubject.yaml"
+    $ref: "../openapi.yaml#/components/schemas/Subject"
     description: "REQUIRED. A Subject claim identifying the subject to be added."
   verified:
-    type:
-      - bool
+    type: boolean
     description: |-
       OPTIONAL. A boolean value; when true, it indicates that the Event Receiver has verified the Subject claim.
       When false, it indicates that the Event Receiver has not verified the Subject claim.
