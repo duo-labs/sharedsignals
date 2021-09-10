@@ -1,0 +1,14 @@
+type: object
+required:
+  - subject
+properties:
+  subject:
+    allOf:
+      - $ref: "../openapi.yaml#/components/schemas/Subject"
+      - description: "REQUIRED. A Subject claim identifying the subject to be added."
+  verified:
+    type: boolean
+    description: |-
+      OPTIONAL. A boolean value; when true, it indicates that the Event Receiver has verified the Subject claim.
+      When false, it indicates that the Event Receiver has not verified the Subject claim.
+      If omitted, Event Transmitters SHOULD assume that the subject has been verified.

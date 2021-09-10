@@ -22,4 +22,3 @@ post:
       $ref: '../openapi.yaml#/components/responses/Unauthenticated'
     429:
       $ref: '../openapi.yaml#/components/responses/TooManyRequests'
-
