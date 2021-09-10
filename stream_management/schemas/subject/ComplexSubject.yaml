@@ -7,25 +7,32 @@ description: |-
   As a whole, the Complex Subject MUST refer to exactly one Subject Principal.
 properties:
   application:
-    $ref: "./SimpleSubject.yaml"
-    description: A Subject Identifier that identifies an application.
+    allOf:
+      - $ref: "./SimpleSubject.yaml"
+      - description: A Subject Identifier that identifies an application.
   device:
-    $ref: "./SimpleSubject.yaml"
-    description: A Subject Identifier that identifies a device.
+    allOf:
+      - $ref: "./SimpleSubject.yaml"
+      - description: A Subject Identifier that identifies a device.
   group:
-    $ref: "./SimpleSubject.yaml"
-    description: A Subject Identifier that identifies a group.
+    allOf:
+      - $ref: "./SimpleSubject.yaml"
+      - description: A Subject Identifier that identifies a group.
   org_unit:
-    $ref: "./SimpleSubject.yaml"
-    description: A Subject Identifier that identifies an organizational unit.
+    allOf:
+      - $ref: "./SimpleSubject.yaml"
+      - description: A Subject Identifier that identifies an organizational unit.
   session:
-    $ref: "./SimpleSubject.yaml"
-    description: A Subject Identifier that identifies a session.
+    allOf:
+      - $ref: "./SimpleSubject.yaml"
+      - description: A Subject Identifier that identifies a session.
   tenant:
-    $ref: "./SimpleSubject.yaml"
-    description: A Subject Identifier that identifies a tenant.
+    allOf:
+      - $ref: "./SimpleSubject.yaml"
+      - description: A Subject Identifier that identifies a tenant.
   user:
-    $ref: "./SimpleSubject.yaml"
-    description: A Subject Identifier that identifies a user.
+    allOf:
+      - $ref: "./SimpleSubject.yaml"
+      - description: A Subject Identifier that identifies a user.
 title: ComplexSubject
 type: object
