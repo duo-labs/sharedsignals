@@ -1,0 +1,37 @@
+post:
+  summary: Request to add a subject to an Event Stream
+  description: |-
+    [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#removing-a-subject)
+
+    Event Receivers can send rquests to an Event Transmitter's Remove Subject endpoint to remove a subject from an Event Stream.
+  operationId: remove_subject
+  requestBody:
+    description: Request parameters
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../openapi.yaml#/components/schemas/RemoveSubjectParameters"
+  responses:
+    204:
+      description: "On a successful response, the Event Transmitter responds with a 204 No Content response."
+    400:
+      $ref: '../openapi.yaml#/components/responses/BadRequest'
+    401:
+      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+    403:
+      description: "The Event Receiver is not allowed to remove this particular subject, or not allowed to remove in general."
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+    404:
+      description: |-
+        The subject is not recognized by the Event Transmitter,
+        the Event Transmitter may chose to stay silent in this case and respond with 204.
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+    429:
+      $ref: '../openapi.yaml#/components/responses/TooManyRequests'
