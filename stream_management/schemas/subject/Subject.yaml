@@ -4,3 +4,30 @@ oneOf:
   - $ref: '../../openapi.yaml#/components/schemas/ComplexSubject'
 discriminator:
   propertyName: format
+description: |-
+  [Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3)
+
+  As described in Section 1.2 of SET [RFC8417](https://datatracker.ietf.org/doc/html/rfc8417),
+  subjects related to security events may take a variety of forms,
+  including but not limited to a JWT [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)
+  principal, an IP address, a URL, etc. Different types of subjects may need
+  to be identified in different ways. (e.g., a host might be identified by an
+  IP or MAC address, while a user might be identified by an email address)
+  Furthermore, even in the case where the type of the subject is known,
+  there may be multiple ways by which a given subject may be identified.
+  For example, an account may be identified by an opaque identifier, an
+  email address, a phone number, a JWT "iss" claim and "sub" claim,
+  etc., depending on the nature and needs of the transmitter and
+  receiver.  Even within the context of a given transmitter and
+  receiver relationship, it may be appropriate to identify different
+  accounts in different ways, for example if some accounts only have
+  email addresses associated with them while others only have phone
+  numbers.  Therefore it can be necessary to indicate within a SET the
+  mechanism by which a subject is being identified.
+
+  To address this problem, this specification defines Subject
+  Identifiers - JSON [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)
+  objects containing information identifying a subject - and Identifier Formats -
+  named sets of rules describing how to encode different kinds of subject
+  identifying information (e.g., an email address, or an issuer and subject pair)
+  as a Subject Identifier.
