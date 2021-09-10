@@ -22,7 +22,7 @@ class SET(JWT):
     The SET defined in this package is further restricted to the definitons
     provided in SSE's standards:
 
-    1. https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.4
+    1. https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.4
     The keys in the events dictionary MUST be URIs
 
     2.
