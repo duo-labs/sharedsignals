@@ -62,6 +62,8 @@ components:
       $ref: "./schemas/subject/Aliases.yaml"
     ComplexSubject:
       $ref: "./schemas/subject/ComplexSubject.yaml"
+    SimpleSubject:
+      $ref: "./schemas/subject/SimpleSubject.yaml"
 
     # Subject
     Subject:
