@@ -13,9 +13,11 @@ info:
 
 paths:
   /.well-known/sse-configuration:
-    $ref: "./paths/configuration.yaml"
+    $ref: "./paths/transmitter-configuration.yaml"
   /.well-known/sse-configuration/{issuer}:
-    $ref: "./paths/configuration-with-issuer.yaml"
+    $ref: "./paths/transmitter-configuration-with-issuer.yaml"
+  /stream:
+    $ref: "./paths/stream-configuration.yaml"
   /status:
     $ref: "./paths/status.yaml"
   /add-subject:
@@ -32,6 +34,8 @@ components:
   schemas:
     TransmitterConfiguration:
       $ref: "./schemas/TransmitterConfiguration.yaml"
+    StreamConfiguration:
+      $ref: "./schemas/StreamConfiguration.yaml"
 
     # Request Body params
     AddSubjectParameters:
@@ -81,7 +85,7 @@ components:
             $ref: '#/components/schemas/Error'
     Unauthenticated:
       # 401
-      description: Authentication failed or is missing
+      description: Authorization failed or is missing
       content:
         application/json:
           schema:

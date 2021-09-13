@@ -1,0 +1,99 @@
+get:
+  description: |-
+  [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#reading-a-streams-configuration)
+
+  An Event Receiver gets the current configuration of a stream by making an HTTP GET request to the Configuration
+  Endpoint. On receiving a valid request the Event Transmitter responds with a 200 OK response containing a JSON
+  representation of the stream’s configuration in the body.
+  responses:
+    200:
+      description: The Event Stream's configuration
+      content:
+        application/json:
+          schema:
+             $ref: "../openapi.yaml#/components/schemas/StreamConfiguration"
+    401:
+     $ref: '../openapi.yaml#/components/responses/BadRequest'
+    403:
+      description: "The Event Receiver is not allowed to read the stream configuration."
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+    404:
+      description: "There is no Event Stream configured for this Event Receiver."
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+post:
+  summary: Request to update the configuration of an event stream
+  description: |-
+    [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#updating-a-streams-configuration)
+    An Event Receiver updates the current configuration of a stream by making an HTTP POST request to the Configuration
+    Endpoint. The POST body contains a JSON representation of the updated configuration. On receiving a valid request
+    the Event Transmitter responds with a 200 OK response containing a JSON representation of the updated stream
+    configuration in the body.
+
+    The full set of editable properties must be present in the POST body, not only the ones that are specifically
+    intended to be changed. Missing properties SHOULD be interpreted as requested to be deleted. Event Receivers should
+    read the configuration first, modify the JSON representation, then make an update request.
+
+    Properties that cannot be updated MAY be present, but they MUST match the expected value.
+  operationId: stream_configuration_udpate_request
+  requestBody:
+    description: Optional request parameters
+    required: false
+    content:
+      application/json:
+        schema:
+          $ref: "../openapi.yaml#/components/schemas/StreamConfiguration"
+  responses:
+    200:
+      description: The Event Stream's updated configuration
+      content:
+        application/json:
+          schema:
+             $ref: "../openapi.yaml#/components/schemas/StreamConfiguration"
+    202:
+      description: |-
+        The update request has been accepted, but not processed.
+        Receiver MAY try the same request later in order to get processing result.
+
+        If a Receiver makes a request to update the stream to enable it for a specific Subject, and the Transmitter is
+        unable to decide whether or not to complete the request, then the Transmitter MUST respond with a 202 status
+        code.
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+    400:
+      $ref: '../openapi.yaml#/components/responses/BadRequest'
+    401:
+      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+    403:
+      description: "The Event Receiver is not allowed to update the stream configuration."
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+    404:
+      description: "There is no Event Stream configured for this Event Receiver."
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+delete:
+  description: |-
+    An Event Receiver removes the configuration of a stream by making an HTTP DELETE request to the Configuration
+    Endpoint. On receiving a request the Event Transmitter responds with a 200 OK response if the configuration was
+    successfully removed.
+  responses:
+    401:
+      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+    403:
+      description: "The Event Receiver is not allowed to update the stream configuration."
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
