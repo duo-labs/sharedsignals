@@ -3,7 +3,7 @@ properties:
   status:
     type: string
     example: disabled
-    oneOf:
+    enum:
       - enabled
       - paused
       - disabled
