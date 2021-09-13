@@ -2,7 +2,7 @@ type: object
 title: 'Transmitter Configuration Response'
 description: |
   Transmitters have metadata describing their configuration.
-  [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0-01.html#discovery-meta)'
+  [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0.html#discovery-meta)
 required:
   - issuer
   - jwks_uri
@@ -18,7 +18,7 @@ properties:
   jwks_uri:
     type: string
     description: |
-      URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0-01.html#RFC7517)
+      URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7517)
       document. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter.
     # pattern: TODO: URL regex
     example: 'https://tr.example.com/jwks.json'

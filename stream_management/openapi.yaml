@@ -43,6 +43,8 @@ components:
     # Request Body params
     AddSubjectParameters:
       $ref: './schemas/AddSubjectParameters.yaml'
+    RemoveSubjectParameters:
+        $ref: './schemas/RemoveSubjectParameters.yaml'
     VerificationParameters:
       $ref: './schemas/VerificationParameters.yaml'
 

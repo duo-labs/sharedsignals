@@ -5,7 +5,7 @@ description: |
   Using path components enables supporting multiple issuers per host.
   This is required in some multi-tenant hosting configurations.
   This use of .well-known is for supporting multiple issuers per host;
-  unlike its use in [RFC5785](https://openid.net/specs/openid-sse-framework-1_0-01.html#RFC5785),
+  unlike its use in [RFC5785](https://openid.net/specs/openid-sse-framework-1_0.html#RFC5785),
   it does not provide general information about the host.
 schema:
   type: string

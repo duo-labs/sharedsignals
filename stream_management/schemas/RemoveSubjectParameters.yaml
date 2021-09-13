@@ -1,0 +1,8 @@
+type: object
+required:
+  - subject
+properties:
+  subject:
+    allOf:
+      - $ref: "../openapi.yaml#/components/schemas/Subject"
+      - description: "REQUIRED. A Subject claim identifying the subject to be removed."

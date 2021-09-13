@@ -99,7 +99,7 @@ class IssSub(Subject):
 
 
 class JwtID(Subject):
-    """https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.3.4.1  # noqa: E501
+    """https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.3.4.1  # noqa: E501
     The "JWT ID" Subject Identifier Format specifies a JSON Web Token (JWT)
     identifier, defined in [RFC7519].
     """
@@ -137,7 +137,7 @@ class PhoneNumber(Subject):
 
 
 class SamlAssertionID(Subject):
-    """https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.3.4.2  # noqa: E501
+    """https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.3.4.2  # noqa: E501
     The "SAML Assertion ID" Subject Identifier Format specifies a SAML 2.0
     [OASIS.saml-core-2.0-os] assertion identifier.
     """
@@ -193,7 +193,7 @@ class Aliases(Subject):
 
 
 class ComplexSubject(pydantic.BaseModel):
-    """https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.3.2  # noqa: E501
+    """https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.3.2  # noqa: E501
     A Complex Subject Member has a name and a value that is a JSON object that
     has one or more Simple Subject Members.
     """
