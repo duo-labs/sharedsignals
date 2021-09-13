@@ -9,7 +9,7 @@ from openid_sse.models.common import StringOrURI
 
 
 # NOTE: Explicitly type the SET in header
-# https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.11.1.4
+# https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.11.1.4
 
 
 class JWT(pydantic.BaseModel):
@@ -26,10 +26,10 @@ class JWT(pydantic.BaseModel):
     The JWT defined in this package is further restricted to only apply to
     SETs as defined in the SSE standards:
 
-    1. https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.11.1.2  # noqa: E501
+    1. https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.11.1.2  # noqa: E501
     The JWT sub claim MUST NOT be present in any SET containing a SSE event.
 
-    2. https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.11.1.5  # noqa: E501
+    2. https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.11.1.5  # noqa: E501
     The exp claim MUST NOT be used in SSE SETs.
 
     3. https://datatracker.ietf.org/doc/html/rfc8417#section-2.2

@@ -1,7 +1,7 @@
 # py-openid-sse
 
 Python tools for working with OpenID's
-[Shared Signals and Events Framework](https://openid.net/specs/openid-sse-framework-1_0-01.html)
+[Shared Signals and Events Framework](https://openid.net/specs/openid-sse-framework-1_0.html)
 as well as the [CAEP standard](https://openid.net/specs/openid-caep-specification-1_0-02.html).
 
 ## Installing

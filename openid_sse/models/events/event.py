@@ -1,6 +1,6 @@
 """
 Defines an Event as described in the SSE spec
-https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.4
+https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.4
 """
 from typing import ClassVar, Literal, Optional
 
@@ -11,7 +11,7 @@ from openid_sse.models.subject import ANY_SUBJECT
 
 
 class Event(pydantic.BaseModel):
-    """https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.4
+    """https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.4
     The base model for all of the SSE event types. It defines a single
     class variable that must be instantiated, which is the URI of the event.
 
@@ -25,7 +25,7 @@ class Event(pydantic.BaseModel):
     """
     __uri__: ClassVar[URI]
 
-    # https://openid.net/specs/openid-sse-framework-1_0-01.html#rfc.section.11.1.2  # noqa: E501
+    # https://openid.net/specs/openid-sse-framework-1_0.html#rfc.section.11.1.2  # noqa: E501
     # The subject of a SSE event is identified by the subject claim within the
     # event payload, whose value is a Subject Identifier. The subject claim is
     # REQUIRED for all SSE events. The JWT sub claim MUST NOT be present in any
