@@ -3,7 +3,7 @@ post:
   description: |-
     [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#removing-a-subject)
 
-    Event Receivers can send rquests to an Event Transmitter's Remove Subject endpoint to remove a subject from an Event Stream.
+    Event Receivers can send requests to an Event Transmitter's Remove Subject endpoint to remove a subject from an Event Stream.
   operationId: remove_subject
   requestBody:
     description: Request parameters
