@@ -1,8 +1,8 @@
 type: object
-title: "Transmitter Configuration Response"
+title: 'Transmitter Configuration Response'
 description: |
   Transmitters have metadata describing their configuration.
-  [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0-01.html#discovery-meta)"
+  [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0.html#discovery-meta)
 required:
   - issuer
   - jwks_uri
@@ -13,50 +13,50 @@ properties:
       URL using the https scheme with no query or fragment component that the Transmitter asserts as its
       Issuer Identifier.
       This MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter.
-#    pattern: TODO: URL regex
-    example: "https://tr.example.com"
+    # pattern: TODO: URL regex
+    example: 'https://tr.example.com'
   jwks_uri:
     type: string
     description: |
-      URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0-01.html#RFC7517)
+      URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7517)
       document. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter.
-    #    pattern: TODO: URL regex
-    example: "https://tr.example.com/jwks.json"
+    # pattern: TODO: URL regex
+    example: 'https://tr.example.com/jwks.json'
   delivery_methods_supported:
     type: array
     items:
       type: string
-      #    pattern: TODO: URL regex
-    description: "List of supported delivery method URIs. Recommended."
+      # pattern: TODO: URL regex
+    description: 'List of supported delivery method URIs. Recommended.'
     example: [
-        "https://schemas.openid.net/secevent/risc/delivery-method/push",
-        "https://schemas.openid.net/secevent/risc/delivery-method/poll"
+        'https://schemas.openid.net/secevent/risc/delivery-method/push',
+        'https://schemas.openid.net/secevent/risc/delivery-method/poll'
     ]
   configuration_endpoint:
     type: string
-    #    pattern: TODO: URL regex
-    description: "The URL of the Configuration Endpoint."
-    example: "https://tr.example.com/sse/mgmt/stream"
+    # pattern: TODO: URL regex
+    description: 'The URL of the Configuration Endpoint.'
+    example: 'https://tr.example.com/sse/mgmt/stream'
   status_endpoint:
     type: string
-    #    pattern: TODO: URL regex
-    description: "The URL of the Status Endpoint."
-    example: "https://tr.example.com/sse/mgmt/status"
+    # pattern: TODO: URL regex
+    description: 'The URL of the Status Endpoint.'
+    example: 'https://tr.example.com/sse/mgmt/status'
   add_subject_endpoint:
     type: string
-    #    pattern: TODO: URL regex
-    description: "The URL of the Add Subject Endpoint."
-    example: "https://tr.example.com/sse/mgmt/subject:add"
+    # pattern: TODO: URL regex
+    description: 'The URL of the Add Subject Endpoint.'
+    example: 'https://tr.example.com/sse/mgmt/subject:add'
   remove_subject_endpoint:
     type: string
-    #    pattern: TODO: URL regex
-    description: "The URL of the Remove Subject Endpoint."
-    example: "https://tr.example.com/sse/mgmt/subject:remove"
+    # pattern: TODO: URL regex
+    description: 'The URL of the Remove Subject Endpoint.'
+    example: 'https://tr.example.com/sse/mgmt/subject:remove'
   verification_endpoint:
     type: string
-    #    pattern: TODO: URL regex
-    description: "The URL of the Verification Endpoint."
-    example: "https://tr.example.com/sse/mgmt/verification"
+    # pattern: TODO: URL regex
+    description: 'The URL of the Verification Endpoint.'
+    example: 'https://tr.example.com/sse/mgmt/verification'
   critical_subject_members:
     type: array
     items:
@@ -64,4 +64,4 @@ properties:
     description: |
       List of member names in a Complex Subject which, if present in a Subject Member in an event,
       MUST be interpreted by a Receiver.
-    example: [ "tenant", "user" ]
+    example: [ 'tenant', 'user' ]
