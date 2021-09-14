@@ -109,11 +109,6 @@ properties:
             type: string
             description: The URL where events can be retrieved from. This is specified by the Transmitter.
             #    pattern: TODO: URL regex
-          authorization_header:
-            type: string
-            description: |-
-              The HTTP Authorization header that the Transmitter MUST set with each event delivery,
-              if the configuration is present. The value is optional and it is set by the Receiver.
   min_verification_interval:
     type: integer
     description: |-
