@@ -1,4 +1,4 @@
-openapi: "3.0.3"
+openapi: '3.0.3'
 info:
   version: 1.0.0
   title: Stream Management API for OpenID Shared Security Events
@@ -13,65 +13,74 @@ info:
 
 paths:
   /.well-known/sse-configuration:
-    $ref: "./paths/configuration.yaml"
+    $ref: './paths/configuration.yaml'
   /.well-known/sse-configuration/{issuer}:
-    $ref: "./paths/configuration-with-issuer.yaml"
+    $ref: './paths/configuration-with-issuer.yaml'
   /status:
-    $ref: "./paths/status.yaml"
+    $ref: './paths/status.yaml'
   /add-subject:
-    $ref: "./paths/add-subject.yaml"
+    $ref: './paths/add-subject.yaml'
   /remove-subject:
-    $ref: "./paths/remove-subject.yaml"
+    $ref: './paths/remove-subject.yaml'
   /verification:
-    $ref: "./paths/verification.yaml"
+    $ref: './paths/verification.yaml'
 
 components:
   parameters:
     issuer:
-      $ref: "./parameters/path/issuer.yaml"
+      $ref: './parameters/path/issuer.yaml'
+    subject:
+      $ref: './parameters/query/subject.yaml'
+
   schemas:
+    StreamStatus:
+      $ref: './schemas/StreamStatus.yaml'
     TransmitterConfiguration:
-      $ref: "./schemas/TransmitterConfiguration.yaml"
+      $ref: './schemas/TransmitterConfiguration.yaml'
+    UpdateStreamStatus:
+      $ref: './schemas/UpdateStreamStatus.yaml'
 
     # Request Body params
     AddSubjectParameters:
-      $ref: "./schemas/AddSubjectParameters.yaml"
+      $ref: './schemas/AddSubjectParameters.yaml'
+    RemoveSubjectParameters:
+        $ref: './schemas/RemoveSubjectParameters.yaml'
     VerificationParameters:
-      $ref: "./schemas/VerificationParameters.yaml"
+      $ref: './schemas/VerificationParameters.yaml'
 
     # Simple Subjects
     Account:
-      $ref: "./schemas/subject/Account.yaml"
+      $ref: './schemas/subject/Account.yaml'
     DID:
-      $ref: "./schemas/subject/DID.yaml"
+      $ref: './schemas/subject/DID.yaml'
     Email:
-      $ref: "./schemas/subject/Email.yaml"
+      $ref: './schemas/subject/Email.yaml'
     IssSub:
-      $ref: "./schemas/subject/IssSub.yaml"
+      $ref: './schemas/subject/IssSub.yaml'
     JwtID:
-      $ref: "./schemas/subject/JwtID.yaml"
+      $ref: './schemas/subject/JwtID.yaml'
     Opaque:
-      $ref: "./schemas/subject/Opaque.yaml"
+      $ref: './schemas/subject/Opaque.yaml'
     PhoneNumber:
-      $ref: "./schemas/subject/PhoneNumber.yaml"
+      $ref: './schemas/subject/PhoneNumber.yaml'
     SamlAssertionID:
-      $ref: "./schemas/subject/SamlAssertionID.yaml"
+      $ref: './schemas/subject/SamlAssertionID.yaml'
 
     # Nested Subjects
     Aliases:
-      $ref: "./schemas/subject/Aliases.yaml"
+      $ref: './schemas/subject/Aliases.yaml'
     ComplexSubject:
-      $ref: "./schemas/subject/ComplexSubject.yaml"
+      $ref: './schemas/subject/ComplexSubject.yaml'
     SimpleSubject:
-      $ref: "./schemas/subject/SimpleSubject.yaml"
+      $ref: './schemas/subject/SimpleSubject.yaml'
 
     # Subject
     Subject:
-      $ref: "./schemas/subject/Subject.yaml"
+      $ref: './schemas/subject/Subject.yaml'
 
     # Errors
     Error:
-      $ref: "./schemas/Error.yaml"
+      $ref: './schemas/Error.yaml'
 
   responses:
     BadRequest:

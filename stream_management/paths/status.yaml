@@ -1,0 +1,82 @@
+get:
+  summary: Request to get the status of an Event Stream
+  description: |-
+    [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#reading-a-streams-status)
+
+    An Event Receiver checks the current status of an event stream by making an
+    HTTP GET request to the stream’s Status Endpoint.
+  operation_id: get_status
+  parameters:
+    - $ref: '../openapi.yaml#/components/parameters/subject'
+  responses:
+    200:
+      description: |-
+        On receiving a valid request the Event Transmitter responds with a 200
+        OK response containing a JSON object with an attribute status
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/StreamStatus'
+    401:
+      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+    403:
+      description: The Event Receiver is not allowed to read this stream's status.
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+    404:
+      description: |-
+        There is no Event Stream configured for this Event Receiver,
+        or the Subject specified is invalid or
+        the Receiver is not authorized to get status for the specified Subject.
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+
+post:
+  summary: Request to update an Event Stream's status
+  description: |-
+    [Spec](https://openid.net/specs/openid-sse-framework-1_0-ID1.html#updating-a-streams-status)
+
+    An Event Receiver updates the current status of a stream by making an HTTP
+    POST request to the Status Endpoint.
+  operationId: update_status
+  requestBody:
+    description: Request parameters
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../openapi.yaml#/components/schemas/UpdateStreamStatus'
+
+  responses:
+    200:
+      description: Event Stream status successfully updated
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/UpdateStreamStatus'
+    202:
+      description: |-
+        The update request has been accepted, but not processed.
+        Receiver MAY try the same request later in order to get processing result.
+    400:
+      $ref: '../openapi.yaml#/components/responses/BadRequest'
+    401:
+      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+    403:
+      description: 'The Event Receiver is not allowed to update the stream status.'
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
+    404:
+      description: |-
+        There is no Event Stream configured for this Event Receiver,
+        or an invalid Subject is specified.
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/Error'
