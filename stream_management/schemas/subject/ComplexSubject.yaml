@@ -8,31 +8,31 @@ description: |-
 properties:
   application:
     allOf:
-      - $ref: "./SimpleSubject.yaml"
+      - $ref: '../../openapi.yaml#/components/schemas/SimpleSubject'
       - description: A Subject Identifier that identifies an application.
   device:
     allOf:
-      - $ref: "./SimpleSubject.yaml"
+      - $ref: '../../openapi.yaml#/components/schemas/SimpleSubject'
       - description: A Subject Identifier that identifies a device.
   group:
     allOf:
-      - $ref: "./SimpleSubject.yaml"
+      - $ref: '../../openapi.yaml#/components/schemas/SimpleSubject'
       - description: A Subject Identifier that identifies a group.
   org_unit:
     allOf:
-      - $ref: "./SimpleSubject.yaml"
+      - $ref: '../../openapi.yaml#/components/schemas/SimpleSubject'
       - description: A Subject Identifier that identifies an organizational unit.
   session:
     allOf:
-      - $ref: "./SimpleSubject.yaml"
+      - $ref: '../../openapi.yaml#/components/schemas/SimpleSubject'
       - description: A Subject Identifier that identifies a session.
   tenant:
     allOf:
-      - $ref: "./SimpleSubject.yaml"
+      - $ref: '../../openapi.yaml#/components/schemas/SimpleSubject'
       - description: A Subject Identifier that identifies a tenant.
   user:
     allOf:
-      - $ref: "./SimpleSubject.yaml"
+      - $ref: '../../openapi.yaml#/components/schemas/SimpleSubject'
       - description: A Subject Identifier that identifies a user.
 title: ComplexSubject
 type: object

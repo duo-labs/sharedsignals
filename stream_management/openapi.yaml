@@ -67,6 +67,8 @@ components:
       $ref: './schemas/subject/SamlAssertionID.yaml'
 
     # Nested Subjects
+    SimpleSubject:
+      $ref: './schemas/subject/SimpleSubject.yaml'
     Aliases:
       $ref: './schemas/subject/Aliases.yaml'
     ComplexSubject:
