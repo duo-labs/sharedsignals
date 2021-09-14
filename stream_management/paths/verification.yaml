@@ -19,6 +19,6 @@ post:
     400:
       $ref: '../openapi.yaml#/components/responses/BadRequest'
     401:
-      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+      $ref: '../openapi.yaml#/components/responses/Unauthorized'
     429:
       $ref: '../openapi.yaml#/components/responses/TooManyRequests'

@@ -1,10 +1,10 @@
 get:
   description: |-
-  [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#reading-a-streams-configuration)
+    [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#reading-a-streams-configuration)
 
-  An Event Receiver gets the current configuration of a stream by making an HTTP GET request to the Configuration
-  Endpoint. On receiving a valid request the Event Transmitter responds with a 200 OK response containing a JSON
-  representation of the stream’s configuration in the body.
+    An Event Receiver gets the current configuration of a stream by making an HTTP GET request to the Configuration
+    Endpoint. On receiving a valid request the Event Transmitter responds with a 200 OK response containing a JSON
+    representation of the stream’s configuration in the body.
   responses:
     200:
       description: The Event Stream's configuration
@@ -30,6 +30,7 @@ post:
   summary: Request to update the configuration of an event stream
   description: |-
     [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#updating-a-streams-configuration)
+
     An Event Receiver updates the current configuration of a stream by making an HTTP POST request to the Configuration
     Endpoint. The POST body contains a JSON representation of the updated configuration. On receiving a valid request
     the Event Transmitter responds with a 200 OK response containing a JSON representation of the updated stream
@@ -42,8 +43,8 @@ post:
     Properties that cannot be updated MAY be present, but they MUST match the expected value.
   operationId: stream_configuration_udpate_request
   requestBody:
-    description: Optional request parameters
-    required: false
+    description: Request parameters
+    required: true
     content:
       application/json:
         schema:
@@ -70,7 +71,7 @@ post:
     400:
       $ref: '../openapi.yaml#/components/responses/BadRequest'
     401:
-      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+      $ref: '../openapi.yaml#/components/responses/Unauthorized'
     403:
       description: "The Event Receiver is not allowed to update the stream configuration."
       content:
@@ -89,8 +90,16 @@ delete:
     Endpoint. On receiving a request the Event Transmitter responds with a 200 OK response if the configuration was
     successfully removed.
   responses:
+    200:
+      description: |-
+        On receiving a request the Event Transmitter responds with a 200 OK response if the configuration was
+        successfully removed.
+      content:
+        application/json:
+          schema:
+            $ref: "../openapi.yaml#/components/schemas/StreamConfiguration"
     401:
-      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+      $ref: '../openapi.yaml#/components/responses/Unauthorized'
     403:
       description: "The Event Receiver is not allowed to update the stream configuration."
       content:

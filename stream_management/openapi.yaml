@@ -83,14 +83,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthenticated:
+    Unauthorized:
       # 401
       description: Authorization failed or is missing
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
+    Forbidden:
       # 403
       description: User not authorized to access resource
       content:

@@ -70,14 +70,37 @@ properties:
       type: string
       #    pattern: TODO: URL regex
     description: |-
-      Read-Write.
-      A JSON object containing a set of name/value pairs specifying configuration parameters for the SET delivery
-      method. The actual delivery method is identified by the special key method with the value being a URI as defined
-      in Section 11.2.1.
-    "events_delivered": [
+      Read-Only.
+      An array of URIs which is the intersection of events_supported and events_requested.
+      These events MAY be delivered over the Event Stream.
+    example: [
         "urn:example:secevent:events:type_2",
         "urn:example:secevent:events:type_3"
     ]
+  delivery:
+    type: object
+    properties:
+      method:
+        type: string
+        enum:
+          - "https://schemas.openid.net/secevent/risc/delivery-method/push"
+          - "https://schemas.openid.net/secevent/risc/delivery-method/poll"
+      endpoint_url:
+        type: string
+        description: |-
+          For PUSH: The URL where events are pushed through HTTP POST. This is set by the Receiver.
+          For POLL: The URL where events can be retrieved from. This is specified by the Transmitter.
+        #    pattern: TODO: URL regex
+      authorization_header:
+        type: string
+        description: |-
+          For PUSH only. The HTTP Authorization header that the Transmitter MUST set with each event delivery,
+          if the configuration is present. The value is optional and it is set by the Receiver.
+    description: |-
+      Read-Write.
+      A JSON object containing a set of name/value pairs specifying configuration parameters for the SET delivery
+      method. The actual delivery method is identified by the special key method with the value being a URI as defined
+      in [Section 11.2.1](https://openid.net/specs/openid-sse-framework-1_0.html#delivery-meta).
   min_verification_interval:
     type: integer
     description: |-
