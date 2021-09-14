@@ -40,7 +40,7 @@ post:
     read the configuration first, modify the JSON representation, then make an update request.
 
     Properties that cannot be updated MAY be present, but they MUST match the expected value.
-  operationId: stream_configuration_udpate_request
+  operationId: stream_configuration_update_request
   requestBody:
     description: Optional request parameters
     required: false
