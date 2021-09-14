@@ -2,5 +2,5 @@ name: subject
 in: query
 description: OPTIONAL. The subject for which the stream status is requested.
 schema:
-  $ref: '../openapi.yaml#/components/schemas/Subject'
+  $ref: '../../openapi.yaml#/components/schemas/Subject'
 style: deepObject

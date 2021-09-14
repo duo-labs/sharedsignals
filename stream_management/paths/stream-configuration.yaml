@@ -1,4 +1,5 @@
 get:
+  summary: Request to retrieve the configuration of an event stream
   description: |-
     [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#reading-a-streams-configuration)
 
@@ -85,6 +86,7 @@ post:
           schema:
             $ref: '../openapi.yaml#/components/schemas/Error'
 delete:
+  summary: Request to remove the configuration of an event stream
   description: |-
     An Event Receiver removes the configuration of a stream by making an HTTP DELETE request to the Configuration
     Endpoint. On receiving a request the Event Transmitter responds with a 200 OK response if the configuration was

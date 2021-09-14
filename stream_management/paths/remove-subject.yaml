@@ -18,7 +18,7 @@ post:
     400:
       $ref: '../openapi.yaml#/components/responses/BadRequest'
     401:
-      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+      $ref: '../openapi.yaml#/components/responses/Unauthorized'
     403:
       description: "The Event Receiver is not allowed to remove this particular subject, or not allowed to remove in general."
       content:
