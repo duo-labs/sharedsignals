@@ -1,4 +1,5 @@
 get:
+  summary: Transmitter Configuration Request (with path)
   description: "Return Transmitter Configuration information (with support for specifying an issuer)."
   parameters:
     - $ref: "../openapi.yaml#/components/parameters/issuer"

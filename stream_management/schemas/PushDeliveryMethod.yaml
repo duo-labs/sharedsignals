@@ -1,0 +1,18 @@
+type: object
+required:
+  - method
+  - endpoint_url
+properties:
+  method:
+    type: string
+    enum:
+      - "https://schemas.openid.net/secevent/risc/delivery-method/push"
+  endpoint_url:
+    type: string
+    description: The URL where events are pushed through HTTP POST. This is set by the Receiver.
+    #    pattern: TODO: URL regex
+  authorization_header:
+    type: string
+    description: |-
+      The HTTP Authorization header that the Transmitter MUST set with each event delivery,
+      if the configuration is present. The value is optional and it is set by the Receiver.

@@ -1,4 +1,5 @@
 get:
+  summary: Transmitter Configuration Request (without path)
   description: "Return Transmitter Configuration information."
   responses:
     '200':

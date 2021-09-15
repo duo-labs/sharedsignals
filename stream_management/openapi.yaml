@@ -13,9 +13,11 @@ info:
 
 paths:
   /.well-known/sse-configuration:
-    $ref: './paths/configuration.yaml'
+    $ref: './paths/transmitter-configuration.yaml'
   /.well-known/sse-configuration/{issuer}:
-    $ref: './paths/configuration-with-issuer.yaml'
+    $ref: './paths/transmitter-configuration-with-issuer.yaml'
+  /stream:
+    $ref: './paths/stream-configuration.yaml'
   /status:
     $ref: './paths/status.yaml'
   /add-subject:
@@ -37,8 +39,15 @@ components:
       $ref: './schemas/StreamStatus.yaml'
     TransmitterConfiguration:
       $ref: './schemas/TransmitterConfiguration.yaml'
+    StreamConfiguration:
+      $ref: './schemas/StreamConfiguration.yaml'
     UpdateStreamStatus:
       $ref: './schemas/UpdateStreamStatus.yaml'
+
+    PollDeliveryMethod:
+      $ref: './schemas/PollDeliveryMethod.yaml'
+    PushDeliveryMethod:
+      $ref: './schemas/PushDeliveryMethod.yaml'
 
     # Request Body params
     AddSubjectParameters:
@@ -90,14 +99,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthenticated:
+    Unauthorized:
       # 401
-      description: Authentication failed or is missing
+      description: Authorization failed or is missing
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
+    Forbidden:
       # 403
       description: User not authorized to access resource
       content:

@@ -5,7 +5,7 @@ get:
 
     An Event Receiver checks the current status of an event stream by making an
     HTTP GET request to the stream’s Status Endpoint.
-  operation_id: get_status
+  operationId: get_status
   parameters:
     - $ref: '../openapi.yaml#/components/parameters/subject'
   responses:
@@ -18,7 +18,7 @@ get:
           schema:
             $ref: '../openapi.yaml#/components/schemas/StreamStatus'
     401:
-      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+      $ref: '../openapi.yaml#/components/responses/Unauthorized'
     403:
       description: The Event Receiver is not allowed to read this stream's status.
       content:
@@ -65,7 +65,7 @@ post:
     400:
       $ref: '../openapi.yaml#/components/responses/BadRequest'
     401:
-      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+      $ref: '../openapi.yaml#/components/responses/Unauthorized'
     403:
       description: 'The Event Receiver is not allowed to update the stream status.'
       content:

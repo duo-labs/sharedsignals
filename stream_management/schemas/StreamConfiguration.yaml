@@ -1,0 +1,102 @@
+type: object
+title: "Event Stream Configuration"
+description: |
+  JSON Object describing and Event Stream's configuration
+  [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#stream-config)"
+properties:
+  iss:
+    type: string
+    description: |-
+      Read-Only.
+      A URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer
+      Identifier. This MUST be identical to the iss Claim value in Security Event Tokens issued from this Transmitter.
+    #    pattern: TODO: URL regex
+    example: "https://tr.example.com"
+  aud:
+    oneOf:
+      - type: string
+        #    pattern: TODO: URL regex
+      - type: array
+        items:
+          type: string
+          #    pattern: TODO: URL regex
+    description: |-
+      Read-Only.
+      A string or an array of strings containing an audience claim as defined in
+      [JSON Web Token (JWT)](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7519) that identifies
+      the Event Receiver(s) for the Event Stream. This property cannot be updated. If multiple Receivers are specified
+      then the Transmitter SHOULD know that these Receivers are the same entity.
+    #    pattern: TODO: URL regex
+    example: [
+      "http://receiver.example.com/web",
+      "http://receiver.example.com/mobile"
+    ]
+  events_supported:
+    type: array
+    items:
+      type: string
+      #    pattern: TODO: URL regex
+    description: |-
+      Read-Only.
+      An array of URIs identifying the set of events supported by the Transmitter for this Receiver.
+      If omitted, Event Transmitters SHOULD make this set available to the Event Receiver via some other means
+      (e.g. publishing it in online documentation).
+    example: [
+        "urn:example:secevent:events:type_1",
+        "urn:example:secevent:events:type_2",
+        "urn:example:secevent:events:type_3"
+    ]
+  events_requested:
+    type: array
+    items:
+      type: string
+      #    pattern: TODO: URL regex
+    description: |-
+      Read-Write.
+      An array of URIs identifying the set of events that the Receiver requested.
+      A Receiver SHOULD request only the events that it understands and it can act on.
+      This is configurable by the Receiver.
+    example: [
+        "urn:example:secevent:events:type_2",
+        "urn:example:secevent:events:type_3",
+        "urn:example:secevent:events:type_4"
+    ]
+  events_delivered:
+    type: array
+    items:
+      type: string
+      #    pattern: TODO: URL regex
+    description: |-
+      Read-Only.
+      An array of URIs which is the intersection of events_supported and events_requested.
+      These events MAY be delivered over the Event Stream.
+    example: [
+        "urn:example:secevent:events:type_2",
+        "urn:example:secevent:events:type_3"
+    ]
+  delivery:
+    description: |-
+      Read-Write.
+      A JSON object containing a set of name/value pairs specifying configuration parameters for the SET delivery
+      method. The actual delivery method is identified by the special key method with the value being a URI as defined
+      in [Section 11.2.1](https://openid.net/specs/openid-sse-framework-1_0.html#delivery-meta).
+    oneOf:
+      - $ref: "../openapi.yaml#/components/schemas/PushDeliveryMethod"
+      - $ref: "../openapi.yaml#/components/schemas/PollDeliveryMethod"
+    discriminator:
+      propertyName: method
+  min_verification_interval:
+    type: integer
+    description: |-
+      Read-Only.
+      An integer indicating the minimum amount of time in seconds that must pass in between verification requests.
+      If an Event Receiver submits verification requests more frequently than this, the Event Transmitter MAY respond
+      with a 429 status code. An Event Transmitter SHOULD NOT respond with a 429 status code if an Event Receiver is not
+      exceeding this frequency.
+  format:
+    type: string
+    #    TODO: How to better link this to existing Subject Identifier Format options?
+    description: |-
+      Read-Write.
+      The Subject Identifier Format that the Receiver wants for the events.
+      If not set then the Transmitter might decide to use a type that discloses more information than necessary.

@@ -23,7 +23,7 @@ post:
     400:
       $ref: '../openapi.yaml#/components/responses/BadRequest'
     401:
-      $ref: '../openapi.yaml#/components/responses/Unauthenticated'
+      $ref: '../openapi.yaml#/components/responses/Unauthorized'
     403:
       description: "The Event Receiver is not allowed to add this particular subject, or not allowed to add in general."
       content:
