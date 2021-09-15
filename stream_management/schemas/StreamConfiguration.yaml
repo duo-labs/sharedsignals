@@ -3,9 +3,6 @@ title: "Event Stream Configuration"
 description: |
   JSON Object describing and Event Stream's configuration
   [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#stream-config)"
-required:
-  - issuer
-  - jwks_uri
 properties:
   iss:
     type: string
@@ -84,31 +81,10 @@ properties:
       method. The actual delivery method is identified by the special key method with the value being a URI as defined
       in [Section 11.2.1](https://openid.net/specs/openid-sse-framework-1_0.html#delivery-meta).
     oneOf:
-      - type: object
-        properties:
-          method:
-            type: string
-            enum:
-              - "https://schemas.openid.net/secevent/risc/delivery-method/push"
-          endpoint_url:
-            type: string
-            description: The URL where events are pushed through HTTP POST. This is set by the Receiver.
-            #    pattern: TODO: URL regex
-          authorization_header:
-            type: string
-            description: |-
-              The HTTP Authorization header that the Transmitter MUST set with each event delivery,
-              if the configuration is present. The value is optional and it is set by the Receiver.
-      - type: object
-        properties:
-          method:
-            type: string
-            enum:
-              - "https://schemas.openid.net/secevent/risc/delivery-method/poll"
-          endpoint_url:
-            type: string
-            description: The URL where events can be retrieved from. This is specified by the Transmitter.
-            #    pattern: TODO: URL regex
+      - $ref: "../openapi.yaml#/components/schemas/PushDeliveryMethod"
+      - $ref: "../openapi.yaml#/components/schemas/PollDeliveryMethod"
+    discriminator:
+      propertyName: petType
   min_verification_interval:
     type: integer
     description: |-

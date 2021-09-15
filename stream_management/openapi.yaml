@@ -44,6 +44,11 @@ components:
     UpdateStreamStatus:
       $ref: './schemas/UpdateStreamStatus.yaml'
 
+    PollDeliveryMethod:
+      $ref: './schemas/PollDeliveryMethod.yaml'
+    PushDeliveryMethod:
+      $ref: './schemas/PushDeliveryMethod.yaml'
+
     # Request Body params
     AddSubjectParameters:
       $ref: './schemas/AddSubjectParameters.yaml'

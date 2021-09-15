@@ -1,0 +1,13 @@
+type: object
+required:
+  - method
+  - endpoint_url
+properties:
+  method:
+    type: string
+    enum:
+      - "https://schemas.openid.net/secevent/risc/delivery-method/poll"
+  endpoint_url:
+    type: string
+    description: The URL where events can be retrieved from. This is specified by the Transmitter.
+    #    pattern: TODO: URL regex
