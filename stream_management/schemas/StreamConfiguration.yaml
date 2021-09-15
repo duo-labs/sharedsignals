@@ -84,7 +84,7 @@ properties:
       - $ref: "../openapi.yaml#/components/schemas/PushDeliveryMethod"
       - $ref: "../openapi.yaml#/components/schemas/PollDeliveryMethod"
     discriminator:
-      propertyName: petType
+      propertyName: method
   min_verification_interval:
     type: integer
     description: |-
