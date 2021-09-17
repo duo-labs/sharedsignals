@@ -5,6 +5,8 @@ post:
 
     Event Receivers can send requests to an Event Transmitter's Add Subject endpoint to add a subject to an Event Stream.
   operationId: add_subject
+  security:
+    - BearerAuth: [ ]
   requestBody:
     description: Request parameters
     required: true

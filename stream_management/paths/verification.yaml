@@ -1,6 +1,8 @@
 post:
   summary: Request that a verification event be sent over an Event Stream
   operationId: verification_request
+  security:
+    - BearerAuth: [ ]
   requestBody:
     description: Optional request parameters
     required: false

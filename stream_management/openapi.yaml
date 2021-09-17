@@ -28,6 +28,11 @@ paths:
     $ref: './paths/verification.yaml'
 
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
   parameters:
     issuer:
       $ref: './parameters/path/issuer.yaml'
