@@ -6,6 +6,8 @@ get:
     An Event Receiver gets the current configuration of a stream by making an HTTP GET request to the Configuration
     Endpoint. On receiving a valid request the Event Transmitter responds with a 200 OK response containing a JSON
     representation of the stream’s configuration in the body.
+  security:
+    - BearerAuth: [ ]
   responses:
     200:
       description: The Event Stream's configuration
@@ -43,6 +45,8 @@ post:
 
     Properties that cannot be updated MAY be present, but they MUST match the expected value.
   operationId: stream_configuration_update_request
+  security:
+    - BearerAuth: [ ]
   requestBody:
     description: Request parameters
     required: true
@@ -91,6 +95,8 @@ delete:
     An Event Receiver removes the configuration of a stream by making an HTTP DELETE request to the Configuration
     Endpoint. On receiving a request the Event Transmitter responds with a 200 OK response if the configuration was
     successfully removed.
+  security:
+    - BearerAuth: [ ]
   responses:
     200:
       description: |-

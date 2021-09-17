@@ -5,6 +5,8 @@ post:
 
     Event Receivers can send requests to an Event Transmitter's Remove Subject endpoint to remove a subject from an Event Stream.
   operationId: remove_subject
+  security:
+    - BearerAuth: [ ]
   requestBody:
     description: Request parameters
     required: true

@@ -6,6 +6,8 @@ get:
     An Event Receiver checks the current status of an event stream by making an
     HTTP GET request to the stream’s Status Endpoint.
   operationId: get_status
+  security:
+    - BearerAuth: [ ]
   parameters:
     - $ref: '../openapi.yaml#/components/parameters/subject'
   responses:
@@ -43,6 +45,8 @@ post:
     An Event Receiver updates the current status of a stream by making an HTTP
     POST request to the Status Endpoint.
   operationId: update_status
+  security:
+    - BearerAuth: [ ]
   requestBody:
     description: Request parameters
     required: true
