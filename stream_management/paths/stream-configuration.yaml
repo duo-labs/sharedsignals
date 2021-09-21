@@ -102,10 +102,6 @@ delete:
       description: |-
         On receiving a request the Event Transmitter responds with a 200 OK response if the configuration was
         successfully removed.
-      content:
-        application/json:
-          schema:
-            $ref: "../openapi.yaml#/components/schemas/StreamConfiguration"
     401:
       $ref: '../openapi.yaml#/components/responses/Unauthorized'
     403:
