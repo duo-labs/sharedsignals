@@ -5,6 +5,7 @@ description: |-
   has one or more Simple Subject Members. All members within a Complex Subject
   MUST represent attributes of the same Subject Principal.
   As a whole, the Complex Subject MUST refer to exactly one Subject Principal.
+additionalProperties: false
 properties:
   application:
     allOf:
