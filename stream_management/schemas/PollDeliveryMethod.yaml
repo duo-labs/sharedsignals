@@ -4,7 +4,7 @@ required:
   - endpoint_url
 properties:
   method:
-  default: "https://schemas.openid.net/secevent/risc/delivery-method/poll"
+    default: "https://schemas.openid.net/secevent/risc/delivery-method/poll"
     type: string
     enum:
       - "https://schemas.openid.net/secevent/risc/delivery-method/poll"
