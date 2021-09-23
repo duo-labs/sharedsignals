@@ -1,3 +1,4 @@
+type: object
 oneOf:
   - $ref: '../../openapi.yaml#/components/schemas/SimpleSubject'
   - $ref: '../../openapi.yaml#/components/schemas/Aliases'

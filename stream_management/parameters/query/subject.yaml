@@ -4,3 +4,5 @@ description: OPTIONAL. The subject for which the stream status is requested.
 schema:
   $ref: '../../openapi.yaml#/components/schemas/Subject'
 style: deepObject
+explode: true
+allowReserved: true
