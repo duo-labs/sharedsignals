@@ -32,7 +32,7 @@ properties:
   subject:
     allOf:
       - $ref: '../openapi.yaml#/components/schemas/Subject'
-      - description: OPTIONAL. The Subject to which the status applies.
-      - example: {'format': 'account', 'uri': 'acct:123:456'}
+    description: OPTIONAL. The Subject to which the status applies.
+    example: {'format': 'account', 'uri': 'acct:123:456'}
 required:
   - status

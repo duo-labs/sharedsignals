@@ -1,6 +1,6 @@
 name: subject
 in: query
-description: \
+description: |-
   OPTIONAL. The subject for which the stream status is requested.
   Content is a string-encoded json representation of a Subject
   (see Subject schema)
