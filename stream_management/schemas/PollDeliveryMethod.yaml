@@ -1,8 +1,7 @@
 type: object
 example:
-  delivery:
-    method: https://schemas.openid.net/secevent/risc/delivery-method/poll
-    endpoint_url: https://tr.example.com/polling
+  method: https://schemas.openid.net/secevent/risc/delivery-method/poll
+  endpoint_url: https://tr.example.com/polling
 required:
   - method
   - endpoint_url
