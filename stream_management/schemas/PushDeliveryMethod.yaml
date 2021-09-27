@@ -1,4 +1,8 @@
 type: object
+example:
+  delivery:
+    method: https://schemas.openid.net/secevent/risc/delivery-method/push
+    endpoint_url: https://receiver.example.com/push
 required:
   - method
   - endpoint_url

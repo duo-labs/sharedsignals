@@ -1,4 +1,9 @@
 type: object
+example:
+  subject:
+    format: email
+    email: "user@example.com"
+  verified: true
 required:
   - subject
 properties:

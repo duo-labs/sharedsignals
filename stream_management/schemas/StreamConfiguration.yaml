@@ -75,6 +75,9 @@ properties:
         "urn:example:secevent:events:type_3"
     ]
   delivery:
+    example:
+      method: https://schemas.openid.net/secevent/risc/delivery-method/push
+      endpoint_url: https://receiver.example.com/push
     description: |-
       Read-Write.
       A JSON object containing a set of name/value pairs specifying configuration parameters for the SET delivery
