@@ -1,4 +1,5 @@
 name: issuer
+example: tenant-a
 in: path
 required: true
 description: |
