@@ -1,6 +1,9 @@
 name: subject
 in: query
-description: OPTIONAL. The subject for which the stream status is requested.
+description: |-
+  OPTIONAL. The subject for which the stream status is requested.
+  Content is a string-encoded json representation of a Subject
+  (see Subject schema)
 schema:
-  $ref: '../../openapi.yaml#/components/schemas/Subject'
-style: deepObject
+  type: string
+  example: {"user": {"format": "email", "email": "user@example.com"}}

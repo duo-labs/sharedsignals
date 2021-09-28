@@ -1,8 +1,8 @@
 allOf:
   - $ref: '../openapi.yaml#/components/schemas/StreamStatus'
-  - type: object
-    properties:
-      reason:
-          type: string
-          description: OPTIONAL. A short text description that explains the reason for the change.
-          example: Disabled by administrator action.
+type: object
+properties:
+  reason:
+    type: string
+    description: OPTIONAL. A short text description that explains the reason for the change.
+    example: Disabled by administrator action.
