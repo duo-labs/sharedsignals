@@ -1,4 +1,6 @@
 get:
+  tags:
+    - StreamManagement
   summary: Request to get the status of an Event Stream
   description: |-
     [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#reading-a-streams-status)
@@ -38,6 +40,8 @@ get:
             $ref: '../openapi.yaml#/components/schemas/Error'
 
 post:
+  tags:
+    - StreamManagement
   summary: Request to update an Event Stream's status
   description: |-
     [Spec](https://openid.net/specs/openid-sse-framework-1_0-ID1.html#updating-a-streams-status)

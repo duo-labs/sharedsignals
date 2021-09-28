@@ -1,4 +1,6 @@
 get:
+  tags:
+    - StreamManagement
   summary: Transmitter Configuration Request (without path)
   description: "Return Transmitter Configuration information."
   responses:

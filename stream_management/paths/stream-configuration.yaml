@@ -1,4 +1,6 @@
 get:
+  tags:
+    - StreamManagement
   summary: Request to retrieve the configuration of an event stream
   description: |-
     [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#reading-a-streams-configuration)
@@ -30,6 +32,8 @@ get:
           schema:
             $ref: '../openapi.yaml#/components/schemas/Error'
 post:
+  tags:
+    - StreamManagement
   summary: Request to update the configuration of an event stream
   description: |-
     [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#updating-a-streams-configuration)
@@ -89,6 +93,8 @@ post:
           schema:
             $ref: '../openapi.yaml#/components/schemas/Error'
 delete:
+  tags:
+    - StreamManagement
   summary: Request to remove the configuration of an event stream
   description: |-
     An Event Receiver removes the configuration of a stream by making an HTTP DELETE request to the Configuration

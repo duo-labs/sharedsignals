@@ -1,4 +1,6 @@
 post:
+  tags:
+    - StreamManagement
   summary: Request to add a subject to an Event Stream
   description: |-
     [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#removing-a-subject)
