@@ -132,3 +132,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+tags:
+  - name: StreamManagement
+    description: |-
+      Endpoints that a Transmitter must provide so that a Receiver can configure
+      Event Streams.
+    externalDocs:
+      url: https://openid.net/specs/openid-sse-framework-1_0.html#management
+  - name: Stream
+    description: Examples of the PUSH and POLL endpoints that Transmitters and
+      Receivers use to communicate Security Events.
