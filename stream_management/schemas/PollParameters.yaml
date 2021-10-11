@@ -23,4 +23,4 @@ properties:
     type: array
     items:
       type: string
-    description: List of event jtis that the receiver is acknowledging. The Transmitter can stop keeping track of these.
+    description: List of event JTIs that the receiver is acknowledging. The Transmitter can stop keeping track of these.
