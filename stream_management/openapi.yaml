@@ -26,6 +26,8 @@ paths:
     $ref: './paths/remove-subject.yaml'
   /verification:
     $ref: './paths/verification.yaml'
+  /poll:
+    $ref: './paths/poll.yaml'
 
 components:
   securitySchemes:
@@ -57,6 +59,8 @@ components:
     # Request Body params
     AddSubjectParameters:
       $ref: './schemas/AddSubjectParameters.yaml'
+    PollParameters:
+      $ref: './schemas/PollParameters.yaml'
     RemoveSubjectParameters:
         $ref: './schemas/RemoveSubjectParameters.yaml'
     VerificationParameters:
