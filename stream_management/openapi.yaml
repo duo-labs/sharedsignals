@@ -26,6 +26,8 @@ paths:
     $ref: './paths/remove-subject.yaml'
   /verification:
     $ref: './paths/verification.yaml'
+  /jwks.json:
+    $ref: './paths/jwks.yaml'
   /poll:
     $ref: './paths/poll.yaml'
 

@@ -1,0 +1,20 @@
+get:
+  tags:
+    - Stream
+  summary: The JSON Web Key Set of the Event Transmitter.
+  description: |-
+    [Spec](https://datatracker.ietf.org/doc/html/rfc7517)
+  operationId: jwks_json
+  responses:
+    200:
+      description: |-
+        [Spec](https://www.rfc-editor.org/rfc/rfc8936.html#name-polling-http-response)
+      content:
+        application/json:
+          schema:
+            type: object
+            example: {
+              "kty": "oct",
+              "alg": "HS256",
+              "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"
+            }
