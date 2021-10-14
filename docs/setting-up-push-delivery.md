@@ -18,7 +18,7 @@ class Handler(BaseHTTPRequestHandler):
         content_length = int(self.headers["Content-Length"])
         body = self.rfile.read(content_length)
         decoded = jwt.decode(body, key="mysymmetrickey", algorithms=["HS256"], audience="example_receiver")
-        pprint(json.dumps(decoded, indent=2))
+        print(json.dumps(decoded, indent=2))
         self.send_response(202)
         self.end_headers()
 
