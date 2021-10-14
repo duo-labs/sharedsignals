@@ -1,9 +1,8 @@
 # Push Delivery
 Push configuration is an alternative to poll delivery, in which the transmitter
-sends events one-at-a-time to an endpoint configured by the receiver. A simple
-push configuration may be a good option for event streams that are not expected
-to have high event throughput, or it could be extended by putting multiple
-receivers behind a load balancer to handle extra throughput.
+sends events one-at-a-time to an endpoint configured by the receiver. Push
+configuration is ideal for event receivers who want to ensure they
+receive events in real time, without needing to poll continuously.
 
 
 ## Receiver Example
