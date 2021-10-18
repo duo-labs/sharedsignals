@@ -1,9 +1,11 @@
 import logging
 import time
 import uuid
-from typing import Optional
+from typing import List, Mapping, Optional, Tuple
 
-from swagger_server.business_logic.const import TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE
+from swagger_server.const import (
+    TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE
+)
 from swagger_server.business_logic.stream import Stream, StreamDoesNotExist
 from swagger_server.models import StreamConfiguration
 from swagger_server.models import StreamStatus
@@ -20,7 +22,11 @@ log = logging.getLogger(__name__)
 
 class LongPollingNotSupported(Exception):
     def __init__(self):
-        self.message = 'This Transmitter does not support long polling. Please try again with return_immediately=True.'
+        self.message = (
+            'This Transmitter does not support long polling. '
+            'Please try again with return_immediately=True.'
+        )
+
 
 class EmailSubjectNotFound(Exception):
     def __init__(self, subject: Subject) -> None:
@@ -66,7 +72,8 @@ def remove_subject(subject: Subject, client_id: str) -> None:
     stream.remove_subject(simple_subj.email)
 
 
-def stream_post(url_root, stream_configuration: StreamConfiguration,
+def stream_post(url_root,
+                stream_configuration: StreamConfiguration,
                 client_id: str) -> StreamConfiguration:
     try:
         stream = Stream.load(client_id)
@@ -113,7 +120,7 @@ def update_status(status: Status,
     )
 
 
-def verification_request(state: Optional[str], client_id: str) -> str:
+def verification_request(state: Optional[str], client_id: str) -> None:
     stream = Stream.load(client_id)
 
     # TODO: Make this a real SET per https://www.rfc-editor.org/rfc/rfc8417.html
@@ -133,7 +140,7 @@ def verification_request(state: Optional[str], client_id: str) -> str:
     stream.queue_event(security_event)
 
 
-def _well_known_sse_configuration_get(url_root, issuer: Optional[str] = None) -> str:
+def _well_known_sse_configuration_get(url_root, issuer: Optional[str] = None) -> TransmitterConfiguration:
     return TransmitterConfiguration(
         issuer=TRANSMITTER_ISSUER + (issuer if issuer else ''),
         jwks_uri=url_root + 'jwks.json',
@@ -150,7 +157,10 @@ def _well_known_sse_configuration_get(url_root, issuer: Optional[str] = None) ->
     )
 
 
-def poll_request(max_events, return_immediately, acks, client_id) -> object:
+def poll_request(max_events: int,
+                 return_immediately: bool,
+                 acks: List[str],
+                 client_id: str) -> Tuple[Mapping[str, str], bool]:
     stream = Stream.load(client_id)
 
     if not return_immediately:
@@ -160,4 +170,6 @@ def poll_request(max_events, return_immediately, acks, client_id) -> object:
         for ack in acks:
             stream.poll_queue.delete(ack)
 
-    return stream.poll_queue.get(max_events), stream.poll_queue.qsize() > max_events
+    more_available = stream.poll_queue.qsize() > max_events
+
+    return stream.poll_queue.get(max_events), more_available

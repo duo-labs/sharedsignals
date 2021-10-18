@@ -1,5 +1,4 @@
 from connexion.apps.flask_app import FlaskJSONEncoder
-import six
 from enum import Enum
 from pydantic import BaseModel
 
