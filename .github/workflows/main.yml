@@ -29,7 +29,7 @@ jobs:
       - name: Swagger Editor Validator
         uses: char0n/swagger-editor-validate@v1.2.1
         with:
-          definition-file: stream_management/openapi.yaml
+          definition-file: transmitter_spec/openapi.yaml
 
 #       # Runs a single command using the runners shell
 #       - name: Run a one-line script
