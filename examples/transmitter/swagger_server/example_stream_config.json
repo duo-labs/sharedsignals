@@ -1,0 +1,22 @@
+{
+  "aud": [
+    "https://popular-app.com"
+  ],
+  "delivery": {
+    "endpoint_url": "https://transmitter.most-secure.com/poll",
+    "method": "https://schemas.openid.net/secevent/risc/delivery-method/poll"
+  },
+  "events_supported": [
+    "https://schemas.openid.net/secevent/caep/event-type/session-revoked",
+    "https://schemas.openid.net/secevent/risc/event-type/credential-compromise"
+  ],
+  "events_requested": [
+    "https://schemas.openid.net/secevent/risc/event-type/credential-compromise"
+  ],
+  "events_delivered": [
+    "https://schemas.openid.net/secevent/risc/event-type/credential-compromise"
+  ],
+  "format": "email",
+  "iss": "https://transmitter.most-secure.com/",
+  "min_verification_interval": 60
+}
