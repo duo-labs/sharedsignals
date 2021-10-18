@@ -32,7 +32,7 @@ docker run -p 80:80 -v "${PWD}":/usr/src/app transmitter
 
 You can also run tests with docker, if you'd like:
 ```
-docker run --rm -v "${PWD}":/usr/src/app cta-transmitter -m pytest
+docker run --rm -v "${PWD}":/usr/src/app transmitter -m pytest
 ```
 
 Note that this runs without hot-reloading.
