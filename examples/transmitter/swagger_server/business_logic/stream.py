@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import List, Mapping, Union
 import queue
 
 from swagger_server.business_logic.const import (
@@ -27,17 +27,23 @@ READ_ONLY_CONFIG_FIELDS = {
     'min_verification_interval'
 }
 
+
 class SubjectNotInStream(KeyError):
     def __init__(self, email_address):
-        self.message = 'There is no subject with this email address associated with this stream: {}.'.format(
-            email_address)
+        self.message = (
+            f'There is no subject with this email address associated with '
+            f'this stream: {email_address}'
+        )
         super().__init__(self.message)
 
 
 class StreamDoesNotExist(KeyError):
     def __init__(self, client_id):
-        self.message = 'There is no Event Stream for client id: {}. ' \
-                       'To use this endpoint, first perform a POST to /stream to create an event stream'.format(client_id)
+        self.message = (
+            f'There is no Event Stream for client id: {client_id}. '
+            f'To use this endpoint, first perform a POST to /stream '
+            f'to create an event stream'
+        )
         super().__init__(self.message)
 
 
@@ -74,7 +80,7 @@ class Stream:
         self.status = status
 
         # Map of subject identifier -> status
-        self._subjects = {}
+        self._subjects: Mapping[str, Status] = {}
         self.push_queue = EventQueue()
         self.poll_queue = EventQueue()
 
@@ -96,10 +102,10 @@ class Stream:
 
     def update_config(self, new_config: StreamConfiguration):
         config = self.config.dict()
-        new_config = new_config.dict()
+        _new_config = new_config.dict()
         for key in READ_ONLY_CONFIG_FIELDS:
-            new_config.pop(key, None)
-        config.update(new_config)
+            _new_config.pop(key, None)
+        config.update(_new_config)
 
         supported = set(config['events_supported'] or [])
         requested = set(config['events_requested'] or [])
@@ -123,7 +129,8 @@ class Stream:
     def add_subject(self, email_address):
         if email_address not in self._subjects:
             # When adding a subject, default them to enabled.
-            # This isn't required by the SSE spec, but is default behavior we thought made sense.
+            # This isn't required by the SSE spec,
+            # but is default behavior we thought made sense.
             self._subjects[email_address] = Status.enabled
 
     def remove_subject(self, email_address):

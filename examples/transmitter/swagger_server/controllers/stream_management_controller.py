@@ -5,13 +5,13 @@ from connexion import NoContent
 
 from swagger_server import business_logic
 from swagger_server.business_logic import EmailSubjectNotFound
-from swagger_server.business_logic.stream import StreamDoesNotExist, SubjectNotInStream
+from swagger_server.business_logic.stream import (
+    StreamDoesNotExist, SubjectNotInStream
+)
 from swagger_server.models import AddSubjectParameters  # noqa: E501
 from swagger_server.models import RemoveSubjectParameters  # noqa: E501
 from swagger_server.models import StreamConfiguration  # noqa: E501
-from swagger_server.models import StreamStatus  # noqa: E501
 from swagger_server.models import Subject  # noqa: E501
-from swagger_server.models import TransmitterConfiguration  # noqa: E501
 from swagger_server.models import UpdateStreamStatus  # noqa: E501
 from swagger_server.models import VerificationParameters  # noqa: E501
 
@@ -34,7 +34,9 @@ def add_subject(token_info, body):  # noqa: E501
         body = AddSubjectParameters.parse_obj(connexion.request.get_json())
 
     try:
-        business_logic.add_subject(subject=body.subject, verified=body.verified, client_id=client_id)
+        business_logic.add_subject(
+            subject=body.subject, verified=body.verified, client_id=client_id
+        )
         return NoContent, 200
     except (StreamDoesNotExist, EmailSubjectNotFound) as e:
         return e.message, 404
@@ -95,7 +97,10 @@ def stream_post(token_info, body):  # noqa: E501
         body = StreamConfiguration.parse_obj(connexion.request.get_json())
 
     try:
-        return business_logic.stream_post(connexion.request.url_root, body, client_id), 200
+        new_config = business_logic.stream_post(
+            connexion.request.url_root, body, client_id
+        )
+        return new_config, 200
     except StreamDoesNotExist as e:
         return e.message, 404
 
@@ -143,12 +148,13 @@ def update_status(token_info, body):  # noqa: E501
         body = UpdateStreamStatus.parse_obj(connexion.request.get_json())
 
     try:
-        return business_logic.update_status(
+        new_status = business_logic.update_status(
             status=body.status,
             subject=body.subject,
             reason=body.reason,
             client_id=client_id,
-        ), 200
+        )
+        return new_status, 200
     except (StreamDoesNotExist, SubjectNotInStream, EmailSubjectNotFound) as e:
         return e.message, 404
 
@@ -168,7 +174,9 @@ def verification_request(token_info, body=None):  # noqa: E501
         body = VerificationParameters.parse_obj(connexion.request.get_json())
 
     try:
-        business_logic.verification_request(state=body.state, client_id=client_id)
+        business_logic.verification_request(
+            state=body.state, client_id=client_id
+        )
         return NoContent, 204
     except StreamDoesNotExist as e:
         return e.message, 404
@@ -182,8 +190,11 @@ def _well_known_sse_configuration_get():  # noqa: E501
 
     :rtype: TransmitterConfiguration
     """
+    config = business_logic._well_known_sse_configuration_get(
+        connexion.request.url_root
+    )
 
-    return business_logic._well_known_sse_configuration_get(connexion.request.url_root)
+    return config, 200
 
 
 def _well_known_sse_configuration_issuer_get(issuer):  # noqa: E501
@@ -196,4 +207,7 @@ def _well_known_sse_configuration_issuer_get(issuer):  # noqa: E501
 
     :rtype: TransmitterConfiguration
     """
-    return business_logic._well_known_sse_configuration_get(connexion.request.url_root, issuer=issuer)
+    config = business_logic._well_known_sse_configuration_get(
+        connexion.request.url_root, issuer=issuer
+    )
+    return config, 200
