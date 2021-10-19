@@ -47,7 +47,7 @@ jobs:
         with:
           name: bundled-spec
           path: tmp/artifacts/bundled.yaml
-      - run: generate -i tmp/artifacts/bundled.yaml -l python-flask -o tmp/artifacts/transmitter
+      - run: java -jar /opt/swagger-codegen-cli/swagger-codegen-cli.jar generate -i tmp/artifacts/bundled.yaml -l python-flask -o tmp/artifacts/transmitter
         name: Generate Example Transmitter Server
       - uses: actions/upload-artifact@v2
         name: Upload Generated Spec
@@ -134,10 +134,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout code
-      - run: cd examples/transmitter
-      - run: pip3 install -r requirements.txt
+      - run: pip3 install -r examples/transmitter/requirements.txt
         name: Install requirements
-      - run: pip3 install -r test-requirements.txt
+      - run: pip3 install -r examples/transmitter/test-requirements.txt
         name: Install test requirements
-      - run: python3 -m tox
+      - run: python3 -m tox examples/transmitter/swagger_server/test
         name: Run tests
