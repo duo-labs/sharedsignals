@@ -68,7 +68,7 @@ def test_poll_events__one_event(client, new_stream):
                                key=JWKS_JSON['k'],
                                algorithms=[JWKS_JSON['alg']],
                                audience='https://audience')
-    
+
 
 def test_poll_events__acks(client, new_stream):
     """Test case for add_subject
