@@ -121,7 +121,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Event Transmitter Swagger Up-to-Date
           conclusion: ${{ job.status }}
-          output: {"summary": ${{ steps.cmp.outputs.summary }}}
+          output: |
+            {"summary": ${{ steps.cmp.outputs.summary }}}
 
   # ensure examples/transmitter/swagger_server/models.py is up to date
   check_models_py_up_to_date:
@@ -147,7 +148,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: models.py Up-to-Date
           conclusion: ${{ job.status }}
-          output: {"summary": ${{ steps.cmp.outputs.summary }}}
+          output: |
+            {"summary": ${{ steps.cmp.outputs.summary }}}
 
   # Validate our OpenAPI spec
   validate_open_api_spec:
@@ -167,7 +169,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Validate OpenAPI spec
           conclusion: ${{ job.status }}
-          output: {"summary": ${{ steps.validate.outputs.summary }}}
+          output: |
+            {"summary": ${{ steps.validate.outputs.summary }}}
 
   # runs tests on our example transmitter
   test_example_transmitter:
@@ -193,4 +196,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Event Transmitter Tests
           conclusion: ${{ job.status }}
-          output: {"summary": ${{ steps.tox.outputs.summary }}}
+          output: |
+            {"summary": ${{ steps.tox.outputs.summary }}}
