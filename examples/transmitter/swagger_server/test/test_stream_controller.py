@@ -29,7 +29,7 @@ def test_poll_events__no_events(client, new_stream):
     )
     response_data = response.data.decode('utf-8')
     assert response.status_code == 200, 'Response body is : ' + response_data
-    assert {'sets': {}} == json.loads(response_data)
+    assert {'sets': {}, 'moreAvailable': False} == json.loads(response_data)
     assert False
 
 
@@ -60,8 +60,11 @@ def test_poll_events__one_event(client, new_stream):
     )
     response_data = response.data.decode('utf-8')
     assert response.status_code == 200, 'Response body is : ' + response_data
-    assert 'abc123' in json.loads(response_data)['sets']
-    encoded_set = json.loads(response_data)['sets']['abc123']
+    response_json = json.loads(response_data)
+    assert 'moreAvailable' in response_json
+    assert response_json['moreAvailable'] == False
+    assert 'abc123' in response_json['sets']
+    encoded_set = response_json['sets']['abc123']
     assert event == jwt.decode(encoded_set,
                                key=JWKS_JSON['k'],
                                algorithms=[JWKS_JSON['alg']],
@@ -92,7 +95,7 @@ def test_poll_events__acks(client, new_stream):
     )
     response_data = response.data.decode('utf-8')
     assert response.status_code == 200, 'Response body is : ' + response_data
-    assert {'sets': {}} == json.loads(response_data)
+    assert {'sets': {}, 'moreAvailable': False} == json.loads(response_data)
     assert 0 == new_stream.poll_queue.qsize()
 
 

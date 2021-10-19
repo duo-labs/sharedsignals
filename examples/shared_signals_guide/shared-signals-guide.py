@@ -1,13 +1,11 @@
-import requests
 import json
 
-from swagger_server.utils import no_ssl_verification
+import jwt
+import requests
 
-"""
-To run this example you need to have the event transmitter app running on port 443 on localhost, with an entry
-in /etc/hosts mapping localhost to transmitter.most-secure.com:
-127.0.0.1       transmitter.most-secure.com
-"""
+from utils import no_ssl_verification
+
+
 if __name__ == '__main__':
     with no_ssl_verification():
         """
@@ -89,7 +87,6 @@ if __name__ == '__main__':
         print("example_jwks.json:", json.dumps(jwks, indent=2))
 
         # Step 7: Decode the SET with pyjwt
-        import jwt
         encoded_set = next(iter(events['sets'].values()))
         decoded_set = jwt.decode(
             encoded_set,
