@@ -1286,3 +1286,4 @@ components:
       type: http
       scheme: bearer
       x-bearerInfoFunc: swagger_server.controllers.authorization_controller.check_BearerAuth
+
