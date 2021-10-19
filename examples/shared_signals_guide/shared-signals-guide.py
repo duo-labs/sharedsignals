@@ -1,13 +1,9 @@
 import requests
 import json
 
-from swagger_server.utils import no_ssl_verification
+from utils import no_ssl_verification
 
-"""
-To run this example you need to have the event transmitter app running on port 443 on localhost, with an entry
-in /etc/hosts mapping localhost to transmitter.most-secure.com:
-127.0.0.1       transmitter.most-secure.com
-"""
+
 if __name__ == '__main__':
     with no_ssl_verification():
         """

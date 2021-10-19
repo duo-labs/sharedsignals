@@ -1,4 +1,1 @@
 pytest
-
-# install this package as editable
--e .
