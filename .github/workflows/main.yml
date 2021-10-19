@@ -32,6 +32,12 @@ jobs:
         with:
           name: bundled-spec
           path: tmp/artifacts/bundled.yaml
+      - uses: LouisBrunner/checks-action@v1.1.1
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Bundle Spec
+          conclusion: ${{ job.status }}
 
   # download the bundled spec, generate the swagger server, upload the generated spec
   generate_transmitter_server_spec:
@@ -54,6 +60,12 @@ jobs:
         with:
           name: generated-spec
           path: tmp/artifacts/transmitter/swagger_server/swagger/swagger.yaml
+      - uses: LouisBrunner/checks-action@v1.1.1
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Generate Event Transmitter Spec
+          conclusion: ${{ job.status }}
 
   # download the transmitter server spec, then generate and upload the pydantic models
   generate_pydantic_models:
@@ -78,6 +90,12 @@ jobs:
         with:
           name: models
           path: tmp/artifacts/models.py
+      - uses: LouisBrunner/checks-action@v1.1.1
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Generate Pydantic Models
+          conclusion: ${{ job.status }}
 
   # ensure examples/transmitter/swagger_server/swagger/swagger.yaml is up to date
   check_swagger_yaml_up_to_date:
@@ -96,6 +114,14 @@ jobs:
           path: tmp/artifacts
       - run: cmp examples/transmitter/swagger_server/swagger/swagger.yaml tmp/artifacts/swagger.yaml
         name: Compare to Spec in examples/transmitter
+        id: cmp
+      - uses: LouisBrunner/checks-action@v1.1.1
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Event Transmitter Swagger Up-to-Date
+          conclusion: ${{ job.status }}
+          output: {"summary": ${{ steps.cmp.outputs.summary }}}
 
   # ensure examples/transmitter/swagger_server/models.py is up to date
   check_models_py_up_to_date:
@@ -114,6 +140,14 @@ jobs:
           path: tmp/artifacts
       - run: cmp examples/transmitter/swagger_server/models.py tmp/artifacts/models.py
         name: Compare to examples/transmitter/models.py
+        id: cmp
+      - uses: LouisBrunner/checks-action@v1.1.1
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: models.py Up-to-Date
+          conclusion: ${{ job.status }}
+          output: {"summary": ${{ steps.cmp.outputs.summary }}}
 
   # Validate our OpenAPI spec
   validate_open_api_spec:
@@ -123,9 +157,17 @@ jobs:
       - uses: actions/checkout@v2
         name: Checkout code
       - name: Validate OpenAPI definition
+        id: validate
         uses: char0n/swagger-editor-validate@v1.2.1
         with:
           definition-file: examples/transmitter/swagger_server/swagger/swagger.yaml
+      - uses: LouisBrunner/checks-action@v1.1.1
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Validate OpenAPI spec
+          conclusion: ${{ job.status }}
+          output: {"summary": ${{ steps.validate.outputs.summary }}}
 
   # runs tests on our example transmitter
   test_example_transmitter:
@@ -143,4 +185,12 @@ jobs:
         working-directory: examples/transmitter
       - run: python3 -m tox swagger_server/test
         name: Run tests
+        id: tox
         working-directory: examples/transmitter
+      - uses: LouisBrunner/checks-action@v1.1.1
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Event Transmitter Tests
+          conclusion: ${{ job.status }}
+          output: {"summary": ${{ steps.tox.outputs.summary }}}
