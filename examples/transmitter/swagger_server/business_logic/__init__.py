@@ -167,8 +167,9 @@ def poll_request(max_events: int,
         raise LongPollingNotSupported()
 
     if acks:
+        acks = set(acks)
         stream.poll_queue = [event for event in stream.poll_queue if event['jti'] not in acks]
 
     more_available = len(stream.poll_queue) > max_events
 
-    return stream.poll_queue[-max_events:], more_available
+    return stream.poll_queue[:max_events], more_available
