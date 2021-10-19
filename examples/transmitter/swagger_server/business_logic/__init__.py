@@ -160,16 +160,15 @@ def _well_known_sse_configuration_get(url_root, issuer: Optional[str] = None) ->
 def poll_request(max_events: int,
                  return_immediately: bool,
                  acks: List[str],
-                 client_id: str) -> Tuple[Mapping[str, str], bool]:
+                 client_id: str) -> Tuple[object, bool]:
     stream = Stream.load(client_id)
 
     if not return_immediately:
         raise LongPollingNotSupported()
 
     if acks:
-        for ack in acks:
-            stream.poll_queue.delete(ack)
+        stream.poll_queue = [event for event in stream.poll_queue if event['jti'] not in acks]
 
-    more_available = stream.poll_queue.qsize() > max_events
+    more_available = len(stream.poll_queue) > max_events
 
-    return stream.poll_queue.get(max_events), more_available
+    return stream.poll_queue[-max_events:], more_available
