@@ -74,7 +74,7 @@ jobs:
         with:
           name: generated-spec
           path: tmp/artifacts/swagger.yaml
-      - run: cmp --silent $GITHUB_WORKSPACE/examples/transmitter/swagger_server/swagger/swagger.yaml tmp/artifacts/swagger.yaml
+      - run: cmp --silent examples/transmitter/swagger_server/swagger/swagger.yaml tmp/artifacts/swagger.yaml
 
   # ensure examples/transmitter/swagger_server/models.py is up to date
   check_models_py_up_to_date:
@@ -88,7 +88,7 @@ jobs:
         with:
           name: models
           path: tmp/artifacts/models.py
-      - run: cmp --silent $GITHUB_WORKSPACE/examples/transmitter/swagger_server/models.py tmp/artifacts/models.py
+      - run: cmp --silent examples/transmitter/swagger_server/models.py tmp/artifacts/models.py
 
   # Validate our OpenAPI spec
   validate_open_api_spec:
@@ -99,7 +99,7 @@ jobs:
       - name: Validate OpenAPI definition
         uses: char0n/swagger-editor-validate@v1.2.1
         with:
-          definition-file: $GITHUB_WORKSPACE/examples/transmitter/swagger_server/swagger/swagger.yaml
+          definition-file: examples/transmitter/swagger_server/swagger/swagger.yaml
 
   # runs tests on our example transmitter
   test_example_transmitter:
@@ -107,7 +107,7 @@ jobs:
     runs-on: python:3.9
     steps:
       - uses: actions/checkout@v2
-      - run: cd $GITHUB_WORKSPACE/examples/transmitter
+      - run: cd examples/transmitter
       - run: pip3 install -r requirements.txt
       - run: pip3 install -r test-requirements.txt
       - run: python3 -m tox
