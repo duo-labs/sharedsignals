@@ -3,7 +3,7 @@ import time
 import uuid
 from typing import List, Mapping, Optional, Tuple
 
-from swagger_server.const import (
+from swagger_server.business_logic.const import (
     TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE
 )
 from swagger_server.business_logic.stream import Stream, StreamDoesNotExist
