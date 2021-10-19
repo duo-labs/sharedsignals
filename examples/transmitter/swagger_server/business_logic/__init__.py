@@ -160,7 +160,7 @@ def _well_known_sse_configuration_get(url_root, issuer: Optional[str] = None) ->
 def poll_request(max_events: int,
                  return_immediately: bool,
                  acks: List[str],
-                 client_id: str) -> Tuple[object, bool]:
+                 client_id: str) -> Tuple[List[object], bool]:
     stream = Stream.load(client_id)
 
     if not return_immediately:
