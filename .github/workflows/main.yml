@@ -20,10 +20,15 @@ jobs:
     container: node:16-alpine
     steps:
       - uses: actions/checkout@v2
+        name: Checkout code
       - run: npm install -g swagger-cli
+        name: Install Swagger CLI
       - run: mkdir -p tmp/artifacts
+        name: Create Directory for Artifacts
       - run: swagger-cli bundle transmitter_spec/openapi.yaml > tmp/artifacts/bundled.yaml
+        name: Bundle OpenAPI spec
       - uses: actions/upload-artifact@v2
+        name: Upload Bundled Spec
         with:
           name: bundled-spec
           path: tmp/artifacts/bundled.yaml
@@ -36,12 +41,16 @@ jobs:
     container: swaggerapi/swagger-codegen-cli-v3
     steps:
       - run: mkdir -p tmp/artifacts
+        name: Create Directory for Artifacts
       - uses: actions/download-artifact@v2
+        name: Download Bundled Spec
         with:
           name: bundled-spec
           path: tmp/artifacts/bundled.yaml
       - run: generate -i tmp/artifacts/bundled.yaml -l python-flask -o tmp/artifacts/transmitter
+        name: Generate Example Transmitter Server
       - uses: actions/upload-artifact@v2
+        name: Upload Generated Spec
         with:
           name: generated-spec
           path: tmp/artifacts/transmitter/swagger_server/swagger/swagger.yaml
@@ -54,13 +63,18 @@ jobs:
     container: python:3.9-slim-buster
     steps:
       - run: mkdir -p tmp/artifacts
+        name: Create Directory for Artifacts
       - uses: actions/download-artifact@v2
+        name: Download Generated Spec
         with:
           name: generated-spec
           path: tmp/artifacts/swagger.yaml
       - run: pip install datamodel-code-generator
+        name: Install Datamodel Code Generator
       - run: datamodel-codegen --input tmp/artifacts/swagger.yaml --enum-field-as-literal one --use-default --strict-nullable --target-python-version 3.9 --use-schema-description --disable-timestamp > tmp/artifacts/models.py
+        name: Generate models.py
       - uses: actions/upload-artifact@v2
+        name: Upload models.py
         with:
           name: models
           path: tmp/artifacts/models.py
@@ -72,12 +86,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        name: Checkout code
       - run: mkdir -p tmp/artifacts
+        name: Create Directory for Artifacts
       - uses: actions/download-artifact@v2
+        name: Download Generated Spec
         with:
           name: generated-spec
           path: tmp/artifacts/swagger.yaml
       - run: cmp --silent examples/transmitter/swagger_server/swagger/swagger.yaml tmp/artifacts/swagger.yaml
+        name: Compare to Spec in examples/transmitter
 
   # ensure examples/transmitter/swagger_server/models.py is up to date
   check_models_py_up_to_date:
@@ -86,12 +104,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        name: Checkout code
       - run: mkdir -p tmp/artifacts
+        name: Create Directory for Artifacts
       - uses: actions/download-artifact@v2
+        name: Download models.py
         with:
           name: models
           path: tmp/artifacts/models.py
       - run: cmp --silent examples/transmitter/swagger_server/models.py tmp/artifacts/models.py
+        name: Compare to examples/transmitter/models.py
 
   # Validate our OpenAPI spec
   validate_open_api_spec:
@@ -99,6 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        name: Checkout code
       - name: Validate OpenAPI definition
         uses: char0n/swagger-editor-validate@v1.2.1
         with:
@@ -110,7 +133,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        name: Checkout code
       - run: cd examples/transmitter
       - run: pip3 install -r requirements.txt
+        name: Install requirements
       - run: pip3 install -r test-requirements.txt
+        name: Install test requirements
       - run: python3 -m tox
+        name: Run tests
