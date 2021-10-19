@@ -36,7 +36,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Bundle Spec
+          name: ${{ job.name }} (result)
           conclusion: ${{ job.status }}
 
   # download the bundled spec, generate the swagger server, upload the generated spec
@@ -64,7 +64,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Generate Event Transmitter Spec
+          name: ${{ job.name }} (result)
           conclusion: ${{ job.status }}
 
   # download the transmitter server spec, then generate and upload the pydantic models
@@ -94,7 +94,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Generate Pydantic Models
+          name: ${{ job.name }} (result)
           conclusion: ${{ job.status }}
 
   # ensure examples/transmitter/swagger_server/swagger/swagger.yaml is up to date
@@ -119,10 +119,8 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Event Transmitter Swagger Up-to-Date
+          name: ${{ job.name }} (result)
           conclusion: ${{ job.status }}
-          output: |
-            {"summary": ${{ steps.cmp.outputs.summary }}}
 
   # ensure examples/transmitter/swagger_server/models.py is up to date
   check_models_py_up_to_date:
@@ -146,10 +144,8 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: models.py Up-to-Date
+          name: ${{ job.name }} (result)
           conclusion: ${{ job.status }}
-          output: |
-            {"summary": ${{ steps.cmp.outputs.summary }}}
 
   # Validate our OpenAPI spec
   validate_open_api_spec:
@@ -167,10 +163,8 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Validate OpenAPI spec
+          name: ${{ job.name }} (result)
           conclusion: ${{ job.status }}
-          output: |
-            {"summary": ${{ steps.validate.outputs.summary }}}
 
   # runs tests on our example transmitter
   test_example_transmitter:
@@ -194,7 +188,5 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Event Transmitter Tests
+          name: ${{ job.name }} (result)
           conclusion: ${{ job.status }}
-          output: |
-            {"summary": ${{ steps.tox.outputs.summary }}}
