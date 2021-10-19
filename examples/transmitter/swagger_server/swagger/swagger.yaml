@@ -22,7 +22,7 @@ tags:
     use to communicate Security Events.
 paths:
   /.well-known/sse-configuration:
-    get:
+    get-at-it:
       tags:
       - StreamManagement
       summary: Transmitter Configuration Request (without path)
@@ -1286,4 +1286,3 @@ components:
       type: http
       scheme: bearer
       x-bearerInfoFunc: swagger_server.controllers.authorization_controller.check_BearerAuth
-

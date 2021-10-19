@@ -30,6 +30,7 @@ def test_poll_events__no_events(client, new_stream):
     response_data = response.data.decode('utf-8')
     assert response.status_code == 200, 'Response body is : ' + response_data
     assert {'sets': {}} == json.loads(response_data)
+    assert False
 
 
 def test_poll_events__one_event(client, new_stream):
@@ -65,7 +66,7 @@ def test_poll_events__one_event(client, new_stream):
                                key=JWKS_JSON['k'],
                                algorithms=[JWKS_JSON['alg']],
                                audience='https://audience')
-    
+
 
 def test_poll_events__acks(client, new_stream):
     """Test case for add_subject
