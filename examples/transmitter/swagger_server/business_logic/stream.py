@@ -47,6 +47,7 @@ class StreamDoesNotExist(KeyError):
         super().__init__(self.message)
 
 
+# TODO-T136006 remove this when push_queue gets removed...
 class EventQueue:
     def __init__(self):
         self.event_map = {}
@@ -82,7 +83,7 @@ class Stream:
         # Map of subject identifier -> status
         self._subjects: Mapping[str, Status] = {}
         self.push_queue = EventQueue()
-        self.poll_queue = EventQueue()
+        self.poll_queue = []
 
         self._save()
 
@@ -141,7 +142,7 @@ class Stream:
         if isinstance(self.config.delivery, PushDeliveryMethod):
             self.push_queue.put(event)
         else:  # PollDeliveryMethod
-            self.poll_queue.put(event)
+            self.poll_queue.append(event)
 
 
 # Add a stream temporarily

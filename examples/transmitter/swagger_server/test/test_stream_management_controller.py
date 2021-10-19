@@ -18,9 +18,6 @@ from swagger_server.models import StreamConfiguration  # noqa: E501
 from swagger_server.models import StreamStatus  # noqa: E501
 from swagger_server.models import Status  # noqa: E501
 from swagger_server.models import Subject  # noqa: E501
-from swagger_server.models import ComplexSubject  # noqa: E501
-from swagger_server.models import SimpleSubject  # noqa: E501
-from swagger_server.models import Aliases  # noqa: E501
 from swagger_server.models import TransmitterConfiguration  # noqa: E501
 from swagger_server.models import UpdateStreamStatus  # noqa: E501
 from swagger_server.models import VerificationParameters  # noqa: E501
@@ -366,23 +363,17 @@ def test_update_status__no_subject(client, new_stream, status):
 
 
 @pytest.mark.parametrize(
-    "delivery", [
-        PollDeliveryMethod(endpoint_url="http://transmitter.com/polling"),
-        PushDeliveryMethod(endpoint_url="http://receiver.com/push")
-    ]
-)
-@pytest.mark.parametrize(
     "state", [
         None,
         "someArbitraryString"
     ]
 )
-def test_verification_request(client, new_stream, delivery, state):
+def test_verification_request__polling(client, new_stream, state):
     """Test case for verification_request
 
     Request that a verification event be sent over an Event Stream
     """
-    new_stream.config.delivery = delivery
+    new_stream.config.delivery = PollDeliveryMethod(endpoint_url="http://transmitter.com/polling"),
 
     body = VerificationParameters(state=state)
     response = client.post(
@@ -392,13 +383,8 @@ def test_verification_request(client, new_stream, delivery, state):
     )
     assert response.status_code == 204, "Incorrect response code: {}".format(response.status_code)
 
-    if isinstance(delivery, PollDeliveryMethod):
-        stream_queue = new_stream.poll_queue
-    else:
-        stream_queue = new_stream.push_queue
-
-    assert stream_queue.qsize() == 1, "Incorrect queue size: {}".format(stream_queue.qsize())
-    events = stream_queue.get(1)[0]
+    assert len(new_stream.poll_queue) == 1, "Incorrect queue size: {}".format(stream_queue.qsize())
+    events = new_stream.poll_queue[0]
 
     assert VERIFICATION_EVENT_TYPE in events['events']
     verification_event = events['events'][VERIFICATION_EVENT_TYPE]
