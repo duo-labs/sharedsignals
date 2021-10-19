@@ -94,7 +94,7 @@ jobs:
         with:
           name: generated-spec
           path: tmp/artifacts
-      - run: cmp --silent examples/transmitter/swagger_server/swagger/swagger.yaml tmp/artifacts/swagger.yaml
+      - run: cmp examples/transmitter/swagger_server/swagger/swagger.yaml tmp/artifacts/swagger.yaml
         name: Compare to Spec in examples/transmitter
 
   # ensure examples/transmitter/swagger_server/models.py is up to date
@@ -112,7 +112,7 @@ jobs:
         with:
           name: models
           path: tmp/artifacts
-      - run: cmp --silent examples/transmitter/swagger_server/models.py tmp/artifacts/models.py
+      - run: cmp examples/transmitter/swagger_server/models.py tmp/artifacts/models.py
         name: Compare to examples/transmitter/models.py
 
   # Validate our OpenAPI spec
