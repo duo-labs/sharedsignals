@@ -9,7 +9,7 @@ from typing import List, Literal, Optional, Union
 from pydantic import BaseModel, Extra, Field, constr
 
 
-class SuperStatus(Enum):
+class Status(Enum):
     """
         REQUIRED. The status of the stream. Values can be one of:
 

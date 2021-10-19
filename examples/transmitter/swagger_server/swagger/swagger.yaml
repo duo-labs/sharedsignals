@@ -22,7 +22,7 @@ tags:
     use to communicate Security Events.
 paths:
   /.well-known/sse-configuration:
-    get-at-it:
+    get:
       tags:
       - StreamManagement
       summary: Transmitter Configuration Request (without path)
