@@ -134,9 +134,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout code
-      - run: pip3 install -r examples/transmitter/requirements.txt
+      - run: pip3 install -r requirements.txt
         name: Install requirements
-      - run: pip3 install -r examples/transmitter/test-requirements.txt
+        working-directory: examples/transmitter
+      - run: pip3 install -r test-requirements.txt
         name: Install test requirements
-      - run: python3 -m tox examples/transmitter/swagger_server/test
+        working-directory: examples/transmitter
+      - run: python3 -m tox swagger_server/test
         name: Run tests
+        working-directory: examples/transmitter
