@@ -10,7 +10,7 @@ RUN npm install -g swagger-cli
 ENTRYPOINT ["swagger-cli"]
 EOF
 # Bundle our multi-file yaml into one file
-docker run --rm -v ~/src/py-openid-sse/stream_management:/local/input \
+docker run --rm -v "${PWD}/../../transmitter_spec":/local/input \
     swagger-cli bundle /local/input/openapi.yaml > "${bundled_yaml}"
 
 # Do server yaml generation
