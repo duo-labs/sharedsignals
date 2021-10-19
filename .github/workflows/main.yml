@@ -4,9 +4,7 @@ name: CI
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-#   push:
-#     branches: [ main ]
+  # Triggers the workflow on pull request events but only for the main branch
   pull_request:
     branches: [ main ]
 
@@ -15,28 +13,138 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  # bundle the spec and upload it to be used in other jobs
+  bundle_openapi_spec:
+    name: bundle_openapi_spec
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    container: node:16-alpine
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
-      # Validate our openapi spec
-      - name: Swagger Editor Validator
+        name: Checkout code
+      - run: npm install -g swagger-cli
+        name: Install Swagger CLI
+      - run: mkdir -p tmp/artifacts
+        name: Create Directory for Artifacts
+      - run: swagger-cli bundle transmitter_spec/openapi.yaml > tmp/artifacts/bundled.yaml
+        name: Bundle OpenAPI spec
+      - uses: actions/upload-artifact@v2
+        name: Upload Bundled Spec
+        with:
+          name: bundled-spec
+          path: tmp/artifacts/bundled.yaml
+
+  # download the bundled spec, generate the swagger server, upload the generated spec
+  generate_transmitter_server_spec:
+    name: generate_transmitter_server_spec
+    needs: bundle_openapi_spec
+    runs-on: ubuntu-latest
+    container: swaggerapi/swagger-codegen-cli-v3
+    steps:
+      - run: mkdir -p tmp/artifacts
+        name: Create Directory for Artifacts
+      - uses: actions/download-artifact@v2
+        name: Download Bundled Spec
+        with:
+          name: bundled-spec
+          path: tmp/artifacts
+      - run: java -jar /opt/swagger-codegen-cli/swagger-codegen-cli.jar generate -i tmp/artifacts/bundled.yaml -l python-flask -o tmp/artifacts/transmitter
+        name: Generate Example Transmitter Server
+      - uses: actions/upload-artifact@v2
+        name: Upload Generated Spec
+        with:
+          name: generated-spec
+          path: tmp/artifacts/transmitter/swagger_server/swagger/swagger.yaml
+
+  # download the transmitter server spec, then generate and upload the pydantic models
+  generate_pydantic_models:
+    name: generate_pydantic_models
+    needs: generate_transmitter_server_spec
+    runs-on: ubuntu-latest
+    container: python:3.9-slim-buster
+    steps:
+      - run: mkdir -p tmp/artifacts
+        name: Create Directory for Artifacts
+      - uses: actions/download-artifact@v2
+        name: Download Generated Spec
+        with:
+          name: generated-spec
+          path: tmp/artifacts
+      - run: pip install datamodel-code-generator
+        name: Install Datamodel Code Generator
+      - run: datamodel-codegen --input tmp/artifacts/swagger.yaml --enum-field-as-literal one --use-default --strict-nullable --target-python-version 3.9 --use-schema-description --disable-timestamp > tmp/artifacts/models.py
+        name: Generate models.py
+      - uses: actions/upload-artifact@v2
+        name: Upload models.py
+        with:
+          name: models
+          path: tmp/artifacts/models.py
+
+  # ensure examples/transmitter/swagger_server/swagger/swagger.yaml is up to date
+  check_swagger_yaml_up_to_date:
+    name: check_swagger_yaml_up_to_date
+    needs: generate_transmitter_server_spec
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout code
+      - run: mkdir -p tmp/artifacts
+        name: Create Directory for Artifacts
+      - uses: actions/download-artifact@v2
+        name: Download Generated Spec
+        with:
+          name: generated-spec
+          path: tmp/artifacts
+      - run: cmp examples/transmitter/swagger_server/swagger/swagger.yaml tmp/artifacts/swagger.yaml
+        name: Compare to Spec in examples/transmitter
+        id: cmp
+
+  # ensure examples/transmitter/swagger_server/models.py is up to date
+  check_models_py_up_to_date:
+    name: check_models_py_up_to_date
+    needs: generate_pydantic_models
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout code
+      - run: mkdir -p tmp/artifacts
+        name: Create Directory for Artifacts
+      - uses: actions/download-artifact@v2
+        name: Download models.py
+        with:
+          name: models
+          path: tmp/artifacts
+      - run: cmp examples/transmitter/swagger_server/models.py tmp/artifacts/models.py
+        name: Compare to examples/transmitter/models.py
+        id: cmp
+
+  # Validate our OpenAPI spec
+  validate_open_api_spec:
+    name: validate_open_api_spec
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout code
+      - name: Validate OpenAPI definition
+        id: validate
         uses: char0n/swagger-editor-validate@v1.2.1
         with:
-          definition-file: transmitter_spec/openapi.yaml
+          definition-file: examples/transmitter/swagger_server/swagger/swagger.yaml
 
-#       # Runs a single command using the runners shell
-#       - name: Run a one-line script
-#         run: echo Hello, world!
-
-#       # Runs a set of commands using the runners shell
-#       - name: Run a multi-line script
-#         run: |
-#           echo Add other actions to build,
-#           echo test, and deploy your project.
+  # runs tests on our example transmitter
+  test_example_transmitter:
+    name: test_example_transmitter
+    runs-on: ubuntu-latest
+    container: python:3.9
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout code
+      - run: pip3 install -r requirements.txt
+        name: Install requirements
+        working-directory: examples/transmitter
+      - run: pip3 install -r test-requirements.txt
+        name: Install test requirements
+        working-directory: examples/transmitter
+      - run: python3 -m tox swagger_server/test
+        name: Run tests
+        id: tox
+        working-directory: examples/transmitter
