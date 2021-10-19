@@ -1,4 +1,5 @@
 from typing import Optional, Type, TypeVar
+
 from swagger_server.models import (Subject, SimpleSubject, ComplexSubject, Aliases,
                                    Account, DID, Email, IssSub, JwtID, Opaque,
                                    PhoneNumber, SamlAssertionID)

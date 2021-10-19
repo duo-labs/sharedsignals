@@ -7,10 +7,13 @@ in `/etc/hosts` mapping `localhost` to `transmitter.most-secure.com`:
 127.0.0.1       transmitter.most-secure.com
 ```
 
-Then, from `examples`, run
+Then, from this directory, run shared-signals-guide.py using python (Python 3.8+ are supported): 
 ```
-python3 shared_signals_guide/shared-signals-guide.py
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+python3 shared-signals-guide.py
 ```
 
-The output should roughtly match the various `example_***.json` files in this directory.
+The output should roughly match the various `example_***.json` files in this directory.
 Note that the JSON was re-arranged a bit for increased readability.

@@ -1,5 +1,7 @@
-import requests
 import json
+
+import jwt
+import requests
 
 from utils import no_ssl_verification
 
@@ -85,7 +87,6 @@ if __name__ == '__main__':
         print("example_jwks.json:", json.dumps(jwks, indent=2))
 
         # Step 7: Decode the SET with pyjwt
-        import jwt
         encoded_set = next(iter(events['sets'].values()))
         decoded_set = jwt.decode(
             encoded_set,
