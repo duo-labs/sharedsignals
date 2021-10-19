@@ -54,11 +54,16 @@ jobs:
           name: generated-spec
           path: tmp/artifacts/swagger.yaml
       - run: pip install datamodel-code-generator
-      - run: |
-        datamodel-codegen --input tmp/artifacts/swagger.yaml \
-          --enum-field-as-literal one --use-default --strict-nullable \
-          --target-python-version 3.9 --use-schema-description \
-          --disable-timestamp > tmp/artifacts/models.py
+      - run: >
+        datamodel-codegen
+        --input tmp/artifacts/swagger.yaml
+        --enum-field-as-literal one
+        --use-default
+        --strict-nullable
+        --target-python-version 3.9
+        --use-schema-description
+        --disable-timestamp
+        > tmp/artifacts/models.py
       - uses: actions/upload-artifact@v2
         name: models
         path: tmp/artifacts/models.py
