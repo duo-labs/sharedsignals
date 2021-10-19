@@ -131,6 +131,7 @@ jobs:
   test_example_transmitter:
     name: test_example_transmitter
     runs-on: ubuntu-latest
+    container: python:3.9
     steps:
       - uses: actions/checkout@v2
         name: Checkout code
