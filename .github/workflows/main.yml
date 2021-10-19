@@ -36,7 +36,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ job.name }} (result)
+          name: bundle_openapi_spec (result)
           conclusion: ${{ job.status }}
 
   # download the bundled spec, generate the swagger server, upload the generated spec
@@ -64,7 +64,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ job.name }} (result)
+          name: generate_transmitter_server_spec (result)
           conclusion: ${{ job.status }}
 
   # download the transmitter server spec, then generate and upload the pydantic models
@@ -94,7 +94,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ job.name }} (result)
+          name: generate_pydantic_models (result)
           conclusion: ${{ job.status }}
 
   # ensure examples/transmitter/swagger_server/swagger/swagger.yaml is up to date
@@ -119,7 +119,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ job.name }} (result)
+          name: check_swagger_yaml_up_to_date (result)
           conclusion: ${{ job.status }}
 
   # ensure examples/transmitter/swagger_server/models.py is up to date
@@ -144,7 +144,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ job.name }} (result)
+          name: check_models_py_up_to_date (result)
           conclusion: ${{ job.status }}
 
   # Validate our OpenAPI spec
@@ -163,7 +163,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ job.name }} (result)
+          name: validate_open_api_spec (result)
           conclusion: ${{ job.status }}
 
   # runs tests on our example transmitter
@@ -188,5 +188,5 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ job.name }} (result)
+          name: test_example_transmitter (result)
           conclusion: ${{ job.status }}
