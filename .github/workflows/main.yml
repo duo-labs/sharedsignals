@@ -23,8 +23,9 @@ jobs:
       - run: mkdir -p tmp/artifacts
       - run: swagger-cli bundle transmitter_spec/openapi.yaml > tmp/artifacts/bundled.yaml
       - uses: actions/upload-artifact@v2
-        name: bundled-spec
-        path: tmp/artifacts/bundled.yaml
+        with:
+          name: bundled-spec
+          path: tmp/artifacts/bundled.yaml
 
   # download the bundled spec, generate the swagger server, upload the generated spec
   generate_transmitter_server_spec:
@@ -39,8 +40,9 @@ jobs:
           path: tmp/artifacts/bundled.yaml
       - run: generate -i tmp/artifacts/bundled.yaml -l python-flask -o tmp/artifacts/transmitter
       - uses: actions/upload-artifact@v2
-        name: generated-spec
-        path: tmp/artifacts/transmitter/swagger_server/swagger/swagger.yaml
+        with:
+          name: generated-spec
+          path: tmp/artifacts/transmitter/swagger_server/swagger/swagger.yaml
 
   # download the transmitter server spec, then generate and upload the pydantic models
   generate_pydantic_models:
