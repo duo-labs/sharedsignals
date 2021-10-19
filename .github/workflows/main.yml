@@ -46,7 +46,7 @@ jobs:
         name: Download Bundled Spec
         with:
           name: bundled-spec
-          path: tmp/artifacts/bundled.yaml
+          path: tmp/artifacts
       - run: java -jar /opt/swagger-codegen-cli/swagger-codegen-cli.jar generate -i tmp/artifacts/bundled.yaml -l python-flask -o tmp/artifacts/transmitter
         name: Generate Example Transmitter Server
       - uses: actions/upload-artifact@v2
@@ -68,7 +68,7 @@ jobs:
         name: Download Generated Spec
         with:
           name: generated-spec
-          path: tmp/artifacts/swagger.yaml
+          path: tmp/artifacts
       - run: pip install datamodel-code-generator
         name: Install Datamodel Code Generator
       - run: datamodel-codegen --input tmp/artifacts/swagger.yaml --enum-field-as-literal one --use-default --strict-nullable --target-python-version 3.9 --use-schema-description --disable-timestamp > tmp/artifacts/models.py
@@ -93,7 +93,7 @@ jobs:
         name: Download Generated Spec
         with:
           name: generated-spec
-          path: tmp/artifacts/swagger.yaml
+          path: tmp/artifacts
       - run: cmp --silent examples/transmitter/swagger_server/swagger/swagger.yaml tmp/artifacts/swagger.yaml
         name: Compare to Spec in examples/transmitter
 
@@ -111,7 +111,7 @@ jobs:
         name: Download models.py
         with:
           name: models
-          path: tmp/artifacts/models.py
+          path: tmp/artifacts
       - run: cmp --silent examples/transmitter/swagger_server/models.py tmp/artifacts/models.py
         name: Compare to examples/transmitter/models.py
 
