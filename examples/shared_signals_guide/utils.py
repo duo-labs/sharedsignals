@@ -1,6 +1,7 @@
-import requests
 import contextlib
 import warnings
+
+import requests
 from urllib3.exceptions import InsecureRequestWarning
 
 old_merge_environment_settings = requests.Session.merge_environment_settings

@@ -1,7 +1,7 @@
 The code in shared-signals-guide.py provides working code that corresponds to the snippets found on http://sharedsignals.guide
 
-To run this example you need to have the event transmitter app running on port 443 on localhost (see the README in
-the ./transmitter), with an entry
+To run this example you need to have the event transmitter app running on port 443 on localhost 
+([see the README](../transmitter/README.md)), with an entry
 in `/etc/hosts` mapping `localhost` to `transmitter.most-secure.com`:
 ```
 127.0.0.1       transmitter.most-secure.com
