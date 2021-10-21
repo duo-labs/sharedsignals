@@ -25,7 +25,7 @@ def add_jwk_to_jwks(jwk: JWK, jwks: JWKSet) -> JWKSet:
 
     if jwks.get_key(jwk.kid) is not None:
         raise ValueError(
-            "The 'kid' claim should be unique among the JWKs in a JWKSet"
+            f"The 'kid' claim {jwk.kid} is already present in this JWKSet"
         )
 
     jwks.add(jwk)
