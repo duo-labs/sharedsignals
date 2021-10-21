@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Copyright (c) 2021 Cisco Systems, Inc. and its affiliates
+# All rights reserved.
+# Licensed under BSD 3-Clause License
+
 import connexion
 
 from swagger_server import encoder

@@ -1,3 +1,7 @@
+# Copyright (c) 2021 Cisco Systems, Inc. and its affiliates
+# All rights reserved.
+# Licensed under BSD 3-Clause License
+
 FROM python:3.9
 
 RUN mkdir -p /usr/src/app
