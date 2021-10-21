@@ -18,3 +18,13 @@ docker run --rm -v `pwd`/transmitter_spec:/local/input swagger-cli bundle /local
 
 That will output the bundled openapi spec to stdout. You can redirect that output
 to a new file if desired.
+
+## Adding License Headers
+Using https://github.com/google/addlicense to automatically add license headers.
+This tool is open sourced with Apache 2.0 license.
+```
+docker run --rm -it -v ${PWD}:/src ghcr.io/google/addlicense \
+  -f LICENSEHEADER -ignore **/swagger.yaml -ignore **/models.py *
+```
+This tool can't remove or update license headers, so removing
+license headers would need a separate script or manual process.
