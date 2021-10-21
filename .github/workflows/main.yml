@@ -17,12 +17,13 @@ jobs:
   check_license_headers_applied:
     name: check_license_headers_applied
     runs-on: ubuntu-latest
-    container: ghcr.io/google/addlicense
     steps:
       - uses: actions/checkout@v2
         name: Checkout code
-      - run: addlicense -check -ignore **/swagger.yaml -ignore **/models.py *
-        name: Generate Example Transmitter Server
+      - uses: ghcr.io/google/addlicense
+        name: Run license header check
+        with:
+          args: -check -ignore **/swagger.yaml -ignore **/models.py *
 
   # bundle the spec and upload it to be used in other jobs
   bundle_openapi_spec:
