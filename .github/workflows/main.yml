@@ -23,7 +23,7 @@ jobs:
       - uses: docker://ghcr.io/google/addlicense
         name: Run license header check
         with:
-          args: -check -ignore **/swagger.yaml -ignore **/models.py *
+          args: -check -ignore **/swagger.yaml -ignore **/models.py .
 
   # bundle the spec and upload it to be used in other jobs
   bundle_openapi_spec:
