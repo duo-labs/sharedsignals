@@ -40,6 +40,6 @@ def jwks_json():
     """
     :return: JSON Web Key Set for our Event Transmitter
     """
-    # Export the JWKS _without_ the privtae keys used to encode the SETs
+    # Export the JWKS _without_ the private keys used to encode the SETs
     jwks = jwt_encode.load_jwks().export(private_keys=False, as_dict=True)
     return jwks, 200
