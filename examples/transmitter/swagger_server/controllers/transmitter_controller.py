@@ -1,6 +1,7 @@
 # Copyright (c) 2021 Cisco Systems, Inc. and its affiliates
 # All rights reserved.
-# Licensed under BSD 3-Clause License
+# Use of this source code is governed by a
+# BSD 3-Clause License that can be found in the LICENSE file.
 
 import connexion
 import jwt
