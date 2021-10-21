@@ -6,7 +6,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import List, Literal, Optional, Union
 
-from pydantic import BaseModel, Extra, Field, constr
+from pydantic import AnyUrl, BaseModel, Extra, Field, constr
 
 
 class Status(Enum):
@@ -120,6 +120,13 @@ class PushDeliveryMethod(BaseModel):
     )
 
 
+class RegisterResponse(BaseModel):
+    token: str = Field(
+        ...,
+        description='The Bearer Token that the receiver will need to use for all Stream Management API calls that require authorization.',
+    )
+
+
 class PollParameters(BaseModel):
     maxEvents: Optional[int] = Field(
         None,
@@ -132,6 +139,14 @@ class PollParameters(BaseModel):
     acks: Optional[List[str]] = Field(
         None,
         description='List of event JTIs that the receiver is acknowledging. The Transmitter can stop keeping track of these.',
+    )
+
+
+class RegisterParameters(BaseModel):
+    audience: Optional[AnyUrl] = Field(
+        None,
+        description='The audience claim to be used for all events on this stream.',
+        example='https://popular-app.com',
     )
 
 

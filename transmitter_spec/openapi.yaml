@@ -30,6 +30,8 @@ paths:
     $ref: './paths/jwks.yaml'
   /poll:
     $ref: './paths/poll.yaml'
+  /register:
+    $ref: './paths/register.yaml'
 
 components:
   securitySchemes:
@@ -58,13 +60,18 @@ components:
     PushDeliveryMethod:
       $ref: './schemas/PushDeliveryMethod.yaml'
 
+    RegisterResponse:
+      $ref: './schemas/RegisterResponse.yaml'
+
     # Request Body params
     AddSubjectParameters:
       $ref: './schemas/AddSubjectParameters.yaml'
     PollParameters:
       $ref: './schemas/PollParameters.yaml'
+    RegisterParameters:
+      $ref: './schemas/RegisterParameters.yaml'
     RemoveSubjectParameters:
-        $ref: './schemas/RemoveSubjectParameters.yaml'
+      $ref: './schemas/RemoveSubjectParameters.yaml'
     VerificationParameters:
       $ref: './schemas/VerificationParameters.yaml'
 
@@ -139,12 +146,15 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 tags:
-  - name: StreamManagement
-    description: |-
-      Endpoints that a Transmitter must provide so that a Receiver can configure
-      Event Streams.
-    externalDocs:
-      url: https://openid.net/specs/openid-sse-framework-1_0.html#management
-  - name: Stream
-    description: Examples of the PUSH and POLL endpoints that Transmitters and
-      Receivers use to communicate Security Events.
+- name: StreamManagement
+  description: |-
+    [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#management)
+    Stream Management endpoints provided by an Event Transmitter so that Event Transmitters may configure Event Streams.
+- name: Transmitter
+  description: |-
+    Additional endpoints provided by an Event Transmitter. These are not needed during Stream Managment, but are used
+    by Event Receivers for event processing.
+- name: OutOfBand
+  description: |-
+    Endpoints that are NOT a part of the [Open ID Spec](https://openid.net/specs/openid-sse-framework-1_0.html), but
+    that exist for convenience within this demo.

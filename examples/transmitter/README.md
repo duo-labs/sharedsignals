@@ -41,6 +41,8 @@ Note that this runs without hot-reloading.
 To run the server, please execute the following from the `examples/transmitter` directory:
 
 ```
+python3 -m venv venv
+source venv/bin/activate
 pip3 install -r requirements.txt
 python3 -m swagger_server
 ```

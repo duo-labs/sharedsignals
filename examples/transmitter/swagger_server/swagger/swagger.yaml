@@ -12,14 +12,15 @@ servers:
 - url: /
 tags:
 - name: StreamManagement
-  description: |-
-    Endpoints that a Transmitter must provide so that a Receiver can configure
-    Event Streams.
-  externalDocs:
-    url: https://openid.net/specs/openid-sse-framework-1_0.html#management
-- name: Stream
-  description: Examples of the PUSH and POLL endpoints that Transmitters and Receivers
-    use to communicate Security Events.
+  description: "[Spec](https://openid.net/specs/openid-sse-framework-1_0.html#management)\n\
+    Stream Management endpoints provided by an Event Transmitter so that Event Transmitters\
+    \ may configure Event Streams."
+- name: Transmitter
+  description: "Additional endpoints provided by an Event Transmitter. These are not\
+    \ needed during Stream Managment, but are used\nby Event Receivers for event processing."
+- name: OutOfBand
+  description: "Endpoints that are NOT a part of the [Open ID Spec](https://openid.net/specs/openid-sse-framework-1_0.html),\
+    \ but\nthat exist for convenience within this demo."
 paths:
   /.well-known/sse-configuration:
     get:
@@ -473,7 +474,7 @@ paths:
   /jwks.json:
     get:
       tags:
-      - Stream
+      - Transmitter
       summary: The JSON Web Key Set of the Event Transmitter.
       description: "[Spec](https://datatracker.ietf.org/doc/html/rfc7517)"
       operationId: jwks_json
@@ -489,11 +490,11 @@ paths:
                   alg: HS256
                   k: AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow
                 x-content-type: application/json
-      x-openapi-router-controller: swagger_server.controllers.stream_controller
+      x-openapi-router-controller: swagger_server.controllers.transmitter_controller
   /poll:
     post:
       tags:
-      - Stream
+      - Transmitter
       summary: Request for queued events to be returned.
       description: "[Spec](https://www.rfc-editor.org/rfc/rfc8936.html#name-polling-http-request)"
       operationId: poll_events
@@ -514,7 +515,31 @@ paths:
                 x-content-type: application/json
       security:
       - BearerAuth: []
-      x-openapi-router-controller: swagger_server.controllers.stream_controller
+      x-openapi-router-controller: swagger_server.controllers.transmitter_controller
+  /register:
+    post:
+      tags:
+      - OutOfBand
+      summary: Request the transmitter to setup a stream for a given receiver.
+      description: "This endpoint is not part of the spec, but rather a quick-and-dirty\
+        \ way to allow a receiver to pass along its\naudience claim in exchange for\
+        \ a bearer token."
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterParameters'
+        required: true
+      responses:
+        "200":
+          description: "On successful creation of a stream, returns a bearer token\
+            \ that will be used for subsequent requests."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+      x-openapi-router-controller: swagger_server.controllers.out_of_band_controller
 components:
   schemas:
     StreamStatus:
@@ -794,6 +819,17 @@ components:
       example:
         method: https://schemas.openid.net/secevent/risc/delivery-method/push
         endpoint_url: https://receiver.example.com/push
+    RegisterResponse:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+          description: The Bearer Token that the receiver will need to use for all
+            Stream Management API calls that require authorization.
+      example:
+        token: 49e5e7785e4e4f688aa49e2585970370
     AddSubjectParameters:
       required:
       - subject
@@ -845,6 +881,14 @@ components:
             Transmitter can stop keeping track of these.
           items:
             type: string
+    RegisterParameters:
+      type: object
+      properties:
+        audience:
+          type: string
+          description: The audience claim to be used for all events on this stream.
+          format: uri
+          example: https://popular-app.com
     RemoveSubjectParameters:
       required:
       - subject

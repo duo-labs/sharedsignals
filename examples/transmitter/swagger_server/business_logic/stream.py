@@ -13,7 +13,9 @@ from swagger_server.models import Status
 
 DEFAULT_CONFIG = StreamConfiguration(
     iss=TRANSMITTER_ISSUER,
+    aud='',
     events_supported=SUPPORTED_EVENTS,
+    events_requested=[],
     events_delivered=[],
     min_verification_interval=MIN_VERIFICATION_INTERVAL,
     delivery=PollDeliveryMethod(endpoint_url=POLL_ENDPOINT)
@@ -38,11 +40,11 @@ class SubjectNotInStream(KeyError):
 
 
 class StreamDoesNotExist(KeyError):
-    def __init__(self, client_id):
+    def __init__(self):
         self.message = (
-            f'There is no Event Stream for client id: {client_id}. '
-            f'To use this endpoint, first perform a POST to /stream '
-            f'to create an event stream'
+            f'There is no Event Stream associated with that bearer token. '
+            f'To use this endpoint, first create an Event Stream with a POST to /register, '
+            f'and use the resulting token for authenticated requests.'
         )
         super().__init__(self.message)
 
@@ -73,11 +75,11 @@ class EventQueue:
 class Stream:
     def __init__(self,
                  client_id: str,
-                 aud: Union[str, List[str]] = None,
+                 aud: Union[str, List[str]],
                  status: Status = Status.enabled):
         self.client_id = client_id
         self.config = DEFAULT_CONFIG
-        self.config.aud = aud if aud else f"https://{client_id}"
+        self.config.aud = aud
         self.status = status
 
         # Map of subject identifier -> status
@@ -95,7 +97,7 @@ class Stream:
         if client_id in db.STREAMS:
             return db.STREAMS[client_id]
         else:
-            raise StreamDoesNotExist(client_id)
+            raise StreamDoesNotExist()
 
     @classmethod
     def delete(cls, client_id):
@@ -145,8 +147,8 @@ class Stream:
             self.poll_queue.append(event)
 
 
-# Add a stream temporarily
+# Add a stream for https://popular-app.com automatically on startup
 Stream(
-    client_id='test-account',
-    aud=['http://bar.com', 'http://bar.com/baz'],
+    client_id='49e5e7785e4e4f688aa49e2585970370',
+    aud='https://popular-app.com',
 )

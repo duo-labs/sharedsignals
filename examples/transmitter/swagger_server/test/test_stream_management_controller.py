@@ -69,7 +69,7 @@ def test_add_subject__no_stream(client):
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
     assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
-    assert StreamDoesNotExist(bad_client_id).message in str(response.data)
+    assert StreamDoesNotExist().message in str(response.data)
 
 
 @pytest.mark.parametrize("status", [
@@ -136,7 +136,7 @@ def test_get_status__no_stream(client):
         query_string=None,
         headers={'Authorization': f'Bearer {bad_client_id}'})
     assert response.status_code == 404, 'Incorrect response code: ' + response.data.decode('utf-8')
-    assert StreamDoesNotExist(bad_client_id).message in str(response.data)
+    assert StreamDoesNotExist().message in str(response.data)
 
 
 def test_remove_subject(client, new_stream):
@@ -187,7 +187,7 @@ def test_remove_subject__no_stream(client):
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
     assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
-    assert StreamDoesNotExist(bad_client_id).message in str(response.data)
+    assert StreamDoesNotExist().message in str(response.data)
 
 
 def test_stream_post(client, new_stream):
@@ -239,8 +239,8 @@ def test_stream_post__no_stream(client):
         json={},
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
-    assert response.status_code == 200, 'Incorrect response code' + response.data.decode('utf-8')
-    assert bad_client_id in db.STREAMS
+    assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
+    assert StreamDoesNotExist().message in str(response.data)
 
 
 def test_stream_delete(client, new_stream):
@@ -295,7 +295,7 @@ def test_stream_get__no_stream(client):
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
     assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
-    assert StreamDoesNotExist(bad_client_id).message in str(response.data)
+    assert StreamDoesNotExist().message in str(response.data)
 
 
 @pytest.mark.parametrize("subject", [
@@ -411,7 +411,7 @@ def test_verification_request__no_stream(client):
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
     assert response.status_code == 404, "Incorrect response code: {}".format(response.status_code)
-    assert StreamDoesNotExist(bad_client_id).message in str(response.data)
+    assert StreamDoesNotExist().message in str(response.data)
 
 
 def test_well_known_sse_configuration_get(client):

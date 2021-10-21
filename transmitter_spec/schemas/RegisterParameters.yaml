@@ -1,0 +1,8 @@
+type: object
+properties:
+  audience:
+    type: string
+    format: uri
+    description: |-
+      The audience claim to be used for all events on this stream.
+    example: "https://popular-app.com"

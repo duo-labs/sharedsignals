@@ -7,7 +7,7 @@ from flask import json
 
 from swagger_server.business_logic import VERIFICATION_EVENT_TYPE
 from swagger_server.business_logic.stream import StreamDoesNotExist
-from swagger_server.controllers.stream_controller import JWKS_JSON
+from swagger_server.controllers.transmitter_controller import JWKS_JSON
 from swagger_server.models import PollParameters  # noqa: E501
 from swagger_server.test import client, new_stream
 
@@ -157,8 +157,8 @@ def test_poll_events__no_stream(client, new_stream):
         json=body.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
-    assert response.status_code == 404, 'Incorrect response code: ' + response.data.decode('utf-8')
-    assert StreamDoesNotExist(bad_client_id).message in str(response.data)
+    assert response.status_code == 404, "Incorrect response code: {}".format(response.status_code)
+    assert StreamDoesNotExist().message in str(response.data)
 
 
 def test_jwks_json(client):
@@ -168,8 +168,3 @@ def test_jwks_json(client):
     """
     response = client.get('/jwks.json')
     assert response.status_code == 200, "Incorrect response code: {}".format(response.status_code)
-
-
-if __name__ == '__main__':
-    import pytest
-    pytest.main()
