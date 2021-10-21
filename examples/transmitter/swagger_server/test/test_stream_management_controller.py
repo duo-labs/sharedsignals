@@ -24,7 +24,6 @@ from swagger_server.models import Aliases  # noqa: E501
 from swagger_server.models import TransmitterConfiguration  # noqa: E501
 from swagger_server.models import UpdateStreamStatus  # noqa: E501
 from swagger_server.models import VerificationParameters  # noqa: E501
-from swagger_server.test import client, new_stream
 from swagger_server.utils import get_simple_subject
 
 

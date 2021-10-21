@@ -9,7 +9,6 @@ from swagger_server.business_logic import VERIFICATION_EVENT_TYPE
 from swagger_server.business_logic.stream import StreamDoesNotExist
 from swagger_server.controllers.stream_controller import JWKS_JSON
 from swagger_server.models import PollParameters  # noqa: E501
-from swagger_server.test import client, new_stream
 
 
 def test_poll_events__no_events(client, new_stream):
