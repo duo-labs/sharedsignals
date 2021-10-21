@@ -4,17 +4,7 @@ import uuid
 from jwcrypto.jwk import JWK, JWKSet
 import pytest
 
-import swagger_server.encryption as enc
-
-
-@pytest.fixture(autouse=True)
-def mock_jwks_path(monkeypatch, tmpdir):
-    """Mock out the environment variable so that we have control over it
-    for testing.
-    """
-    MOCK_JWKS_PATH = str(tmpdir.mkdir("keys") / "jwks.json")
-    monkeypatch.setenv("JWKS_PATH", MOCK_JWKS_PATH)
-    yield MOCK_JWKS_PATH
+from swagger_server import jwt_encode
 
 
 @pytest.fixture(autouse=True)
@@ -22,7 +12,7 @@ def clear_cache():
     """The function we use to load keys uses LRU Caching to avoid hitting
     the disk too often. We need to clear it before running any unit tests.
     """
-    enc.load_jwks.cache_clear()
+    jwt_encode.load_jwks.cache_clear()
 
 
 class TestMakeJWK:
@@ -32,7 +22,7 @@ class TestMakeJWK:
     )
     def test_has_correct_claims(self, claim):
         """Ensures the JWK has all of the expected claims"""
-        jwk = enc.make_jwk(uuid.uuid1().hex)
+        jwk = jwt_encode.make_jwk(uuid.uuid1().hex)
 
         assert claim in jwk
         assert isinstance(jwk[claim], str)
@@ -46,7 +36,9 @@ class TestMakeJWK:
             crv="P-256",
             kid=key_id
         )
-        jwk = enc.make_jwk(key_id).export(private_key=False, as_dict=True)
+        jwk = jwt_encode.make_jwk(key_id).export(
+            private_key=False, as_dict=True
+        )
 
         # remove non-constant values
         jwk.pop("x")
@@ -59,20 +51,20 @@ class TestAddJWKToJWKS:
     def test_adds_to_empty_jwks(self):
         """Ensures we can add a JWK to an empty JWKSet"""
         key_id = uuid.uuid1().hex
-        jwks = enc.make_jwks()
-        jwk = enc.make_jwk(key_id)
-        enc.add_jwk_to_jwks(jwk=jwk, jwks=jwks)
+        jwks = jwt_encode.make_jwks()
+        jwk = jwt_encode.make_jwk(key_id)
+        jwt_encode.add_jwk_to_jwks(jwk=jwk, jwks=jwks)
         assert isinstance(jwks.get_key(key_id), JWK)
 
     def test_adds_to_non_empty_jwks(self):
         """Ensures we can add a JWK to an empty JWKSet"""
         key_ids = [uuid.uuid1().hex for _ in range(3)]
-        jwks = enc.make_jwks(key_ids)
+        jwks = jwt_encode.make_jwks(key_ids)
 
         key_id = uuid.uuid1().hex
-        jwk = enc.make_jwk(key_id)
+        jwk = jwt_encode.make_jwk(key_id)
 
-        enc.add_jwk_to_jwks(jwk=jwk, jwks=jwks)
+        jwt_encode.add_jwk_to_jwks(jwk=jwk, jwks=jwks)
 
         # check that the new jwk is there
         assert isinstance(jwks.get_key(key_id), JWK)
@@ -85,45 +77,45 @@ class TestAddJWKToJWKS:
         """Ensure adding a jwk with a kid that is already in the JWKSet
         raises an error"""
         key_id = uuid.uuid1().hex
-        jwks = enc.make_jwks([key_id])
+        jwks = jwt_encode.make_jwks([key_id])
 
-        jwk = enc.make_jwk(key_id)
+        jwk = jwt_encode.make_jwk(key_id)
 
         with pytest.raises(ValueError):
-            enc.add_jwk_to_jwks(jwk=jwk, jwks=jwks)
+            jwt_encode.add_jwk_to_jwks(jwk=jwk, jwks=jwks)
 
 
 class TestMakeJWKS:
     def test_can_make_single_jwk(self):
         """Ensures we can create a single JWK in the JWKSet"""
         key_id = uuid.uuid1().hex
-        jwks = enc.make_jwks([key_id])
+        jwks = jwt_encode.make_jwks([key_id])
         assert isinstance(jwks.get_key(key_id), JWK)
 
     def test_can_make_many_jwks(self):
         """Ensures we can make many JWKs in a JWKSet"""
         key_ids = [uuid.uuid1().hex for _ in range(5)]
-        jwks = enc.make_jwks(key_ids)
+        jwks = jwt_encode.make_jwks(key_ids)
 
         for kid in key_ids:
             assert isinstance(jwks.get_key(kid), JWK)
 
     def test_can_make_no_jwks(self):
         """Ensures we can make an empty JWKSet"""
-        jwks = enc.make_jwks()
+        jwks = jwt_encode.make_jwks()
         assert isinstance(jwks, JWKSet)
 
     def test_error_if_duplicate_kid_values(self):
         """Ensures the kid values are unique in a JWKSet"""
         with pytest.raises(ValueError):
-            enc.make_jwks(["foo", "foo", "foo"])
+            jwt_encode.make_jwks(["foo", "foo", "foo"])
 
 
 class TestGetJWKSPath:
-    def test_correct_path(self, mock_jwks_path):
+    def test_correct_path(self, jwks_path):
         """Ensures we get the expected path"""
-        expected = Path(mock_jwks_path)
-        actual = enc.get_jwks_path()
+        expected = Path(jwks_path)
+        actual = jwt_encode.get_jwks_path()
 
         assert actual == expected
 
@@ -131,28 +123,35 @@ class TestGetJWKSPath:
 class TestSaveJWKS:
     def test_makes_file(self):
         """Ensures we are able to save a JWKS file to disk"""
-        assert not enc.get_jwks_path().exists()
-        mock_jwks = enc.make_jwks(["foo", "bar"])
-        enc.save_jwks(mock_jwks)
-        assert enc.get_jwks_path().exists()
+        assert not jwt_encode.get_jwks_path().exists()
+        mock_jwks = jwt_encode.make_jwks(["foo", "bar"])
+        jwt_encode.save_jwks(mock_jwks)
+        assert jwt_encode.get_jwks_path().exists()
+
+    def test_makes_needed_directories(self, monkeypatch, tmpdir):
+        """Ensures the saving process creates all needed directories"""
+        temp_base = tmpdir.mkdir("mock")
+        monkeypatch.setenv("JWKS_PATH", f"{temp_base}/foo/bar/jwks.json")
+
+        assert not jwt_encode.get_jwks_path().exists()
+        mock_jwks = jwt_encode.make_jwks(["foo", "bar"])
+        jwt_encode.save_jwks(mock_jwks)
+        assert jwt_encode.get_jwks_path().exists()
 
 
 class TestLoadJWKS:
     def test_loads_jwks(self):
         """Ensures we are able to load a JWKS file from disk"""
-        mock_jwks = enc.make_jwks(["foo", "bar"])
-        enc.save_jwks(mock_jwks)
+        mock_jwks = jwt_encode.make_jwks(["foo", "bar"])
+        jwt_encode.save_jwks(mock_jwks)
 
-        actual = enc.load_jwks()
+        actual = jwt_encode.load_jwks()
         assert actual.export() == mock_jwks.export()
 
 
 class TestEncodeSet:
-    def test_makes_string(self):
+    def test_makes_string(self, with_jwks):
         """Ensures we can encode the SET"""
-        key_id = uuid.uuid1().hex
-        jwks = enc.make_jwks([key_id])
-        enc.save_jwks(jwks)
 
         SET = dict(
             iss="foo",
@@ -163,15 +162,13 @@ class TestEncodeSet:
             }
         )
 
-        JWT = enc.encode_set(SET, key_id)
+        JWT = jwt_encode.encode_set(SET)
         assert isinstance(JWT, str)
 
 
 class TestDecodeSet:
-    def test_decodes_encoded_set(self):
-        key_id = uuid.uuid1().hex
-        jwks = enc.make_jwks([key_id])
-        enc.save_jwks(jwks)
+    def test_decodes_encoded_set(self, with_jwks):
+        jwks = jwt_encode.load_jwks()
 
         issuer = "foo"
         audience = "bar"
@@ -185,8 +182,8 @@ class TestDecodeSet:
             }
         )
 
-        JWT = enc.encode_set(SET, key_id)
+        JWT = jwt_encode.encode_set(SET)
 
-        actual = enc.decode_set(JWT, jwks, issuer, audience)
+        actual = jwt_encode.decode_set(JWT, jwks, issuer, audience)
 
         assert actual == SET

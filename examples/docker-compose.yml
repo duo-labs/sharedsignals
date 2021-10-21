@@ -7,5 +7,15 @@ services:
       - "443:443"
     volumes:
       - ./transmitter:/usr/src/app
+      - keys-volume:/usr/keys
     environment:
       - FLASK_ENV=development
+      # Path to our JWKS file
+      - JWKS_PATH=/usr/keys/jwks.json
+      # The key ID of the JSON Web Key Set that is currently in use
+      # update this if we want to rotate keys
+      - JWK_KEY_ID=transmitter-ES256-001
+
+volumes:
+  # we will store our JWKS file here so that it is persistent between builds
+  keys-volume:

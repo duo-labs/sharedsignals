@@ -1,7 +1,7 @@
 from functools import lru_cache
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Mapping, Union
 
 from jwcrypto.jwk import JWK, JWKSet
 import jwt
@@ -50,6 +50,8 @@ def get_jwks_path() -> Path:
 def save_jwks(jwks: JWKSet) -> None:
     """Save a JSON Web Key Set to the appropriate file location"""
     jwks_path = get_jwks_path()
+    jwks_path.parent.mkdir(parents=True, exist_ok=True)
+
     with open(jwks_path, "w") as fout:
         fout.write(jwks.export(private_keys=True))
 
@@ -63,8 +65,11 @@ def load_jwks() -> JWKSet:
 
 
 # TODO: make annotation for the SET a pydantic model
-def encode_set(security_event_token: Dict[str, Any], key_id: str) -> str:
+def encode_set(security_event_token: Dict[str, Any]) -> str:
     """This runs on the transmitter. Encodes a SET using EC256"""
+    # get the key id of the JWK we want to use
+    key_id = os.environ["JWK_KEY_ID"]
+
     # select the right JWK with the key_id
     jwk = load_jwks().get_key(key_id)
     private_key = jwk.export_to_pem(private_key=True, password=None)
@@ -83,7 +88,7 @@ def encode_set(security_event_token: Dict[str, Any], key_id: str) -> str:
 
 # TODO: make annotation for the SET a pydantic model
 def decode_set(jwt_value: str,
-               jwks: JWKSet,
+               jwks: Mapping[str, Any],
                iss: str,
                aud: str) -> Dict[str, Any]:
     """This runs on the receiver. Decodes a SET intended from a specific issuer
@@ -93,13 +98,13 @@ def decode_set(jwt_value: str,
     kid = jwt.get_unverified_header(jwt_value)["kid"]
 
     # and use it to select the right JWK
-    jwk = jwks.get_key(kid)
-    parsed_jwk = jwt.PyJWK(jwk)
+    jwk = [jwk for jwk in jwks["keys"] if jwk["kid"] == kid][0]
+    key = jwt.PyJWK(jwk).key
 
     return jwt.decode(
         jwt=jwt_value,
-        key=parsed_jwk.key,
-        algorithms=[jwk.alg],
+        key=key,
+        algorithms=[jwk["alg"]],
         issuer=iss,
         audience=aud
     )

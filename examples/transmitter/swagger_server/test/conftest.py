@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Iterator
 import uuid
 
@@ -6,8 +7,9 @@ import connexion
 from flask.testing import FlaskClient
 import pytest
 
-from swagger_server.encoder import JSONEncoder
 from swagger_server.business_logic.stream import Stream
+from swagger_server.encoder import JSONEncoder
+from swagger_server import jwt_encode
 
 
 @pytest.fixture
@@ -32,3 +34,24 @@ def create_app(self):
     app.app.json_encoder = JSONEncoder
     app.add_api('swagger.yaml')
     return app.app
+
+
+@pytest.fixture(autouse=True)
+def jwks_path(monkeypatch, tmpdir):
+    """Mock out the environment variables so that we have control over them
+    for testing.
+    """
+    # set the JWKS key id
+    monkeypatch.setenv("JWK_KEY_ID", "mock_key")
+
+    # set the jwks path
+    MOCK_JWKS_PATH = str(tmpdir.mkdir("keys") / "jwks.json")
+    monkeypatch.setenv("JWKS_PATH", MOCK_JWKS_PATH)
+    yield MOCK_JWKS_PATH
+
+
+@pytest.fixture
+def with_jwks(jwks_path):
+    """Sets up the JWKS file so that it is present during testing"""
+    key_id = os.environ["JWK_KEY_ID"]
+    jwt_encode.save_jwks(jwt_encode.make_jwks([key_id]))

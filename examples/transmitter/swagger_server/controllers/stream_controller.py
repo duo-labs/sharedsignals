@@ -1,21 +1,11 @@
 import os
-from pathlib import Path
-from typing import Any, Mapping
 
 import connexion
-import jwt
 
 from swagger_server import business_logic
 from swagger_server.business_logic import StreamDoesNotExist
-from swagger_server import encryption
+from swagger_server import jwt_encode
 from swagger_server.models import PollParameters
-
-
-JWKS_JSON = {
-    "kty": "oct",
-    "alg": "HS256",
-    "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"
-}
 
 
 def poll_events(token_info, body=None):  # noqa: E501
@@ -42,8 +32,7 @@ def poll_events(token_info, body=None):  # noqa: E501
 
     events = {
         'sets': {
-            event['jti']: jwt.encode(event, JWKS_JSON['k'], JWKS_JSON['alg'])
-            for event in events
+            event['jti']: jwt_encode.encode_set(event) for event in events
         },
         'moreAvailable': more_available
     }
@@ -51,9 +40,9 @@ def poll_events(token_info, body=None):  # noqa: E501
     return events, 200
 
 
-def jwks_json() -> Mapping[str, Mapping[str, Any]]:
+def jwks_json():
     """
     :return: JSON Web Key Set for our Event Transmitter
     """
-    jwks_path = Path(os.environ["KEY_PATH"]) / "jwks.json"
-    return encryption.load_jwks(jwks_path)
+    jwks = jwt_encode.load_jwks().export(private_keys=False, as_dict=True)
+    return jwks, 200
