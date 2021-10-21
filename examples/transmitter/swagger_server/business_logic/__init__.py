@@ -1,13 +1,13 @@
 import logging
 import time
 import uuid
-from typing import List, Mapping, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import swagger_server.db as db
 from swagger_server.business_logic.const import (
     TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE
 )
-from swagger_server.business_logic.stream import Stream, StreamDoesNotExist
+from swagger_server.business_logic.stream import Stream
 from swagger_server.models import StreamConfiguration
 from swagger_server.models import StreamStatus
 from swagger_server.models import Subject

@@ -88,11 +88,20 @@ if __name__ == '__main__':
 
         # Step 7: Decode the SET with pyjwt
         encoded_set = next(iter(events['sets'].values()))
+
+        # get the key id from the header of the JWT
+        kid = jwt.get_unverified_header(encoded_set)["kid"]
+
+        # and use it to select the right JWK
+        jwk = [jwk for jwk in jwks["keys"] if jwk["kid"] == kid][0]
+        key = jwt.PyJWK(jwk).key
+
         decoded_set = jwt.decode(
-            encoded_set,
-            key=jwks['k'],
-            algorithms=[jwks['alg']],
-            audience='https://popular-app.com'
+            jwt=encoded_set,
+            key=key,
+            algorithms=[jwk["alg"]],
+            issuer=stream_config["iss"],
+            audience=stream_config["aud"]
         )
         print("example_decoded_set.json", json.dumps(decoded_set, indent=2))
 

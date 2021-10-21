@@ -2,7 +2,6 @@ import json
 
 from swagger_server import db
 from swagger_server.models import RegisterParameters
-from swagger_server.test import client, new_stream
 
 
 def test_register(client):
