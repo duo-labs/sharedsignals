@@ -239,8 +239,8 @@ def test_stream_post__no_stream(client):
         json={},
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
-    assert response.status_code == 200, 'Incorrect response code' + response.data.decode('utf-8')
-    assert bad_client_id in db.STREAMS
+    assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
+    assert StreamDoesNotExist(bad_client_id).message in str(response.data)
 
 
 def test_stream_delete(client, new_stream):

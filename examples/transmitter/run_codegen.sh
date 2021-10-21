@@ -1,4 +1,5 @@
 #!/bin/bash
+RED='\033[0;31m'
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf -- "$tmpdir"' EXIT
@@ -12,6 +13,11 @@ EOF
 # Bundle our multi-file yaml into one file
 docker run --rm -v "${PWD}/../../transmitter_spec":/local/input \
     swagger-cli bundle /local/input/openapi.yaml > "${bundled_yaml}"
+if [ $? -eq 1 ]
+then
+  echo -e "${RED}Failed to create bundled.yaml"
+  exit 1
+fi
 
 # Do server yaml generation
 docker run --rm -v "${PWD}/swagger_server/swagger":/local/out/flask/swagger_server/swagger \
@@ -20,6 +26,12 @@ docker run --rm -v "${PWD}/swagger_server/swagger":/local/out/flask/swagger_serv
     -i /local/input/bundled.yaml \
     -l python-flask \
     -o /local/out/flask
+if [ $? -eq 1 ]
+then
+  echo -e "${RED}Server yaml generation failed"
+  exit 1
+fi
+
 
 docker build -t datamodel-codegen -<<EOF
 FROM python:3.9-slim-buster
@@ -33,3 +45,8 @@ docker run --rm -v "${PWD}/swagger_server/swagger":/local/input \
     --target-python-version 3.9 --use-schema-description \
     --disable-timestamp \
     > swagger_server/models.py
+if [ $? -eq 1 ]
+then
+  echo -e "${RED}Pydantic model generation failed"
+  exit 1
+fi

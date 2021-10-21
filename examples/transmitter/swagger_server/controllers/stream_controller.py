@@ -5,6 +5,7 @@ from swagger_server import business_logic
 from swagger_server.business_logic import StreamDoesNotExist
 from swagger_server.models import PollParameters
 
+from swagger_server.models import RegisterParameters
 
 JWKS_JSON = {
     "kty": "oct",
@@ -48,3 +49,11 @@ def jwks_json():
     :return: JSON Web Key Set for our Event Transmitter
     """
     return JWKS_JSON
+
+
+def register(body=None):
+    if connexion.request.is_json:
+        body = RegisterParameters.parse_obj(connexion.request.get_json())
+
+    token_json = business_logic.create_stream(body.audience)
+    return token_json, 200

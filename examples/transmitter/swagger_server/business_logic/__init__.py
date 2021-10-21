@@ -3,6 +3,8 @@ import time
 import uuid
 from typing import List, Mapping, Optional, Tuple
 
+import jwt
+
 from swagger_server.business_logic.const import (
     TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE
 )
@@ -16,6 +18,8 @@ from swagger_server.models import Email
 from swagger_server.models import TransmitterConfiguration  # noqa: E501
 
 from swagger_server.utils import get_simple_subject
+
+from swagger_server.controllers.stream_controller import JWKS_JSON
 
 log = logging.getLogger(__name__)
 
@@ -75,10 +79,7 @@ def remove_subject(subject: Subject, client_id: str) -> None:
 def stream_post(url_root,
                 stream_configuration: StreamConfiguration,
                 client_id: str) -> StreamConfiguration:
-    try:
-        stream = Stream.load(client_id)
-    except StreamDoesNotExist:
-        stream = Stream(client_id)
+    stream = Stream.load(client_id)
 
     if (stream_configuration.delivery
             and stream_configuration.delivery.method == 'https://schemas.openid.net/secevent/risc/delivery-method/poll'):
@@ -173,3 +174,9 @@ def poll_request(max_events: int,
     more_available = len(stream.poll_queue) > max_events
 
     return stream.poll_queue[:max_events], more_available
+
+
+def create_stream(audience):
+    client_id = jwt.encode({'audience': audience}, JWKS_JSON['k'], JWKS_JSON['alg'])
+    Stream(client_id, audience)
+    return {'token': client_id}

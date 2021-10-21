@@ -515,6 +515,30 @@ paths:
       security:
       - BearerAuth: []
       x-openapi-router-controller: swagger_server.controllers.stream_controller
+  /register:
+    post:
+      tags:
+      - Stream
+      summary: Request the transmitter to setup a stream for a given receiver.
+      description: "This endpoint is not part of the spec, but rather a quick-and-dirty\
+        \ way to allow a receiver to pass along its\naudience claim in exchange for\
+        \ a bearer token."
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterParameters'
+        required: true
+      responses:
+        "200":
+          description: "On successful creation of a stream, returns a bearer token\
+            \ that will be used for subsequent requests."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+      x-openapi-router-controller: swagger_server.controllers.stream_controller
 components:
   schemas:
     StreamStatus:
@@ -794,6 +818,17 @@ components:
       example:
         method: https://schemas.openid.net/secevent/risc/delivery-method/push
         endpoint_url: https://receiver.example.com/push
+    RegisterResponse:
+      required:
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+          description: The Bearer Token that the receiver will need to use for all
+            Stream Management API calls that require authorization.
+      example:
+        token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWRpZW5jZSI6Imh0dHBzOi8vcG9wdWxhci1hcHAuY29tIn0.yPqCw01HY35G161OoCbXvuurQSWDvwBEZc7nG7j0I_8
     AddSubjectParameters:
       required:
       - subject
@@ -845,6 +880,13 @@ components:
             Transmitter can stop keeping track of these.
           items:
             type: string
+    RegisterParameters:
+      type: object
+      properties:
+        audience:
+          type: string
+          description: The audience claim to be used for all events on this stream.
+          example: https://popular-app.com
     RemoveSubjectParameters:
       required:
       - subject

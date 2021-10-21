@@ -30,6 +30,8 @@ paths:
     $ref: './paths/jwks.yaml'
   /poll:
     $ref: './paths/poll.yaml'
+  /register:
+    $ref: './paths/register.yaml'
 
 components:
   securitySchemes:
@@ -58,13 +60,18 @@ components:
     PushDeliveryMethod:
       $ref: './schemas/PushDeliveryMethod.yaml'
 
+    RegisterResponse:
+      $ref: './schemas/RegisterResponse.yaml'
+
     # Request Body params
     AddSubjectParameters:
       $ref: './schemas/AddSubjectParameters.yaml'
     PollParameters:
       $ref: './schemas/PollParameters.yaml'
+    RegisterParameters:
+      $ref: './schemas/RegisterParameters.yaml'
     RemoveSubjectParameters:
-        $ref: './schemas/RemoveSubjectParameters.yaml'
+      $ref: './schemas/RemoveSubjectParameters.yaml'
     VerificationParameters:
       $ref: './schemas/VerificationParameters.yaml'
 
