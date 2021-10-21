@@ -5,7 +5,6 @@
 # that can be found in the LICENSE file.
 
 
-
 from distutils.core import setup
 
 setup(
