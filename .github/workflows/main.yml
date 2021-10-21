@@ -13,6 +13,17 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # Use addlicense tool to check that all files have a license header
+  check_license_headers_applied:
+    name: check_license_headers_applied
+    runs-on: ubuntu-latest
+    container: ghcr.io/google/addlicense
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout code
+      - run: addlicense -check -ignore **/swagger.yaml -ignore **/models.py *
+        name: Generate Example Transmitter Server
+
   # bundle the spec and upload it to be used in other jobs
   bundle_openapi_spec:
     name: bundle_openapi_spec
