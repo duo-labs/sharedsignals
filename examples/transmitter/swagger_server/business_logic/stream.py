@@ -75,11 +75,11 @@ class EventQueue:
 class Stream:
     def __init__(self,
                  client_id: str,
-                 aud: Union[str, List[str]] = None,
+                 aud: Union[str, List[str]],
                  status: Status = Status.enabled):
         self.client_id = client_id
         self.config = DEFAULT_CONFIG
-        self.config.aud = aud if aud else f"https://{client_id}"
+        self.config.aud = aud
         self.status = status
 
         # Map of subject identifier -> status
@@ -147,8 +147,8 @@ class Stream:
             self.poll_queue.append(event)
 
 
-# Add a stream temporarily
+# Add a stream for https://popular-app.com automatically on startup
 Stream(
-    client_id='test-account',
-    aud=['http://bar.com', 'http://bar.com/baz'],
+    client_id='49e5e7785e4e4f688aa49e2585970370',
+    aud='https://popular-app.com',
 )

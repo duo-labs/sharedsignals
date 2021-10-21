@@ -7,7 +7,7 @@ from flask import json
 
 from swagger_server.business_logic import VERIFICATION_EVENT_TYPE
 from swagger_server.business_logic.stream import StreamDoesNotExist
-from swagger_server.controllers.stream_controller import JWKS_JSON
+from swagger_server.controllers.transmitter_controller import JWKS_JSON
 from swagger_server.models import PollParameters  # noqa: E501
 from swagger_server.test import client, new_stream
 

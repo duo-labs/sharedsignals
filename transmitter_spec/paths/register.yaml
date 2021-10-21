@@ -1,6 +1,6 @@
 post:
   tags:
-    - Stream
+    - OutOfBand
   summary: Request the transmitter to setup a stream for a given receiver.
   description: |-
     This endpoint is not part of the spec, but rather a quick-and-dirty way to allow a receiver to pass along its

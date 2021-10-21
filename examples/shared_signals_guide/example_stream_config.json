@@ -1,7 +1,5 @@
 {
-  "aud": [
-    "https://popular-app.com"
-  ],
+  "aud": "https://popular-app.com",
   "delivery": {
     "endpoint_url": "https://transmitter.most-secure.com/poll",
     "method": "https://schemas.openid.net/secevent/risc/delivery-method/poll"

@@ -3,8 +3,7 @@ import time
 import uuid
 from typing import List, Mapping, Optional, Tuple
 
-import jwt
-
+import swagger_server.db as db
 from swagger_server.business_logic.const import (
     TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE
 )
@@ -18,8 +17,6 @@ from swagger_server.models import Email
 from swagger_server.models import TransmitterConfiguration  # noqa: E501
 
 from swagger_server.utils import get_simple_subject
-
-from swagger_server.controllers.stream_controller import JWKS_JSON
 
 log = logging.getLogger(__name__)
 
@@ -177,6 +174,10 @@ def poll_request(max_events: int,
 
 
 def create_stream(audience):
-    client_id = jwt.encode({'audience': audience}, JWKS_JSON['k'], JWKS_JSON['alg'])
+    for stream in db.STREAMS.values():
+        if stream.config.aud == audience:
+            return {'token': stream.client_id}
+
+    client_id = uuid.uuid4().hex
     Stream(client_id, audience)
     return {'token': client_id}

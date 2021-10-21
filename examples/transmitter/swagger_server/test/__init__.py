@@ -7,8 +7,6 @@ import pytest
 
 from swagger_server.encoder import JSONEncoder
 from swagger_server.business_logic.stream import Stream
-from swagger_server.models import StreamConfiguration  # noqa: E501
-from swagger_server.models import StreamStatus  # noqa: E501
 
 
 @pytest.fixture
@@ -29,7 +27,7 @@ def client() -> FlaskClient:
 @pytest.fixture
 def new_stream() -> str:
     client_id = uuid.uuid4().hex
-    stream = Stream(client_id=client_id)
+    stream = Stream(client_id, "https://test-case.popular-app.com")
     yield stream
     Stream.delete(client_id)
 

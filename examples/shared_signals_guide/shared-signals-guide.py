@@ -34,7 +34,7 @@ if __name__ == '__main__':
                 'format': 'email'
             },
             headers={
-                'Authorization': 'Bearer popular-app.com',
+                'Authorization': 'Bearer 49e5e7785e4e4f688aa49e2585970370'
             }
         )
         stream_config = stream_config_response.json()
@@ -50,7 +50,7 @@ if __name__ == '__main__':
                 }
             },
             headers = {
-                'Authorization': 'Bearer popular-app.com',
+                'Authorization': 'Bearer 49e5e7785e4e4f688aa49e2585970370'
             }
         )
         print("add_subject_response:", add_subject_response.status_code, add_subject_response.reason)
@@ -62,7 +62,7 @@ if __name__ == '__main__':
                 'state': 'VGhpcyBpcyBhbiBleG'
             },
             headers={
-                'Authorization': 'Bearer popular-app.com',
+                'Authorization': 'Bearer 49e5e7785e4e4f688aa49e2585970370'
             }
         )
         print("verification_response:", verification_response.status_code, verification_response.reason)
@@ -75,7 +75,7 @@ if __name__ == '__main__':
                 "returnImmediately": True
             },
             headers={
-                'Authorization': 'Bearer popular-app.com',
+                'Authorization': 'Bearer 49e5e7785e4e4f688aa49e2585970370'
             }
         )
         events = polling_response.json()
@@ -106,7 +106,7 @@ if __name__ == '__main__':
                 "returnImmediately": True,
             },
             headers={
-                'Authorization': 'Bearer popular-app.com',
+                'Authorization': 'Bearer 49e5e7785e4e4f688aa49e2585970370'
             }
         )
         print("example_polling_response_2.json:", json.dumps(ack_response.json(), indent=2))

@@ -1,6 +1,6 @@
 get:
   tags:
-    - Stream
+    - Transmitter
   summary: The JSON Web Key Set of the Event Transmitter.
   description: |-
     [Spec](https://datatracker.ietf.org/doc/html/rfc7517)
