@@ -1,7 +1,7 @@
 import logging
 import time
 import uuid
-from typing import List, Mapping, Optional, Tuple
+from typing import List, Mapping, Optional, Tuple, Union
 
 import swagger_server.db as db
 from swagger_server.business_logic.const import (
@@ -173,7 +173,7 @@ def poll_request(max_events: int,
     return stream.poll_queue[:max_events], more_available
 
 
-def create_stream(audience):
+def register(audience: [Union[str, List[str]]]):
     for stream in db.STREAMS.values():
         if stream.config.aud == audience:
             return {'token': stream.client_id}

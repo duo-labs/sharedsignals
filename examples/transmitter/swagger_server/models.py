@@ -6,7 +6,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import List, Literal, Optional, Union
 
-from pydantic import BaseModel, Extra, Field, constr
+from pydantic import AnyUrl, BaseModel, Extra, Field, constr
 
 
 class Status(Enum):
@@ -143,7 +143,7 @@ class PollParameters(BaseModel):
 
 
 class RegisterParameters(BaseModel):
-    audience: Optional[str] = Field(
+    audience: Optional[AnyUrl] = Field(
         None,
         description='The audience claim to be used for all events on this stream.',
         example='https://popular-app.com',

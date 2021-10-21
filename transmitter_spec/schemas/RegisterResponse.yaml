@@ -1,6 +1,6 @@
 type: object
 example:
-  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWRpZW5jZSI6Imh0dHBzOi8vcG9wdWxhci1hcHAuY29tIn0.yPqCw01HY35G161OoCbXvuurQSWDvwBEZc7nG7j0I_8
+  token: 49e5e7785e4e4f688aa49e2585970370
 required:
   - token
 properties:

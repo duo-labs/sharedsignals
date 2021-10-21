@@ -40,9 +40,9 @@ class SubjectNotInStream(KeyError):
 
 
 class StreamDoesNotExist(KeyError):
-    def __init__(self, client_id):
+    def __init__(self):
         self.message = (
-            f'There is no Event Stream associated with token: {client_id}. '
+            f'There is no Event Stream associated with that bearer token. '
             f'To use this endpoint, first create an Event Stream with a POST to /register, '
             f'and use the resulting token for authenticated requests.'
         )
@@ -97,7 +97,7 @@ class Stream:
         if client_id in db.STREAMS:
             return db.STREAMS[client_id]
         else:
-            raise StreamDoesNotExist(client_id)
+            raise StreamDoesNotExist()
 
     @classmethod
     def delete(cls, client_id):

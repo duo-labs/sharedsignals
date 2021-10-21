@@ -9,5 +9,5 @@ def register(body=None):
     if connexion.request.is_json:
         body = RegisterParameters.parse_obj(connexion.request.get_json())
 
-    token_json = business_logic.create_stream(body.audience)
+    token_json = business_logic.register(body.audience)
     return token_json, 200

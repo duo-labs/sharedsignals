@@ -11,9 +11,6 @@ from swagger_server.controllers.transmitter_controller import JWKS_JSON
 from swagger_server.models import PollParameters  # noqa: E501
 from swagger_server.test import client, new_stream
 
-from swagger_server import db
-from swagger_server.models import RegisterParameters
-
 
 def test_poll_events__no_events(client, new_stream):
     """Test case for add_subject
@@ -161,7 +158,7 @@ def test_poll_events__no_stream(client, new_stream):
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
     assert response.status_code == 404, "Incorrect response code: {}".format(response.status_code)
-    assert StreamDoesNotExist(bad_client_id).message in str(response.data)
+    assert StreamDoesNotExist().message in str(response.data)
 
 
 def test_jwks_json(client):
@@ -171,26 +168,3 @@ def test_jwks_json(client):
     """
     response = client.get('/jwks.json')
     assert response.status_code == 200, "Incorrect response code: {}".format(response.status_code)
-
-
-def test_register(client):
-    """Test case for add_subject
-
-    Request to add a subject to an Event Stream
-    """
-    body = RegisterParameters(
-        audience='https://popular-app.com'
-    )
-    response = client.post(
-        '/register',
-        json=body.dict(exclude_none=True)
-    )
-    assert response.status_code == 200, "Incorrect response code: {}".format(response.status_code)
-    response_json = json.loads(response.data.decode('utf-8'))
-    assert 'token' in response_json
-    assert response_json['token'] in db.STREAMS
-
-
-if __name__ == '__main__':
-    import pytest
-    pytest.main()
