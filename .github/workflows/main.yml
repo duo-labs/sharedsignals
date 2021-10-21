@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout code
-      - uses: ghcr.io/google/addlicense
+      - uses: docker://ghcr.io/google/addlicense
         name: Run license header check
         with:
           args: -check -ignore **/swagger.yaml -ignore **/models.py *
