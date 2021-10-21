@@ -1,9 +1,8 @@
+# coding: utf-8
 # Copyright (c) 2021 Cisco Systems, Inc. and its affiliates
 # All rights reserved.
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
-
-# coding: utf-8
 from __future__ import absolute_import
 
 from flask import json
