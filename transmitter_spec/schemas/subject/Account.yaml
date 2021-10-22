@@ -17,7 +17,7 @@ properties:
     type: string
   uri:
     type: string
-    example: "acct:example.user@service.example.com"
+    example: "acct:reginold@popular-app.com"
     title: Uri
     # TODO: make this more accurate
     pattern: ^acct:[^\s]+$

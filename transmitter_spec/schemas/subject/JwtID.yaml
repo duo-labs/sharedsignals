@@ -13,7 +13,7 @@ properties:
   # TODO: pattern this
   iss:
     type: string
-    example: "https://idp.example.com/123456789/"
+    example: "https://transmitter.most-secure.com"
     title: iss
     description: |-
       The "iss" (issuer) claim of the JWT being identified, defined in

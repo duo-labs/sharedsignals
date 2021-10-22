@@ -14,7 +14,7 @@ properties:
   # TODO: pattern this
   issuer:
     type: string
-    example: "https://idp.example.com/123456789/"
+    example: "https://transmitter.most-secure.com"
     title: Issuer
     description: |-
       The "Issuer" value of the SAML assertion being identified, defined in

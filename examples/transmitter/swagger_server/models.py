@@ -49,12 +49,12 @@ class TransmitterConfiguration(BaseModel):
     issuer: str = Field(
         ...,
         description='URL using the https scheme with no query or fragment component that the Transmitter asserts as its\nIssuer Identifier.\nThis MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter.\n',
-        example='https://tr.example.com',
+        example='https://transmitter.most-secure.com',
     )
     jwks_uri: str = Field(
         ...,
         description="URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7517)\ndocument. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter.\n",
-        example='https://tr.example.com/jwks.json',
+        example='https://transmitter.most-secure.com',
     )
     delivery_methods_supported: Optional[List[str]] = Field(
         None,
@@ -67,27 +67,27 @@ class TransmitterConfiguration(BaseModel):
     configuration_endpoint: Optional[str] = Field(
         None,
         description='The URL of the Configuration Endpoint.',
-        example='https://tr.example.com/sse/mgmt/stream',
+        example='https://transmitter.most-secure.com/stream',
     )
     status_endpoint: Optional[str] = Field(
         None,
         description='The URL of the Status Endpoint.',
-        example='https://tr.example.com/sse/mgmt/status',
+        example='https://transmitter.most-secure.com/status',
     )
     add_subject_endpoint: Optional[str] = Field(
         None,
         description='The URL of the Add Subject Endpoint.',
-        example='https://tr.example.com/sse/mgmt/subject:add',
+        example='https://transmitter.most-secure.com/add-subject',
     )
     remove_subject_endpoint: Optional[str] = Field(
         None,
         description='The URL of the Remove Subject Endpoint.',
-        example='https://tr.example.com/sse/mgmt/subject:remove',
+        example='https://transmitter.most-secure.com/remove-subject',
     )
     verification_endpoint: Optional[str] = Field(
         None,
         description='The URL of the Verification Endpoint.',
-        example='https://tr.example.com/sse/mgmt/verification',
+        example='https://transmitter.most-secure.com/verification',
     )
     critical_subject_members: Optional[List[str]] = Field(
         None,
@@ -172,7 +172,7 @@ class Account(BaseModel):
 
     format: Literal['account'] = Field('account', title='Format')
     uri: constr(regex=r'^acct:[^\s]+$') = Field(
-        ..., example='acct:example.user@service.example.com', title='Uri'
+        ..., example='acct:reginold@popular-app.com', title='Uri'
     )
 
 
@@ -213,7 +213,7 @@ class Email(BaseModel):
     format: Literal['email'] = Field('email', title='Format')
     email: constr(
         regex=r'(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])'
-    ) = Field(..., example='user@example.com', title='Email')
+    ) = Field(..., example='reginold@popular-app.com', title='Email')
 
 
 class IssSub(BaseModel):
@@ -232,7 +232,7 @@ class IssSub(BaseModel):
     """
 
     format: Literal['iss_sub'] = Field('iss_sub', title='Format')
-    iss: str = Field(..., example='http://issuer.example.com/', title='iss')
+    iss: str = Field(..., example='https://transmitter.most-secure.com', title='iss')
     sub: str = Field(..., example='145234573', title='sub')
 
 
@@ -248,7 +248,7 @@ class JwtID(BaseModel):
     iss: str = Field(
         ...,
         description='The "iss" (issuer) claim of the JWT being identified, defined in\n[RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)',
-        example='https://idp.example.com/123456789/',
+        example='https://transmitter.most-secure.com',
         title='iss',
     )
     jti: str = Field(
@@ -308,7 +308,7 @@ class SamlAssertionID(BaseModel):
     issuer: str = Field(
         ...,
         description='The "Issuer" value of the SAML assertion being identified, defined in\n[OASIS.saml-core-2.0-os](https://openid.net/specs/openid-sse-framework-1_0.html#OASIS.saml-core-2.0-os)',
-        example='https://idp.example.com/123456789/',
+        example='https://transmitter.most-secure.com',
         title='Issuer',
     )
     assertion_id: str = Field(
@@ -394,7 +394,7 @@ class StreamStatus(BaseModel):
     subject: Optional[Subject] = Field(
         None,
         description='OPTIONAL. The Subject to which the status applies.',
-        example={'format': 'email', 'email': 'user@example.com'},
+        example={'format': 'email', 'email': 'reginold@popular-app.com'},
     )
 
 
@@ -408,15 +408,12 @@ class StreamConfiguration(BaseModel):
     iss: Optional[str] = Field(
         None,
         description='Read-Only.\nA URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer\nIdentifier. This MUST be identical to the iss Claim value in Security Event Tokens issued from this Transmitter.',
-        example='https://tr.example.com',
+        example='https://transmitter.most-secure.com',
     )
     aud: Optional[Union[str, List[str]]] = Field(
         None,
         description='Read-Only.\nA string or an array of strings containing an audience claim as defined in\n[JSON Web Token (JWT)](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7519) that identifies\nthe Event Receiver(s) for the Event Stream. This property cannot be updated. If multiple Receivers are specified\nthen the Transmitter SHOULD know that these Receivers are the same entity.',
-        example=[
-            'http://receiver.example.com/web',
-            'http://receiver.example.com/mobile',
-        ],
+        example='https://popular-app.com',
     )
     events_supported: Optional[List[str]] = Field(
         None,
@@ -448,8 +445,8 @@ class StreamConfiguration(BaseModel):
         None,
         description='Read-Write.\nA JSON object containing a set of name/value pairs specifying configuration parameters for the SET delivery\nmethod. The actual delivery method is identified by the special key method with the value being a URI as defined\nin [Section 11.2.1](https://openid.net/specs/openid-sse-framework-1_0.html#delivery-meta).',
         example={
-            'method': 'https://schemas.openid.net/secevent/risc/delivery-method/push',
-            'endpoint_url': 'https://receiver.example.com/push',
+            'method': 'https://schemas.openid.net/secevent/risc/delivery-method/poll',
+            'endpoint_url': '',
         },
     )
     min_verification_interval: Optional[int] = Field(

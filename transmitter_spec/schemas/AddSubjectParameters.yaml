@@ -2,7 +2,7 @@ type: object
 example:
   subject:
     format: email
-    email: "user@example.com"
+    email: "reginold@popular-app.com"
   verified: true
 required:
   - subject

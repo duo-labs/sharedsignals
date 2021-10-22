@@ -11,7 +11,7 @@ properties:
       A URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer
       Identifier. This MUST be identical to the iss Claim value in Security Event Tokens issued from this Transmitter.
     #    pattern: TODO: URL regex
-    example: "https://tr.example.com"
+    example: "https://transmitter.most-secure.com"
   aud:
     oneOf:
       - type: string
@@ -27,10 +27,7 @@ properties:
       the Event Receiver(s) for the Event Stream. This property cannot be updated. If multiple Receivers are specified
       then the Transmitter SHOULD know that these Receivers are the same entity.
     #    pattern: TODO: URL regex
-    example: [
-      "http://receiver.example.com/web",
-      "http://receiver.example.com/mobile"
-    ]
+    example: "https://popular-app.com"
   events_supported:
     type: array
     items:
@@ -76,8 +73,8 @@ properties:
     ]
   delivery:
     example:
-      method: https://schemas.openid.net/secevent/risc/delivery-method/push
-      endpoint_url: https://receiver.example.com/push
+      method: https://schemas.openid.net/secevent/risc/delivery-method/poll
+      endpoint_url: ""
     description: |-
       Read-Write.
       A JSON object containing a set of name/value pairs specifying configuration parameters for the SET delivery
