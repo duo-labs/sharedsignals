@@ -46,17 +46,17 @@ class TransmitterConfiguration(BaseModel):
 
     """
 
-    issuer: str = Field(
+    issuer: AnyUrl = Field(
         ...,
         description='URL using the https scheme with no query or fragment component that the Transmitter asserts as its\nIssuer Identifier.\nThis MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter.\n',
         example='https://tr.example.com',
     )
-    jwks_uri: str = Field(
+    jwks_uri: AnyUrl = Field(
         ...,
         description="URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7517)\ndocument. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter.\n",
         example='https://tr.example.com/jwks.json',
     )
-    delivery_methods_supported: Optional[List[str]] = Field(
+    delivery_methods_supported: Optional[List[AnyUrl]] = Field(
         None,
         description='List of supported delivery method URIs. Recommended.',
         example=[
@@ -64,27 +64,27 @@ class TransmitterConfiguration(BaseModel):
             'https://schemas.openid.net/secevent/risc/delivery-method/poll',
         ],
     )
-    configuration_endpoint: Optional[str] = Field(
+    configuration_endpoint: Optional[AnyUrl] = Field(
         None,
         description='The URL of the Configuration Endpoint.',
         example='https://tr.example.com/sse/mgmt/stream',
     )
-    status_endpoint: Optional[str] = Field(
+    status_endpoint: Optional[AnyUrl] = Field(
         None,
         description='The URL of the Status Endpoint.',
         example='https://tr.example.com/sse/mgmt/status',
     )
-    add_subject_endpoint: Optional[str] = Field(
+    add_subject_endpoint: Optional[AnyUrl] = Field(
         None,
         description='The URL of the Add Subject Endpoint.',
         example='https://tr.example.com/sse/mgmt/subject:add',
     )
-    remove_subject_endpoint: Optional[str] = Field(
+    remove_subject_endpoint: Optional[AnyUrl] = Field(
         None,
         description='The URL of the Remove Subject Endpoint.',
         example='https://tr.example.com/sse/mgmt/subject:remove',
     )
-    verification_endpoint: Optional[str] = Field(
+    verification_endpoint: Optional[AnyUrl] = Field(
         None,
         description='The URL of the Verification Endpoint.',
         example='https://tr.example.com/sse/mgmt/verification',
@@ -100,7 +100,7 @@ class PollDeliveryMethod(BaseModel):
     method: Literal[
         'https://schemas.openid.net/secevent/risc/delivery-method/poll'
     ] = 'https://schemas.openid.net/secevent/risc/delivery-method/poll'
-    endpoint_url: Optional[str] = Field(
+    endpoint_url: Optional[AnyUrl] = Field(
         ...,
         description='The URL where events can be retrieved from. This is specified by the Transmitter.',
     )
@@ -110,7 +110,7 @@ class PushDeliveryMethod(BaseModel):
     method: Literal[
         'https://schemas.openid.net/secevent/risc/delivery-method/push'
     ] = 'https://schemas.openid.net/secevent/risc/delivery-method/push'
-    endpoint_url: str = Field(
+    endpoint_url: AnyUrl = Field(
         ...,
         description='The URL where events are pushed through HTTP POST. This is set by the Receiver.',
     )
@@ -405,12 +405,12 @@ class StreamConfiguration(BaseModel):
 
     """
 
-    iss: Optional[str] = Field(
+    iss: Optional[AnyUrl] = Field(
         None,
         description='Read-Only.\nA URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer\nIdentifier. This MUST be identical to the iss Claim value in Security Event Tokens issued from this Transmitter.',
         example='https://tr.example.com',
     )
-    aud: Optional[Union[str, List[str]]] = Field(
+    aud: Optional[Union[AnyUrl, List[AnyUrl]]] = Field(
         None,
         description='Read-Only.\nA string or an array of strings containing an audience claim as defined in\n[JSON Web Token (JWT)](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7519) that identifies\nthe Event Receiver(s) for the Event Stream. This property cannot be updated. If multiple Receivers are specified\nthen the Transmitter SHOULD know that these Receivers are the same entity.',
         example=[
@@ -418,30 +418,26 @@ class StreamConfiguration(BaseModel):
             'http://receiver.example.com/mobile',
         ],
     )
-    events_supported: Optional[List[str]] = Field(
+    events_supported: Optional[List[AnyUrl]] = Field(
         None,
         description='Read-Only.\nAn array of URIs identifying the set of events supported by the Transmitter for this Receiver.\nIf omitted, Event Transmitters SHOULD make this set available to the Event Receiver via some other means\n(e.g. publishing it in online documentation).',
         example=[
-            'urn:example:secevent:events:type_1',
-            'urn:example:secevent:events:type_2',
-            'urn:example:secevent:events:type_3',
+            'https://schemas.openid.net/secevent/caep/event-type/session-revoked',
+            'https://schemas.openid.net/secevent/risc/event-type/credential-compromise',
         ],
     )
-    events_requested: Optional[List[str]] = Field(
+    events_requested: Optional[List[AnyUrl]] = Field(
         None,
         description='Read-Write.\nAn array of URIs identifying the set of events that the Receiver requested.\nA Receiver SHOULD request only the events that it understands and it can act on.\nThis is configurable by the Receiver.',
         example=[
-            'urn:example:secevent:events:type_2',
-            'urn:example:secevent:events:type_3',
-            'urn:example:secevent:events:type_4',
+            'https://schemas.openid.net/secevent/risc/event-type/credential-compromise'
         ],
     )
-    events_delivered: Optional[List[str]] = Field(
+    events_delivered: Optional[List[AnyUrl]] = Field(
         None,
         description='Read-Only.\nAn array of URIs which is the intersection of events_supported and events_requested.\nThese events MAY be delivered over the Event Stream.',
         example=[
-            'urn:example:secevent:events:type_2',
-            'urn:example:secevent:events:type_3',
+            'https://schemas.openid.net/secevent/risc/event-type/credential-compromise'
         ],
     )
     delivery: Optional[Union[PushDeliveryMethod, PollDeliveryMethod]] = Field(

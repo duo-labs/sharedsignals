@@ -18,20 +18,20 @@ properties:
       URL using the https scheme with no query or fragment component that the Transmitter asserts as its
       Issuer Identifier.
       This MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter.
-    # pattern: TODO: URL regex
+    format: uri
     example: 'https://tr.example.com'
   jwks_uri:
     type: string
     description: |
       URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7517)
       document. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter.
-    # pattern: TODO: URL regex
+    format: uri
     example: 'https://tr.example.com/jwks.json'
   delivery_methods_supported:
     type: array
     items:
       type: string
-      # pattern: TODO: URL regex
+      format: uri
     description: 'List of supported delivery method URIs. Recommended.'
     example: [
         'https://schemas.openid.net/secevent/risc/delivery-method/push',
@@ -39,27 +39,27 @@ properties:
     ]
   configuration_endpoint:
     type: string
-    # pattern: TODO: URL regex
+    format: uri
     description: 'The URL of the Configuration Endpoint.'
     example: 'https://tr.example.com/sse/mgmt/stream'
   status_endpoint:
     type: string
-    # pattern: TODO: URL regex
+    format: uri
     description: 'The URL of the Status Endpoint.'
     example: 'https://tr.example.com/sse/mgmt/status'
   add_subject_endpoint:
     type: string
-    # pattern: TODO: URL regex
+    format: uri
     description: 'The URL of the Add Subject Endpoint.'
     example: 'https://tr.example.com/sse/mgmt/subject:add'
   remove_subject_endpoint:
     type: string
-    # pattern: TODO: URL regex
+    format: uri
     description: 'The URL of the Remove Subject Endpoint.'
     example: 'https://tr.example.com/sse/mgmt/subject:remove'
   verification_endpoint:
     type: string
-    # pattern: TODO: URL regex
+    format: uri
     description: 'The URL of the Verification Endpoint.'
     example: 'https://tr.example.com/sse/mgmt/verification'
   critical_subject_members:
