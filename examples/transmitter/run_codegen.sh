@@ -55,3 +55,12 @@ then
   echo -e "${RED}Pydantic model generation failed"
   exit 1
 fi
+
+# Add license headers to all code in the transmitter folder,
+# including generated code
+docker run --rm -it -v ${PWD}:/src ghcr.io/google/addlicense -f ../../LICENSEHEADER .
+if [ $? -eq 1 ]
+then
+  echo -e "${RED}Adding license headers failed"
+  exit 1
+fi

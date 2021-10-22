@@ -28,7 +28,7 @@ jobs:
       - uses: docker://ghcr.io/google/addlicense
         name: Run license header check
         with:
-          args: -check -ignore **/swagger.yaml -ignore **/models.py .
+          args: -check .
 
   # bundle the spec and upload it to be used in other jobs
   bundle_openapi_spec:
@@ -111,6 +111,10 @@ jobs:
         with:
           name: generated-spec
           path: tmp/artifacts
+      - uses: docker://ghcr.io/google/addlicense
+        name: Add license header to swagger yaml
+        with:
+          args: -f LICENSEHEADER tmp/artifacts/swagger.yaml
       - run: cmp examples/transmitter/swagger_server/swagger/swagger.yaml tmp/artifacts/swagger.yaml
         name: Compare to Spec in examples/transmitter
         id: cmp
@@ -130,6 +134,10 @@ jobs:
         with:
           name: models
           path: tmp/artifacts
+      - uses: docker://ghcr.io/google/addlicense
+        name: Add license header to models.py
+        with:
+          args: -f LICENSEHEADER tmp/artifacts/models.py
       - run: cmp examples/transmitter/swagger_server/models.py tmp/artifacts/models.py
         name: Compare to examples/transmitter/models.py
         id: cmp
