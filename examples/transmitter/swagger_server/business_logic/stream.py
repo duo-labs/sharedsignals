@@ -54,12 +54,6 @@ class StreamDoesNotExist(KeyError):
         super().__init__(self.message)
 
 
-class PushEndpointIsMissing(KeyError):
-    def __init__(self):
-        self.message = ('For push delivery method "endpoint_url" must be specified.')
-        super().__init__(self.message)
-
-
 # TODO-T136006 remove this when push_queue gets removed...
 class EventQueue:
     def __init__(self):
@@ -117,11 +111,6 @@ class Stream:
     def update_config(self, new_config: StreamConfiguration):
         config = self.config.dict()
         _new_config = new_config.dict()
-
-        if isinstance(new_config.delivery, PushDeliveryMethod) and \
-           _new_config['delivery'].get('endpoint_url') is None:
-            raise PushEndpointIsMissing()
-
         for key in READ_ONLY_CONFIG_FIELDS:
             _new_config.pop(key, None)
         config.update(_new_config)

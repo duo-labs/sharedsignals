@@ -110,7 +110,7 @@ class PushDeliveryMethod(BaseModel):
     method: Literal[
         'https://schemas.openid.net/secevent/risc/delivery-method/push'
     ] = 'https://schemas.openid.net/secevent/risc/delivery-method/push'
-    endpoint_url: Optional[AnyUrl] = Field(
+    endpoint_url: AnyUrl = Field(
         ...,
         description='The URL where events are pushed through HTTP POST. This is set by the Receiver.',
     )

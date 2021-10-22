@@ -20,7 +20,6 @@ properties:
     type: string
     description: The URL where events are pushed through HTTP POST. This is set by the Receiver.
     format: uri
-    nullable: true
   authorization_header:
     type: string
     description: |-

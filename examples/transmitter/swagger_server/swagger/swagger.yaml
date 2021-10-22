@@ -798,6 +798,7 @@ components:
           description: The URL where events can be retrieved from. This is specified
             by the Transmitter.
           format: uri
+          nullable: true
       example:
         method: https://schemas.openid.net/secevent/risc/delivery-method/poll
         endpoint_url: https://tr.example.com/polling
@@ -817,7 +818,6 @@ components:
           description: The URL where events are pushed through HTTP POST. This is
             set by the Receiver.
           format: uri
-          nullable: true
         authorization_header:
           type: string
           description: "The HTTP Authorization header that the Transmitter MUST set\
