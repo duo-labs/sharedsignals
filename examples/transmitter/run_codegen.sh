@@ -58,7 +58,7 @@ fi
 
 # Add license headers to all code in the transmitter folder,
 # including generated code
-docker run --rm -it -v ${PWD}:/src ghcr.io/google/addlicense -f ../../LICENSEHEADER .
+docker run --rm -i -v ${PWD}:/src ghcr.io/google/addlicense -f /dev/stdin . < ../../LICENSEHEADER
 if [ $? -eq 1 ]
 then
   echo -e "${RED}Adding license headers failed"
