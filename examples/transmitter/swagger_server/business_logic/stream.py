@@ -18,7 +18,7 @@ from swagger_server.models import Status
 
 DEFAULT_CONFIG = StreamConfiguration(
     iss=TRANSMITTER_ISSUER,
-    aud='',
+    aud=[],
     events_supported=SUPPORTED_EVENTS,
     events_requested=[],
     events_delivered=[],

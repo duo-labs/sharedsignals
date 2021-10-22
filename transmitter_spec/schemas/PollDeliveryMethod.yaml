@@ -9,7 +9,6 @@ example:
   endpoint_url: https://tr.example.com/polling
 required:
   - method
-  - endpoint_url
 properties:
   method:
     default: "https://schemas.openid.net/secevent/risc/delivery-method/poll"
@@ -19,5 +18,4 @@ properties:
   endpoint_url:
     type: string
     description: The URL where events can be retrieved from. This is specified by the Transmitter.
-    nullable: true
     format: uri

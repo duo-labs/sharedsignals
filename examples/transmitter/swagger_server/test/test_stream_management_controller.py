@@ -207,7 +207,7 @@ def test_stream_post(client, new_stream):
     new_config = StreamConfiguration(
         iss='http://pets.com',  # this should not update
         events_requested=requested_events,
-        delivery=PollDeliveryMethod(endpoint_url="")
+        delivery=PollDeliveryMethod(endpoint_url=None)
     )
 
     response = client.post(

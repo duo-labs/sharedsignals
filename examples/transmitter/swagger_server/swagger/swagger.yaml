@@ -731,8 +731,8 @@ components:
             \ The actual delivery method is identified by the special key method with\
             \ the value being a URI as defined\nin [Section 11.2.1](https://openid.net/specs/openid-sse-framework-1_0.html#delivery-meta)."
           example:
-            method: https://schemas.openid.net/secevent/risc/delivery-method/push
-            endpoint_url: https://receiver.example.com/push
+            method: https://schemas.openid.net/secevent/risc/delivery-method/poll
+            endpoint_url: https://receiver.example.com/poll
           discriminator:
             propertyName: method
           oneOf:
@@ -759,8 +759,8 @@ components:
         - http://receiver.example.com/web
         - http://receiver.example.com/mobile
         delivery:
-          method: https://schemas.openid.net/secevent/risc/delivery-method/push
-          endpoint_url: https://receiver.example.com/push
+          method: https://schemas.openid.net/secevent/risc/delivery-method/poll
+          endpoint_url: https://receiver.example.com/poll
         events_supported:
         - https://schemas.openid.net/secevent/caep/event-type/session-revoked
         - https://schemas.openid.net/secevent/risc/event-type/credential-compromise
@@ -785,7 +785,6 @@ components:
       - $ref: '#/components/schemas/StreamStatus'
     PollDeliveryMethod:
       required:
-      - endpoint_url
       - method
       type: object
       properties:
@@ -799,7 +798,6 @@ components:
           description: The URL where events can be retrieved from. This is specified
             by the Transmitter.
           format: uri
-          nullable: true
       example:
         method: https://schemas.openid.net/secevent/risc/delivery-method/poll
         endpoint_url: https://tr.example.com/polling
