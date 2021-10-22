@@ -77,7 +77,7 @@ properties:
   delivery:
     example:
       method: https://schemas.openid.net/secevent/risc/delivery-method/poll
-      endpoint_url: https://receiver.example.com/poll
+      endpoint_url: null
     description: |-
       Read-Write.
       A JSON object containing a set of name/value pairs specifying configuration parameters for the SET delivery

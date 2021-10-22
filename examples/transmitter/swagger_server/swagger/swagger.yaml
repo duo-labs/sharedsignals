@@ -732,7 +732,7 @@ components:
             \ the value being a URI as defined\nin [Section 11.2.1](https://openid.net/specs/openid-sse-framework-1_0.html#delivery-meta)."
           example:
             method: https://schemas.openid.net/secevent/risc/delivery-method/poll
-            endpoint_url: https://receiver.example.com/poll
+            endpoint_url: null
           discriminator:
             propertyName: method
           oneOf:
@@ -760,7 +760,7 @@ components:
         - http://receiver.example.com/mobile
         delivery:
           method: https://schemas.openid.net/secevent/risc/delivery-method/poll
-          endpoint_url: https://receiver.example.com/poll
+          endpoint_url: null
         events_supported:
         - https://schemas.openid.net/secevent/caep/event-type/session-revoked
         - https://schemas.openid.net/secevent/risc/event-type/credential-compromise
@@ -817,6 +817,7 @@ components:
           description: The URL where events are pushed through HTTP POST. This is
             set by the Receiver.
           format: uri
+          nullable: true
         authorization_header:
           type: string
           description: "The HTTP Authorization header that the Transmitter MUST set\

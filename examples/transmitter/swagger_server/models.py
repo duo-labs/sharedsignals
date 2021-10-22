@@ -110,7 +110,7 @@ class PushDeliveryMethod(BaseModel):
     method: Literal[
         'https://schemas.openid.net/secevent/risc/delivery-method/push'
     ] = 'https://schemas.openid.net/secevent/risc/delivery-method/push'
-    endpoint_url: AnyUrl = Field(
+    endpoint_url: Optional[AnyUrl] = Field(
         ...,
         description='The URL where events are pushed through HTTP POST. This is set by the Receiver.',
     )
@@ -445,7 +445,7 @@ class StreamConfiguration(BaseModel):
         description='Read-Write.\nA JSON object containing a set of name/value pairs specifying configuration parameters for the SET delivery\nmethod. The actual delivery method is identified by the special key method with the value being a URI as defined\nin [Section 11.2.1](https://openid.net/specs/openid-sse-framework-1_0.html#delivery-meta).',
         example={
             'method': 'https://schemas.openid.net/secevent/risc/delivery-method/poll',
-            'endpoint_url': 'https://receiver.example.com/poll',
+            'endpoint_url': None,
         },
     )
     min_verification_interval: Optional[int] = Field(
