@@ -1,3 +1,8 @@
+# Copyright (c) 2021 Cisco Systems, Inc. and its affiliates
+# All rights reserved.
+# Use of this source code is governed by a BSD 3-Clause License
+# that can be found in the LICENSE file.
+
 # This is a basic workflow to help you get started with Actions
 
 name: CI
@@ -13,6 +18,18 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # Use addlicense tool to check that all files have a license header
+  check_license_headers_applied:
+    name: check_license_headers_applied
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout code
+      - uses: docker://ghcr.io/google/addlicense
+        name: Run license header check
+        with:
+          args: -check -ignore **/swagger.yaml -ignore **/models.py .
+
   # bundle the spec and upload it to be used in other jobs
   bundle_openapi_spec:
     name: bundle_openapi_spec
