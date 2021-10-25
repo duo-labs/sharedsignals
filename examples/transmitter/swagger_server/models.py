@@ -49,12 +49,12 @@ class TransmitterConfiguration(BaseModel):
     issuer: str = Field(
         ...,
         description='URL using the https scheme with no query or fragment component that the Transmitter asserts as its\nIssuer Identifier.\nThis MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter.\n',
-        example='https://transmitter.most-secure.com',
+        example='https://most-secure.com',
     )
     jwks_uri: str = Field(
         ...,
         description="URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7517)\ndocument. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter.\n",
-        example='https://transmitter.most-secure.com',
+        example='https://transmitter.most-secure.com/jwks.json',
     )
     delivery_methods_supported: Optional[List[str]] = Field(
         None,
@@ -232,7 +232,7 @@ class IssSub(BaseModel):
     """
 
     format: Literal['iss_sub'] = Field('iss_sub', title='Format')
-    iss: str = Field(..., example='https://transmitter.most-secure.com', title='iss')
+    iss: str = Field(..., example='https://most-secure.com', title='iss')
     sub: str = Field(..., example='145234573', title='sub')
 
 
@@ -248,7 +248,7 @@ class JwtID(BaseModel):
     iss: str = Field(
         ...,
         description='The "iss" (issuer) claim of the JWT being identified, defined in\n[RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)',
-        example='https://transmitter.most-secure.com',
+        example='https://most-secure.com',
         title='iss',
     )
     jti: str = Field(
@@ -308,7 +308,7 @@ class SamlAssertionID(BaseModel):
     issuer: str = Field(
         ...,
         description='The "Issuer" value of the SAML assertion being identified, defined in\n[OASIS.saml-core-2.0-os](https://openid.net/specs/openid-sse-framework-1_0.html#OASIS.saml-core-2.0-os)',
-        example='https://transmitter.most-secure.com',
+        example='https://most-secure.com',
         title='Issuer',
     )
     assertion_id: str = Field(
@@ -408,7 +408,7 @@ class StreamConfiguration(BaseModel):
     iss: Optional[str] = Field(
         None,
         description='Read-Only.\nA URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer\nIdentifier. This MUST be identical to the iss Claim value in Security Event Tokens issued from this Transmitter.',
-        example='https://transmitter.most-secure.com',
+        example='https://most-secure.com',
     )
     aud: Optional[Union[str, List[str]]] = Field(
         None,

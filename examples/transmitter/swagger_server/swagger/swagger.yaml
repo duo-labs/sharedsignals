@@ -594,13 +594,13 @@ components:
             URL using the https scheme with no query or fragment component that the Transmitter asserts as its
             Issuer Identifier.
             This MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter.
-          example: https://transmitter.most-secure.com
+          example: https://most-secure.com
         jwks_uri:
           type: string
           description: "URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7517)\n\
             document. This contains the signing key(s) the Receiver uses to validate\
             \ signatures from the Transmitter.\n"
-          example: https://transmitter.most-secure.com
+          example: https://transmitter.most-secure.com/jwks.json
         delivery_methods_supported:
           type: array
           description: List of supported delivery method URIs. Recommended.
@@ -651,8 +651,8 @@ components:
         add_subject_endpoint: https://transmitter.most-secure.com/add-subject
         remove_subject_endpoint: https://transmitter.most-secure.com/remove-subject
         status_endpoint: https://transmitter.most-secure.com/status
-        jwks_uri: https://transmitter.most-secure.com
-        issuer: https://transmitter.most-secure.com
+        jwks_uri: https://transmitter.most-secure.com/jwks.json
+        issuer: https://most-secure.com
         verification_endpoint: https://transmitter.most-secure.com/verification
     StreamConfiguration:
       title: Event Stream Configuration
@@ -664,7 +664,7 @@ components:
             Read-Only.
             A URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer
             Identifier. This MUST be identical to the iss Claim value in Security Event Tokens issued from this Transmitter.
-          example: https://transmitter.most-secure.com
+          example: https://most-secure.com
         aud:
           description: "Read-Only.\nA string or an array of strings containing an\
             \ audience claim as defined in\n[JSON Web Token (JWT)](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7519)\
@@ -751,7 +751,7 @@ components:
         - urn:example:secevent:events:type_1
         - urn:example:secevent:events:type_2
         - urn:example:secevent:events:type_3
-        iss: https://transmitter.most-secure.com
+        iss: https://most-secure.com
         format: format
         events_delivered:
         - urn:example:secevent:events:type_2
@@ -1012,7 +1012,7 @@ components:
         iss:
           title: iss
           type: string
-          example: https://transmitter.most-secure.com
+          example: https://most-secure.com
         sub:
           title: sub
           type: string
@@ -1045,7 +1045,7 @@ components:
           type: string
           description: "The \"iss\" (issuer) claim of the JWT being identified, defined\
             \ in\n[RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)"
-          example: https://transmitter.most-secure.com
+          example: https://most-secure.com
         jti:
           title: jti
           type: string
@@ -1126,7 +1126,7 @@ components:
           type: string
           description: "The \"Issuer\" value of the SAML assertion being identified,\
             \ defined in\n[OASIS.saml-core-2.0-os](https://openid.net/specs/openid-sse-framework-1_0.html#OASIS.saml-core-2.0-os)"
-          example: https://transmitter.most-secure.com
+          example: https://most-secure.com
         assertion_id:
           title: Assertion ID
           type: string

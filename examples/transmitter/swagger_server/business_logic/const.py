@@ -5,7 +5,7 @@
 
 MIN_VERIFICATION_INTERVAL = 60  # seconds
 
-TRANSMITTER_ISSUER = "https://transmitter.most-secure.com/"
+TRANSMITTER_ISSUER = "https://most-secure.com/"
 
 POLL_ENDPOINT = "https://transmitter.most-secure.com/poll"
 

@@ -16,7 +16,7 @@ properties:
       A URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer
       Identifier. This MUST be identical to the iss Claim value in Security Event Tokens issued from this Transmitter.
     #    pattern: TODO: URL regex
-    example: "https://transmitter.most-secure.com"
+    example: "https://most-secure.com"
   aud:
     oneOf:
       - type: string

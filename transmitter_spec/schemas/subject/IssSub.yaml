@@ -25,7 +25,7 @@ properties:
   # TODO: pattern this
   iss:
     type: string
-    example: "https://transmitter.most-secure.com"
+    example: "https://most-secure.com"
     title: iss
   # TODO: pattern this
   sub:
