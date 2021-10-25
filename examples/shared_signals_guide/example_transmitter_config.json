@@ -4,7 +4,7 @@
   "remove_subject_endpoint": "https://transmitter.most-secure.com/remove-subject",
   "verification_endpoint": "https://transmitter.most-secure.com/verification",
   "status_endpoint": "https://transmitter.most-secure.com/status",
-  "issuer": "https://transmitter.most-secure.com/",
+  "issuer": "https://most-secure.com/",
   "jwks_uri": "https://transmitter.most-secure.com/jwks.json",
   "delivery_methods_supported": [
     "https://schemas.openid.net/secevent/risc/delivery-method/push",

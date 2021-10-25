@@ -15,6 +15,6 @@
     "https://schemas.openid.net/secevent/risc/event-type/credential-compromise"
   ],
   "format": "email",
-  "iss": "https://transmitter.most-secure.com/",
+  "iss": "https://most-secure.com/",
   "min_verification_interval": 60
 }
