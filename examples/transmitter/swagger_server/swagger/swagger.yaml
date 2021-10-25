@@ -598,12 +598,14 @@ components:
             URL using the https scheme with no query or fragment component that the Transmitter asserts as its
             Issuer Identifier.
             This MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter.
+          format: uri
           example: https://tr.example.com
         jwks_uri:
           type: string
           description: "URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7517)\n\
             document. This contains the signing key(s) the Receiver uses to validate\
             \ signatures from the Transmitter.\n"
+          format: uri
           example: https://tr.example.com/jwks.json
         delivery_methods_supported:
           type: array
@@ -613,25 +615,31 @@ components:
           - https://schemas.openid.net/secevent/risc/delivery-method/poll
           items:
             type: string
+            format: uri
         configuration_endpoint:
           type: string
           description: The URL of the Configuration Endpoint.
+          format: uri
           example: https://tr.example.com/sse/mgmt/stream
         status_endpoint:
           type: string
           description: The URL of the Status Endpoint.
+          format: uri
           example: https://tr.example.com/sse/mgmt/status
         add_subject_endpoint:
           type: string
           description: The URL of the Add Subject Endpoint.
+          format: uri
           example: https://tr.example.com/sse/mgmt/subject:add
         remove_subject_endpoint:
           type: string
           description: The URL of the Remove Subject Endpoint.
+          format: uri
           example: https://tr.example.com/sse/mgmt/subject:remove
         verification_endpoint:
           type: string
           description: The URL of the Verification Endpoint.
+          format: uri
           example: https://tr.example.com/sse/mgmt/verification
         critical_subject_members:
           type: array
@@ -668,6 +676,7 @@ components:
             Read-Only.
             A URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer
             Identifier. This MUST be identical to the iss Claim value in Security Event Tokens issued from this Transmitter.
+          format: uri
           example: https://tr.example.com
         aud:
           description: "Read-Only.\nA string or an array of strings containing an\
@@ -680,9 +689,11 @@ components:
           - http://receiver.example.com/mobile
           oneOf:
           - type: string
+            format: uri
           - type: array
             items:
               type: string
+              format: uri
         events_supported:
           type: array
           description: "Read-Only.\nAn array of URIs identifying the set of events\
@@ -690,11 +701,11 @@ components:
             \ SHOULD make this set available to the Event Receiver via some other\
             \ means\n(e.g. publishing it in online documentation)."
           example:
-          - urn:example:secevent:events:type_1
-          - urn:example:secevent:events:type_2
-          - urn:example:secevent:events:type_3
+          - https://schemas.openid.net/secevent/caep/event-type/session-revoked
+          - https://schemas.openid.net/secevent/risc/event-type/credential-compromise
           items:
             type: string
+            format: uri
         events_requested:
           type: array
           description: |-
@@ -703,11 +714,10 @@ components:
             A Receiver SHOULD request only the events that it understands and it can act on.
             This is configurable by the Receiver.
           example:
-          - urn:example:secevent:events:type_2
-          - urn:example:secevent:events:type_3
-          - urn:example:secevent:events:type_4
+          - https://schemas.openid.net/secevent/risc/event-type/credential-compromise
           items:
             type: string
+            format: uri
         events_delivered:
           type: array
           description: |-
@@ -715,18 +725,18 @@ components:
             An array of URIs which is the intersection of events_supported and events_requested.
             These events MAY be delivered over the Event Stream.
           example:
-          - urn:example:secevent:events:type_2
-          - urn:example:secevent:events:type_3
+          - https://schemas.openid.net/secevent/risc/event-type/credential-compromise
           items:
             type: string
+            format: uri
         delivery:
           description: "Read-Write.\nA JSON object containing a set of name/value\
             \ pairs specifying configuration parameters for the SET delivery\nmethod.\
             \ The actual delivery method is identified by the special key method with\
             \ the value being a URI as defined\nin [Section 11.2.1](https://openid.net/specs/openid-sse-framework-1_0.html#delivery-meta)."
           example:
-            method: https://schemas.openid.net/secevent/risc/delivery-method/push
-            endpoint_url: https://receiver.example.com/push
+            method: https://schemas.openid.net/secevent/risc/delivery-method/poll
+            endpoint_url: null
           discriminator:
             propertyName: method
           oneOf:
@@ -753,21 +763,17 @@ components:
         - http://receiver.example.com/web
         - http://receiver.example.com/mobile
         delivery:
-          method: https://schemas.openid.net/secevent/risc/delivery-method/push
-          endpoint_url: https://receiver.example.com/push
+          method: https://schemas.openid.net/secevent/risc/delivery-method/poll
+          endpoint_url: null
         events_supported:
-        - urn:example:secevent:events:type_1
-        - urn:example:secevent:events:type_2
-        - urn:example:secevent:events:type_3
+        - https://schemas.openid.net/secevent/caep/event-type/session-revoked
+        - https://schemas.openid.net/secevent/risc/event-type/credential-compromise
         iss: https://tr.example.com
         format: format
         events_delivered:
-        - urn:example:secevent:events:type_2
-        - urn:example:secevent:events:type_3
+        - https://schemas.openid.net/secevent/risc/event-type/credential-compromise
         events_requested:
-        - urn:example:secevent:events:type_2
-        - urn:example:secevent:events:type_3
-        - urn:example:secevent:events:type_4
+        - https://schemas.openid.net/secevent/risc/event-type/credential-compromise
         min_verification_interval: 0
     UpdateStreamStatus:
       type: object
@@ -783,7 +789,6 @@ components:
       - $ref: '#/components/schemas/StreamStatus'
     PollDeliveryMethod:
       required:
-      - endpoint_url
       - method
       type: object
       properties:
@@ -796,6 +801,7 @@ components:
           type: string
           description: The URL where events can be retrieved from. This is specified
             by the Transmitter.
+          format: uri
           nullable: true
       example:
         method: https://schemas.openid.net/secevent/risc/delivery-method/poll
@@ -815,6 +821,7 @@ components:
           type: string
           description: The URL where events are pushed through HTTP POST. This is
             set by the Receiver.
+          format: uri
         authorization_header:
           type: string
           description: "The HTTP Authorization header that the Transmitter MUST set\

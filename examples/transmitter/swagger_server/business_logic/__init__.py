@@ -178,7 +178,7 @@ def poll_request(max_events: int,
     return stream.poll_queue[:max_events], more_available
 
 
-def register(audience: [Union[str, List[str]]]):
+def register(audience: Union[str, List[str]]):
     for stream in db.STREAMS.values():
         if stream.config.aud == audience:
             return {'token': stream.client_id}
