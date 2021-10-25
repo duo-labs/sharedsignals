@@ -19,7 +19,7 @@ properties:
   endpoint_url:
     type: string
     description: The URL where events are pushed through HTTP POST. This is set by the Receiver.
-    #    pattern: TODO: URL regex
+    format: uri
   authorization_header:
     type: string
     description: |-
