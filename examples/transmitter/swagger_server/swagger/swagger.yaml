@@ -227,7 +227,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: "{\"user\":{\"format\":\"email\",\"email\":\"user@example.com\"\
+          example: "{\"user\":{\"format\":\"email\",\"email\":\"reginold@popular-app.com\"\
             }}"
       responses:
         "200":
@@ -573,13 +573,13 @@ components:
           description: OPTIONAL. The Subject to which the status applies.
           example:
             format: email
-            email: user@example.com
+            email: reginold@popular-app.com
           allOf:
           - $ref: '#/components/schemas/Subject'
       example:
         subject:
           format: email
-          email: user@example.com
+          email: reginold@popular-app.com
         status: disabled
     TransmitterConfiguration:
       title: Transmitter Configuration Response
@@ -595,14 +595,14 @@ components:
             Issuer Identifier.
             This MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter.
           format: uri
-          example: https://tr.example.com
+          example: https://most-secure.com
         jwks_uri:
           type: string
           description: "URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7517)\n\
             document. This contains the signing key(s) the Receiver uses to validate\
             \ signatures from the Transmitter.\n"
           format: uri
-          example: https://tr.example.com/jwks.json
+          example: https://transmitter.most-secure.com/jwks.json
         delivery_methods_supported:
           type: array
           description: List of supported delivery method URIs. Recommended.
@@ -616,27 +616,27 @@ components:
           type: string
           description: The URL of the Configuration Endpoint.
           format: uri
-          example: https://tr.example.com/sse/mgmt/stream
+          example: https://transmitter.most-secure.com/stream
         status_endpoint:
           type: string
           description: The URL of the Status Endpoint.
           format: uri
-          example: https://tr.example.com/sse/mgmt/status
+          example: https://transmitter.most-secure.com/status
         add_subject_endpoint:
           type: string
           description: The URL of the Add Subject Endpoint.
           format: uri
-          example: https://tr.example.com/sse/mgmt/subject:add
+          example: https://transmitter.most-secure.com/add-subject
         remove_subject_endpoint:
           type: string
           description: The URL of the Remove Subject Endpoint.
           format: uri
-          example: https://tr.example.com/sse/mgmt/subject:remove
+          example: https://transmitter.most-secure.com/remove-subject
         verification_endpoint:
           type: string
           description: The URL of the Verification Endpoint.
           format: uri
-          example: https://tr.example.com/sse/mgmt/verification
+          example: https://transmitter.most-secure.com/verification
         critical_subject_members:
           type: array
           description: "List of member names in a Complex Subject which, if present\
@@ -652,16 +652,16 @@ components:
         delivery_methods_supported:
         - https://schemas.openid.net/secevent/risc/delivery-method/push
         - https://schemas.openid.net/secevent/risc/delivery-method/poll
-        configuration_endpoint: https://tr.example.com/sse/mgmt/stream
+        configuration_endpoint: https://transmitter.most-secure.com/stream
         critical_subject_members:
         - tenant
         - user
-        add_subject_endpoint: https://tr.example.com/sse/mgmt/subject:add
-        remove_subject_endpoint: https://tr.example.com/sse/mgmt/subject:remove
-        status_endpoint: https://tr.example.com/sse/mgmt/status
-        jwks_uri: https://tr.example.com/jwks.json
-        issuer: https://tr.example.com
-        verification_endpoint: https://tr.example.com/sse/mgmt/verification
+        add_subject_endpoint: https://transmitter.most-secure.com/add-subject
+        remove_subject_endpoint: https://transmitter.most-secure.com/remove-subject
+        status_endpoint: https://transmitter.most-secure.com/status
+        jwks_uri: https://transmitter.most-secure.com/jwks.json
+        issuer: https://most-secure.com
+        verification_endpoint: https://transmitter.most-secure.com/verification
     StreamConfiguration:
       title: Event Stream Configuration
       type: object
@@ -673,16 +673,14 @@ components:
             A URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer
             Identifier. This MUST be identical to the iss Claim value in Security Event Tokens issued from this Transmitter.
           format: uri
-          example: https://tr.example.com
+          example: https://most-secure.com
         aud:
           description: "Read-Only.\nA string or an array of strings containing an\
             \ audience claim as defined in\n[JSON Web Token (JWT)](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7519)\
             \ that identifies\nthe Event Receiver(s) for the Event Stream. This property\
             \ cannot be updated. If multiple Receivers are specified\nthen the Transmitter\
             \ SHOULD know that these Receivers are the same entity."
-          example:
-          - http://receiver.example.com/web
-          - http://receiver.example.com/mobile
+          example: https://popular-app.com
           oneOf:
           - type: string
             format: uri
@@ -755,16 +753,14 @@ components:
       description: "JSON Object describing and Event Stream's configuration\n[Spec](https://openid.net/specs/openid-sse-framework-1_0.html#stream-config)\"\
         \n"
       example:
-        aud:
-        - http://receiver.example.com/web
-        - http://receiver.example.com/mobile
+        aud: https://popular-app.com
         delivery:
           method: https://schemas.openid.net/secevent/risc/delivery-method/poll
           endpoint_url: null
         events_supported:
         - https://schemas.openid.net/secevent/caep/event-type/session-revoked
         - https://schemas.openid.net/secevent/risc/event-type/credential-compromise
-        iss: https://tr.example.com
+        iss: https://most-secure.com
         format: format
         events_delivered:
         - https://schemas.openid.net/secevent/risc/event-type/credential-compromise
@@ -801,7 +797,7 @@ components:
           nullable: true
       example:
         method: https://schemas.openid.net/secevent/risc/delivery-method/poll
-        endpoint_url: https://tr.example.com/polling
+        endpoint_url: https://transmitter.most-secure.com/poll
     PushDeliveryMethod:
       required:
       - endpoint_url
@@ -855,7 +851,7 @@ components:
       example:
         subject:
           format: email
-          email: user@example.com
+          email: reginold@popular-app.com
         verified: true
     PollParameters:
       type: object
@@ -908,7 +904,7 @@ components:
       example:
         subject:
           format: email
-          email: user@example.com
+          email: reginold@popular-app.com
     VerificationParameters:
       type: object
       properties:
@@ -939,7 +935,7 @@ components:
           title: Uri
           pattern: "^acct:[^\\s]+$"
           type: string
-          example: acct:example.user@service.example.com
+          example: acct:reginold@popular-app.com
       description: "[Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.1)\n\
         \nThe Account Identifier Format identifies a subject using an account\nat\
         \ a service provider, identified with an \"acct\" URI as defined in\n[RFC7565](https://datatracker.ietf.org/doc/html/rfc7565).\n\
@@ -996,7 +992,7 @@ components:
             x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\\
             x0b\\x0c\\x0e-\\x7f])+)\\])"
           type: string
-          example: user@example.com
+          example: reginold@popular-app.com
       description: "[Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3.2.4)\n\
         \nThe Email Identifier Format identifies a subject using an email\naddress.\
         \  Subject Identifiers in this format MUST contain an \"email\"\nmember whose\
@@ -1023,7 +1019,7 @@ components:
         iss:
           title: iss
           type: string
-          example: http://issuer.example.com/
+          example: https://most-secure.com
         sub:
           title: sub
           type: string
@@ -1056,7 +1052,7 @@ components:
           type: string
           description: "The \"iss\" (issuer) claim of the JWT being identified, defined\
             \ in\n[RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)"
-          example: https://idp.example.com/123456789/
+          example: https://most-secure.com
         jti:
           title: jti
           type: string
@@ -1137,7 +1133,7 @@ components:
           type: string
           description: "The \"Issuer\" value of the SAML assertion being identified,\
             \ defined in\n[OASIS.saml-core-2.0-os](https://openid.net/specs/openid-sse-framework-1_0.html#OASIS.saml-core-2.0-os)"
-          example: https://idp.example.com/123456789/
+          example: https://most-secure.com
         assertion_id:
           title: Assertion ID
           type: string
@@ -1331,7 +1327,8 @@ components:
       explode: true
       schema:
         type: string
-        example: "{\"user\":{\"format\":\"email\",\"email\":\"user@example.com\"}}"
+        example: "{\"user\":{\"format\":\"email\",\"email\":\"reginold@popular-app.com\"\
+          }}"
   securitySchemes:
     BearerAuth:
       type: http
