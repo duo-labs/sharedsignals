@@ -615,7 +615,7 @@ components:
         configuration_endpoint:
           type: string
           description: The URL of the Configuration Endpoint.
-		  format: uri
+          format: uri
           example: https://transmitter.most-secure.com/stream
         status_endpoint:
           type: string
