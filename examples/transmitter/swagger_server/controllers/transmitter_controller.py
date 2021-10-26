@@ -6,7 +6,6 @@
 import connexion
 
 from swagger_server import business_logic
-from swagger_server.business_logic.stream import StreamDoesNotExist
 from swagger_server import jwt_encode
 from swagger_server.models import PollParameters
 
@@ -24,12 +23,9 @@ def poll_events(token_info, body=None):
     if connexion.request.is_json:
         body = PollParameters.parse_obj(connexion.request.get_json())
 
-    try:
-        events, more_available = business_logic.poll_request(
-            body.maxEvents, body.returnImmediately, body.acks, client_id
-        )
-    except StreamDoesNotExist as e:
-        return e.message, 404
+    events, more_available = business_logic.poll_request(
+        body.maxEvents, body.returnImmediately, body.acks, client_id
+    )
 
     events = {
         'sets': {

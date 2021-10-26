@@ -10,7 +10,8 @@ import pytest
 
 from swagger_server.business_logic.const import VERIFICATION_EVENT_TYPE
 from swagger_server.business_logic.event import SUPPORTED_EVENTS
-from swagger_server.business_logic.stream import Stream, StreamDoesNotExist
+from swagger_server.business_logic.stream import Stream
+from swagger_server.errors import StreamDoesNotExist
 import swagger_server.db as db
 from swagger_server.models import AddSubjectParameters
 from swagger_server.models import Email

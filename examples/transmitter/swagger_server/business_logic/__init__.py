@@ -13,6 +13,7 @@ from swagger_server.business_logic.const import (
     TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE
 )
 from swagger_server.business_logic.stream import Stream
+from swagger_server.errors import EmailSubjectNotFound, LongPollingNotSupported
 from swagger_server.models import StreamConfiguration
 from swagger_server.models import StreamStatus
 from swagger_server.models import Subject
@@ -24,20 +25,6 @@ from swagger_server.models import TransmitterConfiguration  # noqa: E501
 from swagger_server.utils import get_simple_subject
 
 log = logging.getLogger(__name__)
-
-
-class LongPollingNotSupported(Exception):
-    def __init__(self):
-        self.message = (
-            'This Transmitter does not support long polling. '
-            'Please try again with return_immediately=True.'
-        )
-
-
-class EmailSubjectNotFound(Exception):
-    def __init__(self, subject: Subject) -> None:
-        self.message = 'Email not found in subject: {}'.format(subject.dict())
-        super().__init__(self.message)
 
 
 def add_subject(subject: Subject,
