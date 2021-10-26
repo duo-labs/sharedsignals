@@ -1,0 +1,12 @@
+{
+  "keys": [
+    {
+      "alg": "ES256",
+      "crv": "P-256",
+      "kid": "transmitter-ES256-001",
+      "kty": "EC",
+      "x": "Js-Hzhls17UL1JI2EL0AB6Ta2B282me2niBGc0s1-Lo",
+      "y": "PCsSWYCixwZgEyYKbGDFpzaooP6_Z-4CEfV62cbNBQw"
+    }
+  ]
+}

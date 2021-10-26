@@ -81,7 +81,9 @@ def remove_subject(token_info, body):  # noqa: E501
         body = RemoveSubjectParameters.parse_obj(connexion.request.get_json())
 
     try:
-        business_logic.remove_subject(subject=body.subject, client_id=client_id)
+        business_logic.remove_subject(
+            subject=body.subject, client_id=client_id
+        )
         return NoContent, 204
     except (StreamDoesNotExist, EmailSubjectNotFound) as e:
         return e.message, 404

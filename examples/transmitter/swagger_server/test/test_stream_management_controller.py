@@ -1,10 +1,8 @@
+# coding: utf-8
 # Copyright (c) 2021 Cisco Systems, Inc. and its affiliates
 # All rights reserved.
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
-
-# coding: utf-8
-
 from __future__ import absolute_import
 
 from flask import json
@@ -14,19 +12,18 @@ from swagger_server.business_logic.const import VERIFICATION_EVENT_TYPE
 from swagger_server.business_logic.event import SUPPORTED_EVENTS
 from swagger_server.business_logic.stream import Stream, StreamDoesNotExist
 import swagger_server.db as db
-from swagger_server.models import AddSubjectParameters, PushDeliveryMethod  # noqa: E501
-from swagger_server.models import Email  # noqa: E501
-from swagger_server.models import PhoneNumber  # noqa: E501
+from swagger_server.models import AddSubjectParameters
+from swagger_server.models import Email
+from swagger_server.models import PhoneNumber
 from swagger_server.models import PollDeliveryMethod
-from swagger_server.models import RemoveSubjectParameters  # noqa: E501
-from swagger_server.models import StreamConfiguration  # noqa: E501
-from swagger_server.models import StreamStatus  # noqa: E501
-from swagger_server.models import Status  # noqa: E501
-from swagger_server.models import Subject  # noqa: E501
-from swagger_server.models import TransmitterConfiguration  # noqa: E501
-from swagger_server.models import UpdateStreamStatus  # noqa: E501
-from swagger_server.models import VerificationParameters  # noqa: E501
-from swagger_server.test import client, new_stream
+from swagger_server.models import RemoveSubjectParameters
+from swagger_server.models import StreamConfiguration
+from swagger_server.models import StreamStatus
+from swagger_server.models import Status
+from swagger_server.models import Subject
+from swagger_server.models import TransmitterConfiguration
+from swagger_server.models import UpdateStreamStatus
+from swagger_server.models import VerificationParameters
 from swagger_server.utils import get_simple_subject
 
 

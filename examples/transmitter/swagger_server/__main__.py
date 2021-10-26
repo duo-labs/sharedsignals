@@ -3,11 +3,13 @@
 # All rights reserved.
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
+from logging.config import dictConfig
+import os
 
 import connexion
 
 from swagger_server import encoder
-from logging.config import dictConfig
+from swagger_server import jwt_encode
 
 
 def _init_logging():
@@ -30,12 +32,40 @@ def _init_logging():
 
 def main():
     _init_logging()
+
+    make_keys()
+
     app = connexion.App(__name__, specification_dir='./swagger/')
     app.app.json_encoder = encoder.JSONEncoder
-    app.add_api('swagger.yaml',
-                arguments={'title': 'Stream Management API for OpenID Shared Security Events'},
-                pythonic_params=True)
+    app.add_api(
+        'swagger.yaml',
+        arguments={
+            'title': 'Stream Management API for OpenID Shared Security Events'
+        },
+        pythonic_params=True
+    )
     app.run(port=443, ssl_context='adhoc', host='0.0.0.0')
+
+
+def make_keys() -> None:
+    """Makes a JWKS.json file
+    with a generated key for JWK_KEY_ID if it doesn't exist
+    """
+    # load or create the JWKSet
+    try:
+        jwks = jwt_encode.load_jwks()
+    except FileNotFoundError:
+        jwks = jwt_encode.make_jwks([])
+
+    key_id = os.environ["JWK_KEY_ID"]
+
+    # generate and add the key if not there already
+    if not jwks.get_key(key_id):
+        jwk = jwt_encode.make_jwk(key_id)
+        jwt_encode.add_jwk_to_jwks(jwk, jwks)
+
+    # and save it
+    jwt_encode.save_jwks(jwks)
 
 
 if __name__ == '__main__':
