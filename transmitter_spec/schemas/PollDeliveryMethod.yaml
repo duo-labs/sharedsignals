@@ -6,7 +6,7 @@
 type: object
 example:
   method: https://schemas.openid.net/secevent/risc/delivery-method/poll
-  endpoint_url: https://tr.example.com/polling
+  endpoint_url: https://transmitter.most-secure.com/poll
 required:
   - method
 properties:

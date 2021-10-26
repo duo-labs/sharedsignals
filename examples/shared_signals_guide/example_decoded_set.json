@@ -1,7 +1,7 @@
 {
   "jti": "9e668e802d0311eca8830242ac120005",
   "iat": 1634225410,
-  "iss": "https://transmitter.most-secure.com/",
+  "iss": "https://most-secure.com/",
   "aud": "https://popular-app.com",
   "events": {
     "https://schemas.openid.net/secevent/sse/event-type/verification": {

@@ -38,6 +38,6 @@ properties:
     allOf:
       - $ref: '../openapi.yaml#/components/schemas/Subject'
     description: OPTIONAL. The Subject to which the status applies.
-    example: {'format': 'email', 'email': 'user@example.com'}
+    example: {'format': 'email', 'email': 'reginold@popular-app.com'}
 required:
   - status

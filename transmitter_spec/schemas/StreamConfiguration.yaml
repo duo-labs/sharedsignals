@@ -16,7 +16,7 @@ properties:
       A URL using the https scheme with no query or fragment component that the Transmitter asserts as its Issuer
       Identifier. This MUST be identical to the iss Claim value in Security Event Tokens issued from this Transmitter.
     format: uri
-    example: "https://tr.example.com"
+    example: "https://most-secure.com"
   aud:
     oneOf:
       - type: string
@@ -31,10 +31,7 @@ properties:
       [JSON Web Token (JWT)](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7519) that identifies
       the Event Receiver(s) for the Event Stream. This property cannot be updated. If multiple Receivers are specified
       then the Transmitter SHOULD know that these Receivers are the same entity.
-    example: [
-      "http://receiver.example.com/web",
-      "http://receiver.example.com/mobile"
-    ]
+    example: "https://popular-app.com"
   events_supported:
     type: array
     items:

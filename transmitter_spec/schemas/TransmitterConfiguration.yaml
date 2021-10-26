@@ -19,14 +19,14 @@ properties:
       Issuer Identifier.
       This MUST be identical to the iss claim value in Security Event Tokens issued from this Transmitter.
     format: uri
-    example: 'https://tr.example.com'
+    example: https://most-secure.com
   jwks_uri:
     type: string
     description: |
       URL of the Transmitter's [JSON Web Key Set](https://openid.net/specs/openid-sse-framework-1_0.html#RFC7517)
       document. This contains the signing key(s) the Receiver uses to validate signatures from the Transmitter.
     format: uri
-    example: 'https://tr.example.com/jwks.json'
+    example: https://transmitter.most-secure.com/jwks.json
   delivery_methods_supported:
     type: array
     items:
@@ -41,27 +41,27 @@ properties:
     type: string
     format: uri
     description: 'The URL of the Configuration Endpoint.'
-    example: 'https://tr.example.com/sse/mgmt/stream'
+    example: 'https://transmitter.most-secure.com/stream'
   status_endpoint:
     type: string
     format: uri
     description: 'The URL of the Status Endpoint.'
-    example: 'https://tr.example.com/sse/mgmt/status'
+    example: 'https://transmitter.most-secure.com/status'
   add_subject_endpoint:
     type: string
     format: uri
     description: 'The URL of the Add Subject Endpoint.'
-    example: 'https://tr.example.com/sse/mgmt/subject:add'
+    example: 'https://transmitter.most-secure.com/add-subject'
   remove_subject_endpoint:
     type: string
     format: uri
     description: 'The URL of the Remove Subject Endpoint.'
-    example: 'https://tr.example.com/sse/mgmt/subject:remove'
+    example: 'https://transmitter.most-secure.com/remove-subject'
   verification_endpoint:
     type: string
     format: uri
     description: 'The URL of the Verification Endpoint.'
-    example: 'https://tr.example.com/sse/mgmt/verification'
+    example: 'https://transmitter.most-secure.com/verification'
   critical_subject_members:
     type: array
     items:

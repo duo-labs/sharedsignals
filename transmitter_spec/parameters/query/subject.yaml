@@ -11,4 +11,4 @@ description: |-
   (see Subject schema)
 schema:
   type: string
-  example: {"user": {"format": "email", "email": "user@example.com"}}
+  example: {"user": {"format": "email", "email": "reginold@popular-app.com"}}
