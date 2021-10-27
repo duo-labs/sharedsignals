@@ -10,6 +10,7 @@ from swagger_server.business_logic.const import (
     MIN_VERIFICATION_INTERVAL, POLL_ENDPOINT, TRANSMITTER_ISSUER
 )
 from swagger_server.business_logic.event import SUPPORTED_EVENTS
+from swagger_server.errors import StreamDoesNotExist, SubjectNotInStream
 import swagger_server.db as db
 from swagger_server.models import PollDeliveryMethod, PushDeliveryMethod
 from swagger_server.models import StreamConfiguration
@@ -33,25 +34,6 @@ READ_ONLY_CONFIG_FIELDS = {
     'events_delivered',
     'min_verification_interval'
 }
-
-
-class SubjectNotInStream(KeyError):
-    def __init__(self, email_address):
-        self.message = (
-            f'There is no subject with this email address associated with '
-            f'this stream: {email_address}'
-        )
-        super().__init__(self.message)
-
-
-class StreamDoesNotExist(KeyError):
-    def __init__(self):
-        self.message = (
-            f'There is no Event Stream associated with that bearer token. '
-            f'To use this endpoint, first create an Event Stream with a POST to /register, '
-            f'and use the resulting token for authenticated requests.'
-        )
-        super().__init__(self.message)
 
 
 # TODO-T136006 remove this when push_queue gets removed...

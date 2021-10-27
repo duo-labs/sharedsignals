@@ -14,6 +14,7 @@ import pytest
 
 from swagger_server.business_logic.stream import Stream
 from swagger_server.encoder import JSONEncoder
+from swagger_server.errors import register_error_handlers
 from swagger_server import jwt_encode
 
 
@@ -38,6 +39,7 @@ def create_app(self):
     app = connexion.App(__name__, specification_dir='../swagger/')
     app.app.json_encoder = JSONEncoder
     app.add_api('swagger.yaml')
+    register_error_handlers(app)
     return app.app
 
 

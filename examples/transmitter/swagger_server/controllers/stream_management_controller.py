@@ -9,10 +9,6 @@ import connexion
 from connexion import NoContent
 
 from swagger_server import business_logic
-from swagger_server.business_logic import EmailSubjectNotFound
-from swagger_server.business_logic.stream import (
-    StreamDoesNotExist, SubjectNotInStream
-)
 from swagger_server.models import AddSubjectParameters  # noqa: E501
 from swagger_server.models import RemoveSubjectParameters  # noqa: E501
 from swagger_server.models import StreamConfiguration  # noqa: E501
@@ -38,13 +34,10 @@ def add_subject(token_info, body):  # noqa: E501
     if connexion.request.is_json:
         body = AddSubjectParameters.parse_obj(connexion.request.get_json())
 
-    try:
-        business_logic.add_subject(
-            subject=body.subject, verified=body.verified, client_id=client_id
-        )
-        return NoContent, 200
-    except (StreamDoesNotExist, EmailSubjectNotFound) as e:
-        return e.message, 404
+    business_logic.add_subject(
+        subject=body.subject, verified=body.verified, client_id=client_id
+    )
+    return NoContent, 200
 
 
 def get_status(token_info, subject=None):  # noqa: E501
@@ -60,10 +53,8 @@ def get_status(token_info, subject=None):  # noqa: E501
     client_id = token_info['client_id']
     if subject:
         subject = Subject.parse_raw(subject)
-    try:
-        return business_logic.get_status(subject=subject, client_id=client_id)
-    except (StreamDoesNotExist, SubjectNotInStream, EmailSubjectNotFound) as e:
-        return e.message, 404
+
+    return business_logic.get_status(subject=subject, client_id=client_id)
 
 
 def remove_subject(token_info, body):  # noqa: E501
@@ -80,13 +71,10 @@ def remove_subject(token_info, body):  # noqa: E501
     if connexion.request.is_json:
         body = RemoveSubjectParameters.parse_obj(connexion.request.get_json())
 
-    try:
-        business_logic.remove_subject(
-            subject=body.subject, client_id=client_id
-        )
-        return NoContent, 204
-    except (StreamDoesNotExist, EmailSubjectNotFound) as e:
-        return e.message, 404
+    business_logic.remove_subject(
+        subject=body.subject, client_id=client_id
+    )
+    return NoContent, 204
 
 
 def stream_post(token_info, body):  # noqa: E501
@@ -103,13 +91,10 @@ def stream_post(token_info, body):  # noqa: E501
     if connexion.request.is_json:
         body = StreamConfiguration.parse_obj(connexion.request.get_json())
 
-    try:
-        new_config = business_logic.stream_post(
-            connexion.request.url_root, body, client_id
-        )
-        return new_config, 200
-    except StreamDoesNotExist as e:
-        return e.message, 404
+    new_config = business_logic.stream_post(
+        connexion.request.url_root, body, client_id
+    )
+    return new_config, 200
 
 
 def stream_delete(token_info):
@@ -134,10 +119,7 @@ def stream_get(token_info):
     :rtype: StreamConfiguration
     """
     client_id = token_info['client_id']
-    try:
-        return business_logic.stream_get(client_id=client_id), 200
-    except StreamDoesNotExist as e:
-        return e.message, 404
+    return business_logic.stream_get(client_id=client_id), 200
 
 
 def update_status(token_info, body):  # noqa: E501
@@ -154,16 +136,13 @@ def update_status(token_info, body):  # noqa: E501
     if connexion.request.is_json:
         body = UpdateStreamStatus.parse_obj(connexion.request.get_json())
 
-    try:
-        new_status = business_logic.update_status(
-            status=body.status,
-            subject=body.subject,
-            reason=body.reason,
-            client_id=client_id,
-        )
-        return new_status, 200
-    except (StreamDoesNotExist, SubjectNotInStream, EmailSubjectNotFound) as e:
-        return e.message, 404
+    new_status = business_logic.update_status(
+        status=body.status,
+        subject=body.subject,
+        reason=body.reason,
+        client_id=client_id,
+    )
+    return new_status, 200
 
 
 def verification_request(token_info, body=None):  # noqa: E501
@@ -180,13 +159,10 @@ def verification_request(token_info, body=None):  # noqa: E501
     if connexion.request.is_json:
         body = VerificationParameters.parse_obj(connexion.request.get_json())
 
-    try:
-        business_logic.verification_request(
-            state=body.state, client_id=client_id
-        )
-        return NoContent, 204
-    except StreamDoesNotExist as e:
-        return e.message, 404
+    business_logic.verification_request(
+        state=body.state, client_id=client_id
+    )
+    return NoContent, 204
 
 
 def _well_known_sse_configuration_get():  # noqa: E501

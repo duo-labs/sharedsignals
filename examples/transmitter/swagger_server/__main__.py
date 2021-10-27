@@ -10,6 +10,8 @@ import connexion
 
 from swagger_server import encoder
 from swagger_server import jwt_encode
+from swagger_server.errors import register_error_handlers
+from logging.config import dictConfig
 
 
 def _init_logging():
@@ -44,6 +46,9 @@ def main():
         },
         pythonic_params=True
     )
+
+    register_error_handlers(app)
+
     app.run(port=443, ssl_context='adhoc', host='0.0.0.0')
 
 
