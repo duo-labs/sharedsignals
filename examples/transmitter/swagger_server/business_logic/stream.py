@@ -36,29 +36,6 @@ READ_ONLY_CONFIG_FIELDS = {
 }
 
 
-# TODO-T136006 remove this when push_queue gets removed...
-class EventQueue:
-    def __init__(self):
-        self.event_map = {}
-        self.event_queue = []
-
-    def put(self, event):
-        self.event_map[event.get('jti')] = event
-        self.event_queue.append(event)
-
-    def get(self, max_events=1):
-        return self.event_queue[-max_events:]
-
-    def delete(self, jti):
-        event = self.event_map.get(jti, None)
-        if event:
-            del self.event_map[jti]
-            self.event_queue.remove(event)
-
-    def qsize(self):
-        return len(self.event_queue)
-
-
 class Stream:
     def __init__(self,
                  client_id: str,
@@ -71,8 +48,7 @@ class Stream:
 
         # Map of subject identifier -> status
         self._subjects: Mapping[str, Status] = {}
-        self.push_queue = EventQueue()
-        self.poll_queue = []
+        self.event_queue = []
 
         self._save()
 
@@ -128,10 +104,7 @@ class Stream:
             self._subjects.pop(email_address)
 
     def queue_event(self, event):
-        if isinstance(self.config.delivery, PushDeliveryMethod):
-            self.push_queue.put(event)
-        else:  # PollDeliveryMethod
-            self.poll_queue.append(event)
+        self.event_queue.append(event)
 
 
 # Add a stream for https://popular-app.com automatically on startup

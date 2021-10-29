@@ -53,7 +53,7 @@ def test_poll_events__one_event(client, new_stream, with_jwks):
             VERIFICATION_EVENT_TYPE: {}
         }
     }
-    new_stream.poll_queue.append(event)
+    new_stream.event_queue.append(event)
 
     body = PollParameters(
         maxEvents=1,
@@ -103,8 +103,8 @@ def test_poll_events__more_available(client, new_stream):
         }
     }
 
-    new_stream.poll_queue.append(event1)
-    new_stream.poll_queue.append(event2)
+    new_stream.event_queue.append(event1)
+    new_stream.event_queue.append(event2)
 
     body = PollParameters(
         maxEvents=1,
@@ -134,7 +134,7 @@ def test_poll_events__acks(client, new_stream):
         'jti': 'abc123',
         'event_type': 'https://test-event-type.com/test'
     }
-    new_stream.poll_queue.append(event)
+    new_stream.event_queue.append(event)
 
     body = PollParameters(
         maxEvents=1,
@@ -150,7 +150,7 @@ def test_poll_events__acks(client, new_stream):
     response_data = response.data.decode('utf-8')
     assert response.status_code == 200, 'Response body is : ' + response_data
     assert {'sets': {}, 'moreAvailable': False} == json.loads(response_data)
-    assert 0 == len(new_stream.poll_queue)
+    assert 0 == len(new_stream.event_queue)
 
 
 def test_poll_events__no_stream(client, new_stream):

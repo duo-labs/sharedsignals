@@ -4,6 +4,7 @@
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
 from __future__ import absolute_import
+from unittest.mock import patch
 
 from flask import json
 import pytest
@@ -17,6 +18,7 @@ from swagger_server.models import AddSubjectParameters
 from swagger_server.models import Email
 from swagger_server.models import PhoneNumber
 from swagger_server.models import PollDeliveryMethod
+from swagger_server.models import PushDeliveryMethod
 from swagger_server.models import RemoveSubjectParameters
 from swagger_server.models import StreamConfiguration
 from swagger_server.models import StreamStatus
@@ -25,6 +27,7 @@ from swagger_server.models import Subject
 from swagger_server.models import TransmitterConfiguration
 from swagger_server.models import UpdateStreamStatus
 from swagger_server.models import VerificationParameters
+from swagger_server import jwt_encode
 from swagger_server.utils import get_simple_subject
 
 
@@ -376,7 +379,7 @@ def test_verification_request__polling(client, new_stream, state):
 
     Request that a verification event be sent over an Event Stream
     """
-    new_stream.config.delivery = PollDeliveryMethod(endpoint_url="http://transmitter.com/polling"),
+    new_stream.config.delivery = PollDeliveryMethod(endpoint_url="http://transmitter.com/polling")
 
     body = VerificationParameters(state=state)
     response = client.post(
@@ -386,8 +389,8 @@ def test_verification_request__polling(client, new_stream, state):
     )
     assert response.status_code == 204, "Incorrect response code: {}".format(response.status_code)
 
-    assert len(new_stream.poll_queue) == 1, "Incorrect queue size: {}".format(stream_queue.qsize())
-    events = new_stream.poll_queue[0]
+    assert len(new_stream.event_queue) == 1, "Incorrect queue size: {}".format(new_stream.event_queue)
+    events = new_stream.event_queue[0]
 
     assert VERIFICATION_EVENT_TYPE in events['events']
     verification_event = events['events'][VERIFICATION_EVENT_TYPE]
@@ -396,6 +399,41 @@ def test_verification_request__polling(client, new_stream, state):
         assert verification_event['state'] == state, verification_event
     else:
         assert 'state' not in verification_event
+
+
+def test_verification_request__pushing(client, new_stream):
+    """Test case for verification_request
+
+    Request that a verification event be sent over an Event Stream with Push delivery method
+    """
+    push_url = "https://test-case.popular-app.com/push"
+    new_stream.config.delivery = PushDeliveryMethod(endpoint_url=push_url)
+
+    state = "test state"
+    body = VerificationParameters(state=state)
+
+    with patch('requests.post') as post_mock:
+        response = client.post(
+            '/verification',
+            json=body.dict(exclude_none=True),
+            headers={'Authorization': f'Bearer {new_stream.client_id}'}
+        )
+
+    assert response.status_code == 204, "Incorrect response code: {}".format(response.status_code)
+
+    post_mock.assert_called_once()
+
+    args = post_mock.call_args
+    assert push_url in args.args[0]
+    assert 'data' in args.kwargs
+
+    jwks = client.get('/jwks.json').json
+    iss = new_stream.config.iss
+    aud = new_stream.config.aud
+
+    event = jwt_encode.decode_set(args.kwargs['data'], jwks, iss, aud)
+    assert VERIFICATION_EVENT_TYPE in event['events']
+    assert event['events'][VERIFICATION_EVENT_TYPE]['state'] == state
 
 
 def test_verification_request__no_stream(client):
