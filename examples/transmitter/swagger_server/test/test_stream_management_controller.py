@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 from flask import json
 import pytest
+import requests
 
 from swagger_server.business_logic.const import VERIFICATION_EVENT_TYPE
 from swagger_server.business_logic.event import SUPPORTED_EVENTS
@@ -401,13 +402,42 @@ def test_verification_request__polling(client, new_stream, state):
         assert 'state' not in verification_event
 
 
-def test_verification_request__pushing(client, new_stream):
+def test_verification_request__pushing__no_response(client, new_stream):
+    """Test case for verification_request
+
+    Request that a verification event be sent over an Event Stream with Push delivery method,
+    but the push delivery fails, the response to the request must still return 204
+    """
+    push_url = "https://test-case.popular-app.com/push"
+    new_stream.config.delivery = PushDeliveryMethod(endpoint_url=push_url)
+
+    body = VerificationParameters(state=None)
+
+    with patch('requests.post', side_effect=requests.Timeout()) as post_mock:
+        response = client.post(
+            '/verification',
+            json=body.dict(exclude_none=True),
+            headers={'Authorization': f'Bearer {new_stream.client_id}'}
+        )
+
+    assert response.status_code == 204, "Incorrect response code: {}".format(response.status_code)
+
+    post_mock.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    "auth_header", [ None,"test-auth-header" ]
+)
+def test_verification_request__pushing(client, new_stream, auth_header):
     """Test case for verification_request
 
     Request that a verification event be sent over an Event Stream with Push delivery method
     """
     push_url = "https://test-case.popular-app.com/push"
-    new_stream.config.delivery = PushDeliveryMethod(endpoint_url=push_url)
+    new_stream.config.delivery = PushDeliveryMethod(
+        endpoint_url=push_url, 
+        authorization_header=auth_header
+    )
 
     state = "test state"
     body = VerificationParameters(state=state)
@@ -424,7 +454,15 @@ def test_verification_request__pushing(client, new_stream):
     post_mock.assert_called_once()
 
     args = post_mock.call_args
+
     assert push_url in args.args[0]
+
+    if auth_header:
+        assert 'headers' in args.kwargs
+        headers = { k.lower(): v for k, v in args.kwargs['headers'].items()}
+        assert 'authorization' in headers
+        assert headers['authorization'] == auth_header
+
     assert 'data' in args.kwargs
 
     jwks = client.get('/jwks.json').json

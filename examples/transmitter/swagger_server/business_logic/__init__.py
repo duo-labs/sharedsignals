@@ -141,14 +141,19 @@ def push_events(stream: Stream):
     push_url = stream.config.delivery.endpoint_url
 
     for event in stream.event_queue:
+        headers = {
+            "Content-Type": "application/secevent+jwt",
+            "Accept": "application/json"
+        }
+
+        if stream.config.delivery.authorization_header:
+            headers['Authorization'] = stream.config.delivery.authorization_header
+
         try:
             requests.post(
                 push_url,
                 data=jwt_encode.encode_set(event),
-                headers={
-                    "content-type": "application/secevent+jwt",
-                    "accept": "application/json"
-                }
+                headers=headers
             )
         except:
             continue
