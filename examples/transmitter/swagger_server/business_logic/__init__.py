@@ -133,7 +133,7 @@ def verification_request(state: Optional[str], client_id: str) -> None:
 
     stream.queue_event(security_event)
 
-    if stream.config.delivery.method.endswith('/push'):
+    if isinstance(stream.config.delivery, PushDeliveryMethod):
         push_events(stream)
 
 
