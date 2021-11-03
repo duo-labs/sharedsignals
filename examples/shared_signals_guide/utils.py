@@ -8,8 +8,24 @@ import warnings
 
 import requests
 from urllib3.exceptions import InsecureRequestWarning
+from urllib3.util import connection
 
 old_merge_environment_settings = requests.Session.merge_environment_settings
+old_create_connection = connection.create_connection
+
+
+def patch_hosts(host_to_ip):
+    """Provides mapping from host address to IP prior to making a request."""
+
+    def patched_create_connection(address, *args, **kwargs):
+        host, port = address
+        if host in host_to_ip:
+            host = host_to_ip[host]
+
+        return old_create_connection((host, port), *args, **kwargs)
+
+    connection.create_connection = patched_create_connection
+
 
 @contextlib.contextmanager
 def no_ssl_verification():
