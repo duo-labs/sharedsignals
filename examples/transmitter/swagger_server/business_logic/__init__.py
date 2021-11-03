@@ -69,7 +69,7 @@ def remove_subject(subject: Subject, client_id: str) -> None:
     stream.remove_subject(simple_subj.email)
 
 
-def stream_post(url_root,
+def stream_post(url_root: str,
                 stream_configuration: StreamConfiguration,
                 client_id: str) -> Dict[str, Any]:
     stream = Stream.load(client_id)
