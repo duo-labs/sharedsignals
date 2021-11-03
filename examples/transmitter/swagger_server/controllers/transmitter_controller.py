@@ -2,6 +2,7 @@
 # All rights reserved.
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
+from typing import Dict, List, Any, Tuple, Union
 
 import connexion
 
@@ -10,7 +11,8 @@ from swagger_server import jwt_encode
 from swagger_server.models import PollParameters
 
 
-def poll_events(token_info, body=None):
+def poll_events(token_info: Dict[str, str],
+                body: Union[Dict[str, Any], bytes] = None) -> Tuple[List[Dict[str, Any]], int]:
     """Request to return queued events
 
     :param body: Optional request parameters
@@ -37,7 +39,7 @@ def poll_events(token_info, body=None):
     return events, 200
 
 
-def jwks_json():
+def jwks_json() -> Tuple[Dict[str, Any], int]:
     """
     :return: JSON Web Key Set for our Event Transmitter
     """

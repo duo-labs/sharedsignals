@@ -7,14 +7,15 @@
 from __future__ import absolute_import
 
 from flask import json
+from flask.testing import FlaskClient
 
 from swagger_server.business_logic import VERIFICATION_EVENT_TYPE
-from swagger_server.business_logic.stream import StreamDoesNotExist
+from swagger_server.business_logic.stream import StreamDoesNotExist, Stream
 from swagger_server import jwt_encode
 from swagger_server.models import PollParameters
 
 
-def test_poll_events__no_events(client, new_stream):
+def test_poll_events__no_events(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for add_subject
 
     Request to add a subject to an Event Stream
@@ -34,7 +35,7 @@ def test_poll_events__no_events(client, new_stream):
     assert {'sets': {}, 'moreAvailable': False} == json.loads(response_data)
 
 
-def test_poll_events__one_event(client, new_stream, with_jwks):
+def test_poll_events__one_event(client: FlaskClient, new_stream: Stream, with_jwks: None) -> None:
     """Test case for add_subject
 
     Request to add a subject to an Event Stream
@@ -81,7 +82,7 @@ def test_poll_events__one_event(client, new_stream, with_jwks):
     assert event == decoded_set
 
 
-def test_poll_events__more_available(client, new_stream):
+def test_poll_events__more_available(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for add_subject
 
     Request to add a subject to an Event Stream
@@ -125,7 +126,7 @@ def test_poll_events__more_available(client, new_stream):
     assert len(response_json['sets']) == 1
 
 
-def test_poll_events__acks(client, new_stream):
+def test_poll_events__acks(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for add_subject
 
     Request to add a subject to an Event Stream
@@ -153,7 +154,7 @@ def test_poll_events__acks(client, new_stream):
     assert 0 == len(new_stream.event_queue)
 
 
-def test_poll_events__no_stream(client, new_stream):
+def test_poll_events__no_stream(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for add_subject
 
     Request to add a subject to an Event Stream
@@ -172,7 +173,7 @@ def test_poll_events__no_stream(client, new_stream):
     assert StreamDoesNotExist().message in str(response.data)
 
 
-def test_jwks_json(client, with_jwks):
+def test_jwks_json(client: FlaskClient, with_jwks: None) -> None:
     """Test case for add_subject
 
     Request to add a subject to an Event Stream

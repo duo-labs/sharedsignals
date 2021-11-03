@@ -6,7 +6,7 @@
 import logging
 import time
 import uuid
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Dict, Any
 
 import requests
 
@@ -71,7 +71,7 @@ def remove_subject(subject: Subject, client_id: str) -> None:
 
 def stream_post(url_root,
                 stream_configuration: StreamConfiguration,
-                client_id: str) -> StreamConfiguration:
+                client_id: str) -> Dict[str, Any]:
     stream = Stream.load(client_id)
 
     if (stream_configuration.delivery
@@ -137,7 +137,7 @@ def verification_request(state: Optional[str], client_id: str) -> None:
         push_events(stream)
 
 
-def push_events(stream: Stream):
+def push_events(stream: Stream) -> None:
     push_url = stream.config.delivery.endpoint_url
 
     for event in stream.event_queue:
@@ -161,7 +161,8 @@ def push_events(stream: Stream):
     stream.event_queue = []
 
 
-def _well_known_sse_configuration_get(url_root, issuer: Optional[str] = None) -> TransmitterConfiguration:
+def _well_known_sse_configuration_get(url_root: str, 
+                                      issuer: Optional[str] = None) -> TransmitterConfiguration:
     return TransmitterConfiguration(
         issuer=TRANSMITTER_ISSUER + (issuer if issuer else ''),
         jwks_uri=url_root + 'jwks.json',
@@ -196,11 +197,11 @@ def poll_request(max_events: int,
     return stream.event_queue[:max_events], more_available
 
 
-def register(audience: Union[str, List[str]]):
+def register(audience: Union[str, List[str]]) -> Dict[str, str]:
     for stream in db.STREAMS.values():
         if stream.config.aud == audience:
-            return {'token': stream.client_id}
+            return { 'token': stream.client_id }
 
     client_id = uuid.uuid4().hex
     Stream(client_id, audience)
-    return {'token': client_id}
+    return { 'token': client_id }

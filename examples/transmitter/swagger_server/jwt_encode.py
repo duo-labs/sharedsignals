@@ -6,7 +6,7 @@
 from functools import lru_cache
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Union
+from typing import Any, Dict, List, Mapping, Optional, Union
 
 from jwcrypto.jwk import JWK, JWKSet
 import jwt
@@ -37,7 +37,7 @@ def add_jwk_to_jwks(jwk: JWK, jwks: JWKSet) -> JWKSet:
     return jwks
 
 
-def make_jwks(key_ids: Union[List[str], None] = None) -> JWKSet:
+def make_jwks(key_ids: Optional[List[str]] = None) -> JWKSet:
     """Makes a JSON Web Key Set with the key_ids passed in"""
     key_ids = [] if key_ids is None else key_ids
 

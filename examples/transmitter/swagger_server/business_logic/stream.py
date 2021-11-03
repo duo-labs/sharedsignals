@@ -3,8 +3,8 @@
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
 
-from typing import List, Mapping, Union
-import queue
+from __future__ import annotations
+from typing import Dict, List, Mapping, Union, Any
 
 from swagger_server.business_logic.const import (
     MIN_VERIFICATION_INTERVAL, POLL_ENDPOINT, TRANSMITTER_ISSUER
@@ -40,7 +40,7 @@ class Stream:
     def __init__(self,
                  client_id: str,
                  aud: Union[str, List[str]],
-                 status: Status = Status.enabled):
+                 status: Status = Status.enabled) -> None:
         self.client_id = client_id
         self.config = DEFAULT_CONFIG
         self.config.aud = aud
@@ -52,21 +52,21 @@ class Stream:
 
         self._save()
 
-    def _save(self):
+    def _save(self) -> None:
         db.STREAMS[self.client_id] = self
 
     @classmethod
-    def load(cls, client_id: str):
+    def load(cls, client_id: str) -> Stream:
         if client_id in db.STREAMS:
             return db.STREAMS[client_id]
         else:
             raise StreamDoesNotExist()
 
     @classmethod
-    def delete(cls, client_id):
+    def delete(cls, client_id: str) -> None:
         db.STREAMS.pop(client_id, None)
 
-    def update_config(self, new_config: StreamConfiguration):
+    def update_config(self, new_config: StreamConfiguration) -> Stream:
         config = self.config.dict()
         _new_config = new_config.dict()
         for key in READ_ONLY_CONFIG_FIELDS:
@@ -80,30 +80,30 @@ class Stream:
         self.config = StreamConfiguration.parse_obj(config)
         return self
 
-    def get_subject_status(self, email_address):
+    def get_subject_status(self, email_address: str) -> Status:
         if email_address not in self._subjects:
             raise SubjectNotInStream(email_address)
 
         return self._subjects[email_address]
 
-    def set_subject_status(self, email_address, status):
+    def set_subject_status(self, email_address: str, status: str) -> None:
         if email_address not in self._subjects:
             raise SubjectNotInStream(email_address)
 
         self._subjects[email_address] = status
 
-    def add_subject(self, email_address):
+    def add_subject(self, email_address: str) -> None:
         if email_address not in self._subjects:
             # When adding a subject, default them to enabled.
             # This isn't required by the SSE spec,
             # but is default behavior we thought made sense.
             self._subjects[email_address] = Status.enabled
 
-    def remove_subject(self, email_address):
+    def remove_subject(self, email_address: str) -> None:
         if email_address in self._subjects:
             self._subjects.pop(email_address)
 
-    def queue_event(self, event):
+    def queue_event(self, event: Dict[str, Any]) -> None:
         self.event_queue.append(event)
 
 
