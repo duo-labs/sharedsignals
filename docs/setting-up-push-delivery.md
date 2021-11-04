@@ -6,57 +6,56 @@ receive events in real time, without needing to poll continuously.
 
 
 ## Receiver Example
-A python example for a push event receiver:
+A python example for a simple push event receiver:
 
 ```py
 import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
+import requests
 import jwt
+from jwcrypto.jwk import JWKSet
 
-class Handler(BaseHTTPRequestHandler):
-    def do_POST(self):
-        content_length = int(self.headers["Content-Length"])
-        body = self.rfile.read(content_length)
-        decoded = jwt.decode(body, key="mysymmetrickey", algorithms=["HS256"], audience="example_receiver")
-        print(json.dumps(decoded, indent=2))
-        self.send_response(202)
-        self.end_headers()
 
-if __name__ == "__main__":
+def main():
+    # Get jwks information from the transmitter so we can decode events
+    sse_config_response = requests.get(
+        "https://transmitter.most-secure.com/.well-known/sse-configuration")
+    sse_config = sse_config_response.json()
+    jwks_json = requests.get(sse_config['jwks_uri']).text
+    jwks = JWKSet.from_json(jwks_json)
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_POST(self):
+            content_length = int(self.headers["Content-Length"])
+            body = self.rfile.read(content_length)
+            kid = jwt.get_unverified_header(body)["kid"]
+            jwk = jwks.get_key(kid)
+            key = jwt.PyJWK(jwk).key
+            decoded = jwt.decode(
+                jwt=body,
+                key=key,
+                algorithms=["ES256"],
+                issuer="example_push_transmitter",
+                audience="example_push_receiver",
+            )
+            print(json.dumps(decoded, indent=2))
+            self.send_response(202)
+            self.end_headers()
+
     server_address = ("localhost", 8080)
     httpd = HTTPServer(server_address, Handler)
     print(f"Starting on {server_address}")
     httpd.serve_forever()
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-Running this python file will start the receiver listening for events. This
-example receiver simply prints the decoded SET and acknowledges it by returning
-HTTP status code 202.
-
 ## Transmitter Example
-A python example for pushing a single event to the receiver:
+A transmitter could then push a single event to this receiver with an http call:
 
 ```py
-import requests
-import jwt
-
-encoded_jwt = jwt.encode({
-    "iss": "https://idp.example.com/",
-    "jti": "756E69717565206964656E746966696572",
-    "iat": 1508184845,
-    "aud": "example_receiver",
-    "events": {
-        "https://schemas.openid.net/secevent/risc/event-type/account-disabled": {
-            "subject": {
-                "subject_type": "iss-sub",
-                "iss": "https://idp.example.com/",
-                "sub": "7375626A656374"
-            },
-            "reason": "hijacking"
-        }
-    }
-}, key="mysymmetrickey", algorithm="HS256")
-
 requests.post("http://localhost:8080", data=encoded_jwt, headers={
         "content-type": "application/secevent+jwt",
         "accept": "application/json"
@@ -64,11 +63,9 @@ requests.post("http://localhost:8080", data=encoded_jwt, headers={
 )
 ```
 
-To avoid the challenge of sharing an asymmetric key pair between the two
-examples, this example transmitter encodes SETS using the symmetric key HS256
-algorithm. For enhanced protection, an asymmetric key algorithm such as ES256
-should be used, and the transmitter's public key should be shared with the
-receiver out-of-band.
+For simplicity, the process of sharing the `jwks.json` file and encoding the JWT
+are omitted from this example -- see the full transmitter example to learn how
+SETs are encoded using the ES256 algorithm
 
 
 ## Errors
