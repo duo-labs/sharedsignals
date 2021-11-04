@@ -8,10 +8,13 @@ import time
 import uuid
 from typing import List, Optional, Tuple, Union
 
+import requests
+
 import swagger_server.db as db
 from swagger_server.business_logic.const import (
     TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE
 )
+from swagger_server import jwt_encode
 from swagger_server.business_logic.stream import Stream
 from swagger_server.errors import EmailSubjectNotFound, LongPollingNotSupported
 from swagger_server.models import StreamConfiguration
@@ -19,6 +22,7 @@ from swagger_server.models import StreamStatus
 from swagger_server.models import Subject
 from swagger_server.models import Status
 from swagger_server.models import Email
+from swagger_server.models import PushDeliveryMethod, PollDeliveryMethod
 
 from swagger_server.models import TransmitterConfiguration  # noqa: E501
 
@@ -129,6 +133,33 @@ def verification_request(state: Optional[str], client_id: str) -> None:
 
     stream.queue_event(security_event)
 
+    if isinstance(stream.config.delivery, PushDeliveryMethod):
+        push_events(stream)
+
+
+def push_events(stream: Stream):
+    push_url = stream.config.delivery.endpoint_url
+
+    for event in stream.event_queue:
+        headers = {
+            "Content-Type": "application/secevent+jwt",
+            "Accept": "application/json"
+        }
+
+        if stream.config.delivery.authorization_header:
+            headers['Authorization'] = stream.config.delivery.authorization_header
+
+        try:
+            requests.post(
+                push_url,
+                data=jwt_encode.encode_set(event),
+                headers=headers
+            )
+        except:
+            continue
+        
+    stream.event_queue = []
+
 
 def _well_known_sse_configuration_get(url_root, issuer: Optional[str] = None) -> TransmitterConfiguration:
     return TransmitterConfiguration(
@@ -158,11 +189,11 @@ def poll_request(max_events: int,
 
     if acks:
         acks = set(acks)
-        stream.poll_queue = [event for event in stream.poll_queue if event['jti'] not in acks]
+        stream.event_queue = [event for event in stream.event_queue if event['jti'] not in acks]
 
-    more_available = len(stream.poll_queue) > max_events
+    more_available = len(stream.event_queue) > max_events
 
-    return stream.poll_queue[:max_events], more_available
+    return stream.event_queue[:max_events], more_available
 
 
 def register(audience: Union[str, List[str]]):
