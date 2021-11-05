@@ -5,13 +5,13 @@
 
 import logging
 import os
-from pathlib import Path
 from typing import Iterator
 import uuid
 
 import connexion
 from flask.testing import FlaskClient
 from flask import Flask
+import py
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
@@ -47,7 +47,7 @@ def create_app(self) -> Flask:
 
 
 @pytest.fixture(autouse=True)
-def jwks_path(monkeypatch: MonkeyPatch, tmpdir: Path) -> Iterator[str]:
+def jwks_path(monkeypatch: MonkeyPatch, tmpdir: py.path.local) -> Iterator[str]:
     """Mock out the environment variables so that we have control over them
     for testing.
     """

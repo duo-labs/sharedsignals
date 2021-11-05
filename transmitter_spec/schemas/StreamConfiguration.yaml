@@ -8,6 +8,9 @@ title: "Event Stream Configuration"
 description: |
   JSON Object describing and Event Stream's configuration
   [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#stream-config)"
+required:
+  - events_requested
+  - delivery
 properties:
   iss:
     type: string

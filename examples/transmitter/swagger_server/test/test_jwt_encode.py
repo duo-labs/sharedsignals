@@ -8,6 +8,7 @@ import uuid
 
 from jwcrypto.jwk import JWK, JWKSet
 import pytest
+import py
 from _pytest.monkeypatch import MonkeyPatch
 
 from swagger_server import jwt_encode
@@ -134,7 +135,7 @@ class TestSaveJWKS:
         jwt_encode.save_jwks(mock_jwks)
         assert jwt_encode.get_jwks_path().exists()
 
-    def test_makes_needed_directories(self, monkeypatch: MonkeyPatch, tmpdir: Path) -> None:
+    def test_makes_needed_directories(self, monkeypatch: MonkeyPatch, tmpdir: py.path.local) -> None:
         """Ensures the saving process creates all needed directories"""
         temp_base = tmpdir.mkdir("mock")
         monkeypatch.setenv("JWKS_PATH", f"{temp_base}/foo/bar/jwks.json")

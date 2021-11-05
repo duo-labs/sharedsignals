@@ -42,7 +42,7 @@ def add_subject(subject: Subject,
     stream.add_subject(simple_subj.email)
 
 
-def get_status(subject: Subject, client_id: str) -> StreamStatus:
+def get_status(subject: Optional[Subject], client_id: str) -> StreamStatus:
     stream = Stream.load(client_id)
 
     if not subject:
@@ -69,14 +69,12 @@ def remove_subject(subject: Subject, client_id: str) -> None:
     stream.remove_subject(simple_subj.email)
 
 
-def stream_post(url_root: str,
-                stream_configuration: StreamConfiguration,
-                client_id: str) -> Dict[str, Any]:
+def stream_post(stream_configuration: StreamConfiguration,
+                client_id: str) -> StreamConfiguration:
     stream = Stream.load(client_id)
 
-    if (stream_configuration.delivery
-            and stream_configuration.delivery.method == 'https://schemas.openid.net/secevent/risc/delivery-method/poll'):
-        stream_configuration.delivery.endpoint_url = url_root + "poll"
+    if isinstance(stream_configuration.delivery, PollDeliveryMethod):
+        stream_configuration.delivery.endpoint_url = None
 
     stream = stream.update_config(stream_configuration)
     return stream.config
@@ -118,7 +116,7 @@ def verification_request(state: Optional[str], client_id: str) -> None:
     stream = Stream.load(client_id)
 
     # TODO: Make this a real SET per https://www.rfc-editor.org/rfc/rfc8417.html
-    security_event = {
+    security_event: Dict[str, Any] = {
         'jti': uuid.uuid1().hex,
         'iat': int(time.time()),
         'iss': stream.config.iss,
@@ -138,6 +136,9 @@ def verification_request(state: Optional[str], client_id: str) -> None:
 
 
 def push_events(stream: Stream) -> None:
+    if isinstance(stream.config.delivery, PollDeliveryMethod):
+        return
+
     push_url = stream.config.delivery.endpoint_url
 
     for event in stream.event_queue:
@@ -179,18 +180,21 @@ def _well_known_sse_configuration_get(url_root: str,
     )
 
 
-def poll_request(max_events: int,
-                 return_immediately: bool,
-                 acks: List[str],
-                 client_id: str) -> Tuple[List[object], bool]:
+def poll_request(max_events: Optional[int],
+                 return_immediately: Optional[bool],
+                 acks: Optional[List[str]],
+                 client_id: str) -> Tuple[List[Any], bool]:
     stream = Stream.load(client_id)
 
-    if not return_immediately:
+    if return_immediately is not None and not return_immediately:
         raise LongPollingNotSupported()
 
     if acks:
-        acks = set(acks)
-        stream.event_queue = [event for event in stream.event_queue if event['jti'] not in acks]
+        acks_set = set(acks)
+        stream.event_queue = [event for event in stream.event_queue if event['jti'] not in acks_set]
+
+    if max_events is None:
+        max_events = len(stream.event_queue)
 
     more_available = len(stream.event_queue) > max_events
 

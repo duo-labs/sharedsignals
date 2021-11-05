@@ -119,6 +119,7 @@ def test_get_status__subject(client: FlaskClient, new_stream: Stream,
     Request to get the status of an Event Stream (subject included)
     """
     simple_subj = get_simple_subject(subject, Email)
+    assert simple_subj is not None
     email_address = simple_subj.email
     new_stream.add_subject(email_address)
     new_stream.set_subject_status(email_address, status)
@@ -235,8 +236,6 @@ def test_stream_post(client, new_stream: Stream) -> None:
     expected_delivered.pop()
     assert updated_stream.config.events_delivered == expected_delivered
 
-    assert "/poll" in updated_stream.config.delivery.endpoint_url
-
 
 def test_stream_post__no_stream(client: FlaskClient) -> None:
     """Test case for stream_post
@@ -244,9 +243,13 @@ def test_stream_post__no_stream(client: FlaskClient) -> None:
     Request to update the configuration of an event stream, but the event stream doesn't exist.
     """
     bad_client_id = 'IncorrectClientId'
+    new_config = StreamConfiguration(
+        events_requested=SUPPORTED_EVENTS.copy(),
+        delivery=PollDeliveryMethod(endpoint_url=None)
+    )
     response = client.post(
         '/stream',
-        json={},
+        json=new_config.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
     assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
@@ -325,6 +328,7 @@ def test_update_status__subject(client: FlaskClient, new_stream: Stream,
     Request to update an Event Stream's status
     """
     simple_subj = get_simple_subject(subject, Email)
+    assert simple_subj is not None
     email_address = simple_subj.email
     new_stream.add_subject(email_address)
 
@@ -444,6 +448,7 @@ def test_verification_request__pushing(client: FlaskClient, new_stream: Stream,
         endpoint_url=push_url, 
         authorization_header=auth_header
     )
+    config = new_stream.config.dict()
 
     state = "test state"
     body = VerificationParameters(state=state)
@@ -461,7 +466,7 @@ def test_verification_request__pushing(client: FlaskClient, new_stream: Stream,
 
     args = post_mock.call_args
 
-    assert push_url in args.args[0]
+    assert push_url == str(args.args[0])
 
     if auth_header:
         assert 'headers' in args.kwargs
@@ -472,8 +477,11 @@ def test_verification_request__pushing(client: FlaskClient, new_stream: Stream,
     assert 'data' in args.kwargs
 
     jwks = client.get('/jwks.json').json
-    iss = new_stream.config.iss
-    aud = new_stream.config.aud
+    iss = config['iss']
+    aud = config['aud']
+    assert jwks is not None
+    assert iss is not None
+    assert aud is not None
 
     event = jwt_encode.decode_set(args.kwargs['data'], jwks, iss, aud)
     assert VERIFICATION_EVENT_TYPE in event['events']

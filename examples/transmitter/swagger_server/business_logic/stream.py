@@ -4,7 +4,7 @@
 # that can be found in the LICENSE file.
 
 from __future__ import annotations
-from typing import Dict, List, Mapping, Union, Any
+from typing import Dict, List, Union, Any
 
 from swagger_server.business_logic.const import (
     MIN_VERIFICATION_INTERVAL, POLL_ENDPOINT, TRANSMITTER_ISSUER
@@ -42,13 +42,12 @@ class Stream:
                  aud: Union[str, List[str]],
                  status: Status = Status.enabled) -> None:
         self.client_id = client_id
-        self.config = DEFAULT_CONFIG
-        self.config.aud = aud
+        self.config = DEFAULT_CONFIG.copy(update={ 'aud': aud })
         self.status = status
 
         # Map of subject identifier -> status
-        self._subjects: Mapping[str, Status] = {}
-        self.event_queue = []
+        self._subjects: Dict[str, Status] = {}
+        self.event_queue: List[Dict[str, Any]] = []
 
         self._save()
 
@@ -86,7 +85,7 @@ class Stream:
 
         return self._subjects[email_address]
 
-    def set_subject_status(self, email_address: str, status: str) -> None:
+    def set_subject_status(self, email_address: str, status: Status) -> None:
         if email_address not in self._subjects:
             raise SubjectNotInStream(email_address)
 

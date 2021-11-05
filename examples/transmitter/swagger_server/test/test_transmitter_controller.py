@@ -42,7 +42,8 @@ def test_poll_events__one_event(client: FlaskClient, new_stream: Stream, with_jw
     """
     # get the jwks file to decode the event with
     jwks = client.get('/jwks.json').json
-
+    assert jwks is not None
+    
     issuer = 'https://issuer'
     audience = 'https://audience'
 

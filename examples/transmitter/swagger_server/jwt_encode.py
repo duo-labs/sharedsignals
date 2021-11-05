@@ -94,8 +94,8 @@ def encode_set(security_event_token: Dict[str, Any]) -> str:
 # TODO: make annotation for the SET a pydantic model
 def decode_set(jwt_value: str,
                jwks: Mapping[str, Any],
-               iss: str,
-               aud: str) -> Dict[str, Any]:
+               iss: Optional[str],
+               aud: Union[str, List[str], None]) -> Dict[str, Any]:
     """This runs on the receiver. Decodes a SET intended from a specific issuer
     and for a specific audience
     """
