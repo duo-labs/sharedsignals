@@ -10,7 +10,7 @@ A python example for a simple push event receiver:
 
 ```py
 import json
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from flask import Flask, request
 import requests
 import jwt
 from jwcrypto.jwk import JWKSet
@@ -24,36 +24,34 @@ def main():
     jwks_json = requests.get(sse_config['jwks_uri']).text
     jwks = JWKSet.from_json(jwks_json)
 
-    class Handler(BaseHTTPRequestHandler):
-        def do_POST(self):
-            content_length = int(self.headers["Content-Length"])
-            body = self.rfile.read(content_length)
-            kid = jwt.get_unverified_header(body)["kid"]
-            jwk = jwks.get_key(kid)
-            key = jwt.PyJWK(jwk).key
-            decoded = jwt.decode(
-                jwt=body,
-                key=key,
-                algorithms=["ES256"],
-                issuer="example_push_transmitter",
-                audience="example_push_receiver",
-            )
-            print(json.dumps(decoded, indent=2))
-            self.send_response(202)
-            self.end_headers()
+    app = Flask(__name__)
 
-    server_address = ("localhost", 8080)
-    httpd = HTTPServer(server_address, Handler)
-    print(f"Starting on {server_address}")
-    httpd.serve_forever()
+    @app.route('/event', methods=['POST'])
+    def receive_event():
+        data = request.get_data()
+        kid = jwt.get_unverified_header(body)["kid"]
+        jwk = jwks.get_key(kid)
+        key = jwt.PyJWK(jwk).key
+        decoded = jwt.decode(
+            jwt=body,
+            key=key,
+            algorithms=["ES256"],
+            issuer="example_push_transmitter",
+            audience="example_push_receiver",
+        )
+        print(json.dumps(decoded, indent=2))
+        return "", 202
+
+    app.run("localhost", 8080)
 
 
 if __name__ == "__main__":
     main()
 ```
 
-## Transmitter Example
-A transmitter could then push a single event to this receiver with an http call:
+As seen here, the main thing that a push receiver needs to set up is an endpoint
+that can receive and decode events in POST message bodies.
+A transmitter could then push an event to this receiver with an http call:
 
 ```py
 requests.post("http://localhost:8080", data=encoded_jwt, headers={
@@ -63,9 +61,9 @@ requests.post("http://localhost:8080", data=encoded_jwt, headers={
 )
 ```
 
-For simplicity, the process of sharing the `jwks.json` file and encoding the JWT
-are omitted from this example -- see the full transmitter example to learn how
-SETs are encoded using the ES256 algorithm
+In a full implementation, the transmitter must share its `jwks.json` file with the receiver
+and encode each JWT. This process is omitted from this example -- see the full transmitter
+example in this repository to learn how SETs can be encoded using the ES256 algorithm
 
 
 ## Errors
