@@ -4,7 +4,7 @@ SETs can be encoded with various different algorithms. We recommend encoding
 with the ES256 algorithm for maximum security.
 
 ## Retrieving the JWKS
-To decode the SET in the response above, we need to get the transmitter's JWKS (JSON Web Key Set):
+To decode SETs from a transmitter, we need the transmitter's JWKS (JSON Web Key Set):
 ```py
 sse_config_response = requests.get(
     'https://transmitter.most-secure.com/.well-known/sse-configuration')
@@ -29,7 +29,9 @@ jwks = {
  }
 ```
 
-We will use this information to decode all SETs from this transmitter.
+This describes the public portion of the key that the transmitter uses to encode SETs.
+It might be confusing to the human eye, but the PyJWT library will have no problem
+understanding how to use it!
 
 ## Decoding
 Now let's say we received a response from our transmitter's polling endpoint that looked like this:
