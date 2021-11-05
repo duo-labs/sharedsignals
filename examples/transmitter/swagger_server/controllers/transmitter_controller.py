@@ -2,6 +2,7 @@
 # All rights reserved.
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
+from typing import Dict, List, Any, Tuple, Union
 
 import connexion
 
@@ -10,34 +11,27 @@ from swagger_server import jwt_encode
 from swagger_server.models import PollParameters
 
 
-def poll_events(token_info, body=None):
-    """Request to return queued events
+def poll_events(token_info: Dict[str, str]) -> Tuple[Dict[str, Any], int]:
+    """Request to return queued events"""
 
-    :param body: Optional request parameters
-    :type body: dict | bytes
-
-    :rtype: None
-    """
     client_id = token_info['client_id']
-
-    if connexion.request.is_json:
-        body = PollParameters.parse_obj(connexion.request.get_json())
+    body = PollParameters.parse_obj(connexion.request.get_json())
 
     events, more_available = business_logic.poll_request(
         body.maxEvents, body.returnImmediately, body.acks, client_id
     )
 
-    events = {
+    set_events = {
         'sets': {
             event['jti']: jwt_encode.encode_set(event) for event in events
         },
         'moreAvailable': more_available
     }
 
-    return events, 200
+    return set_events, 200
 
 
-def jwks_json():
+def jwks_json() -> Tuple[Dict[str, Any], int]:
     """
     :return: JSON Web Key Set for our Event Transmitter
     """

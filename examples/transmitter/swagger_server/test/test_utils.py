@@ -67,6 +67,6 @@ from swagger_server.models import Subject, SimpleSubject, ComplexSubject, Aliase
 def test_get_simple_subject(
         expected_result: SimpleSubjectType,
         class_to_search: type,
-        subject: SimpleSubject
+        subject: Subject
     ) -> None:
     assert get_simple_subject(subject, class_to_search) == expected_result

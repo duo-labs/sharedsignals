@@ -6,7 +6,7 @@
 import logging
 import time
 import uuid
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Dict, Any
 
 import requests
 
@@ -42,7 +42,7 @@ def add_subject(subject: Subject,
     stream.add_subject(simple_subj.email)
 
 
-def get_status(subject: Subject, client_id: str) -> StreamStatus:
+def get_status(subject: Optional[Subject], client_id: str) -> StreamStatus:
     stream = Stream.load(client_id)
 
     if not subject:
@@ -69,14 +69,12 @@ def remove_subject(subject: Subject, client_id: str) -> None:
     stream.remove_subject(simple_subj.email)
 
 
-def stream_post(url_root,
-                stream_configuration: StreamConfiguration,
+def stream_post(stream_configuration: StreamConfiguration,
                 client_id: str) -> StreamConfiguration:
     stream = Stream.load(client_id)
 
-    if (stream_configuration.delivery
-            and stream_configuration.delivery.method == 'https://schemas.openid.net/secevent/risc/delivery-method/poll'):
-        stream_configuration.delivery.endpoint_url = url_root + "poll"
+    if isinstance(stream_configuration.delivery, PollDeliveryMethod):
+        stream_configuration.delivery.endpoint_url = None
 
     stream = stream.update_config(stream_configuration)
     return stream.config
@@ -118,7 +116,7 @@ def verification_request(state: Optional[str], client_id: str) -> None:
     stream = Stream.load(client_id)
 
     # TODO: Make this a real SET per https://www.rfc-editor.org/rfc/rfc8417.html
-    security_event = {
+    security_event: Dict[str, Any] = {
         'jti': uuid.uuid1().hex,
         'iat': int(time.time()),
         'iss': stream.config.iss,
@@ -137,7 +135,10 @@ def verification_request(state: Optional[str], client_id: str) -> None:
         push_events(stream)
 
 
-def push_events(stream: Stream):
+def push_events(stream: Stream) -> None:
+    if isinstance(stream.config.delivery, PollDeliveryMethod):
+        return
+
     push_url = stream.config.delivery.endpoint_url
 
     for event in stream.event_queue:
@@ -161,7 +162,8 @@ def push_events(stream: Stream):
     stream.event_queue = []
 
 
-def _well_known_sse_configuration_get(url_root, issuer: Optional[str] = None) -> TransmitterConfiguration:
+def _well_known_sse_configuration_get(url_root: str, 
+                                      issuer: Optional[str] = None) -> TransmitterConfiguration:
     return TransmitterConfiguration(
         issuer=TRANSMITTER_ISSUER + (issuer if issuer else ''),
         jwks_uri=url_root + 'jwks.json',
@@ -178,29 +180,32 @@ def _well_known_sse_configuration_get(url_root, issuer: Optional[str] = None) ->
     )
 
 
-def poll_request(max_events: int,
-                 return_immediately: bool,
-                 acks: List[str],
-                 client_id: str) -> Tuple[List[object], bool]:
+def poll_request(max_events: Optional[int],
+                 return_immediately: Optional[bool],
+                 acks: Optional[List[str]],
+                 client_id: str) -> Tuple[List[Any], bool]:
     stream = Stream.load(client_id)
 
-    if not return_immediately:
+    if return_immediately is not None and not return_immediately:
         raise LongPollingNotSupported()
 
     if acks:
-        acks = set(acks)
-        stream.event_queue = [event for event in stream.event_queue if event['jti'] not in acks]
+        acks_set = set(acks)
+        stream.event_queue = [event for event in stream.event_queue if event['jti'] not in acks_set]
+
+    if max_events is None:
+        max_events = len(stream.event_queue)
 
     more_available = len(stream.event_queue) > max_events
 
     return stream.event_queue[:max_events], more_available
 
 
-def register(audience: Union[str, List[str]]):
+def register(audience: Union[str, List[str]]) -> Dict[str, str]:
     for stream in db.STREAMS.values():
         if stream.config.aud == audience:
-            return {'token': stream.client_id}
+            return { 'token': stream.client_id }
 
     client_id = uuid.uuid4().hex
     Stream(client_id, audience)
-    return {'token': client_id}
+    return { 'token': client_id }

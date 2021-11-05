@@ -668,6 +668,9 @@ components:
         verification_endpoint: https://transmitter.most-secure.com/verification
     StreamConfiguration:
       title: Event Stream Configuration
+      required:
+      - delivery
+      - events_requested
       type: object
       properties:
         iss:

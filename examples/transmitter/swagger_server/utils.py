@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
 
-from typing import Optional, Type, TypeVar
+from typing import Optional, TypeVar, Type
 
 from swagger_server.models import (Subject, SimpleSubject, ComplexSubject, Aliases,
                                    Account, DID, Email, IssSub, JwtID, Opaque,
@@ -18,7 +18,8 @@ SimpleSubjectType = TypeVar(
 )
 
 
-def get_simple_subject(subject: Subject, simple_subj_type: Type[SimpleSubjectType]) -> Optional[SimpleSubjectType]:
+def get_simple_subject(subject: Subject, 
+                       simple_subj_type: Type[SimpleSubjectType]) -> Optional[SimpleSubjectType]:
     subj_root = subject.__root__
     if isinstance(subj_root, SimpleSubject):
         # return the simplesubject as long as it matches simple_subj_type
