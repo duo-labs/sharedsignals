@@ -1,10 +1,9 @@
 # Decoding SETs with ES256 Algorithm
 
-SETs can be encoded with various different algorithms. We recommend encoding
-with the ES256 algorithm for maximum security.
+SETs can be encoded with various different algorithms, as [described here](https://datatracker.ietf.org/doc/html/rfc7518#section-3.1). We recommend using the asymmetric key [ES256 algorithm](https://datatracker.ietf.org/doc/html/rfc7518#section-3.4) as a best security practice.
 
 ## Retrieving the JWKS
-To decode SETs from a transmitter, we need the transmitter's JWKS (JSON Web Key Set):
+To decode SETs from a transmitter, we need the transmitter's JWKS [(JSON Web Key Set)](https://datatracker.ietf.org/doc/html/rfc7517#section-5):
 ```py
 sse_config_response = requests.get(
     'https://transmitter.most-secure.com/.well-known/sse-configuration')
