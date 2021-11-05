@@ -3,9 +3,7 @@
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
 
-from typing import Dict
-
-from swagger_server.business_logic.stream import Stream
+from typing import Any, Dict
 
 
-STREAMS: Dict[str, Stream] = {}
+STREAMS: Dict[str, Any] = {}
