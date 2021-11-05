@@ -29,11 +29,11 @@ def main():
     @app.route('/event', methods=['POST'])
     def receive_event():
         data = request.get_data()
-        kid = jwt.get_unverified_header(body)["kid"]
+        kid = jwt.get_unverified_header(data)["kid"]
         jwk = jwks.get_key(kid)
         key = jwt.PyJWK(jwk).key
         decoded = jwt.decode(
-            jwt=body,
+            jwt=data,
             key=key,
             algorithms=["ES256"],
             issuer="example_push_transmitter",
