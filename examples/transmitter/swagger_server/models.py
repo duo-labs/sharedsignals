@@ -423,8 +423,8 @@ class StreamConfiguration(BaseModel):
             'https://schemas.openid.net/secevent/risc/event-type/credential-compromise',
         ],
     )
-    events_requested: Optional[List[AnyUrl]] = Field(
-        None,
+    events_requested: List[AnyUrl] = Field(
+        ...,
         description='Read-Write.\nAn array of URIs identifying the set of events that the Receiver requested.\nA Receiver SHOULD request only the events that it understands and it can act on.\nThis is configurable by the Receiver.',
         example=[
             'https://schemas.openid.net/secevent/risc/event-type/credential-compromise'
@@ -437,8 +437,8 @@ class StreamConfiguration(BaseModel):
             'https://schemas.openid.net/secevent/risc/event-type/credential-compromise'
         ],
     )
-    delivery: Optional[Union[PushDeliveryMethod, PollDeliveryMethod]] = Field(
-        None,
+    delivery: Union[PushDeliveryMethod, PollDeliveryMethod] = Field(
+        ...,
         description='Read-Write.\nA JSON object containing a set of name/value pairs specifying configuration parameters for the SET delivery\nmethod. The actual delivery method is identified by the special key method with the value being a URI as defined\nin [Section 11.2.1](https://openid.net/specs/openid-sse-framework-1_0.html#delivery-meta).',
         example={
             'method': 'https://schemas.openid.net/secevent/risc/delivery-method/poll',

@@ -4,9 +4,11 @@
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
 from __future__ import absolute_import
+from typing import Any, Dict, Optional
 from unittest.mock import patch
 
 from flask import json
+from flask.testing import FlaskClient
 import pytest
 import requests
 
@@ -32,7 +34,7 @@ from swagger_server import jwt_encode
 from swagger_server.utils import get_simple_subject
 
 
-def test_add_subject(client, new_stream):
+def test_add_subject(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for add_subject
 
     Request to add a subject to an Event Stream
@@ -48,7 +50,7 @@ def test_add_subject(client, new_stream):
     assert new_stream._subjects['new_subject@test.com'] == Status.enabled
 
 
-def test_add_subject__without_email(client, new_stream):
+def test_add_subject__without_email(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for add_subject
 
     Request to add a subject to an Event Stream, but with a subject format we don't support
@@ -63,7 +65,7 @@ def test_add_subject__without_email(client, new_stream):
     assert 'Email not found in subject' in str(response.data)
 
 
-def test_add_subject__no_stream(client):
+def test_add_subject__no_stream(client: FlaskClient) -> None:
     """Test case for add_subject
 
     Request to add a subject to an Event Stream, but when there's no event stream for the client id given
@@ -84,7 +86,7 @@ def test_add_subject__no_stream(client):
     Status.paused,
     Status.disabled,
 ])
-def test_get_status__no_subject(client, new_stream, status):
+def test_get_status__no_subject(client: FlaskClient, new_stream: Stream, status: Status) -> None:
     """Test case for get_status w/out a subject
 
     Request to get the status of an Event Stream (no subject)
@@ -110,12 +112,14 @@ def test_get_status__no_subject(client, new_stream, status):
     Status.paused,
     Status.disabled,
 ])
-def test_get_status__subject(client, new_stream, subject, status):
+def test_get_status__subject(client: FlaskClient, new_stream: Stream, 
+                             subject: Subject, status: Status) -> None:
     """Test case for get_status (w/ a subject)
 
     Request to get the status of an Event Stream (subject included)
     """
     simple_subj = get_simple_subject(subject, Email)
+    assert simple_subj is not None
     email_address = simple_subj.email
     new_stream.add_subject(email_address)
     new_stream.set_subject_status(email_address, status)
@@ -132,7 +136,7 @@ def test_get_status__subject(client, new_stream, subject, status):
         )
 
 
-def test_get_status__no_stream(client):
+def test_get_status__no_stream(client: FlaskClient) -> None:
     """Test case for get_status
 
     Request to get the status of a non-existent Event Stream
@@ -146,7 +150,7 @@ def test_get_status__no_stream(client):
     assert StreamDoesNotExist().message in str(response.data)
 
 
-def test_remove_subject(client, new_stream):
+def test_remove_subject(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for remove_subject
 
     Request to remove a subject from an Event Stream
@@ -165,7 +169,7 @@ def test_remove_subject(client, new_stream):
     assert "old_subject@test.com" not in new_stream._subjects
 
 
-def test_remove_subject__without_email(client, new_stream):
+def test_remove_subject__without_email(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for remove_subject
 
     Request to remove subject from an Event Stream, but with a subject format we don't support
@@ -181,7 +185,7 @@ def test_remove_subject__without_email(client, new_stream):
     assert 'Email not found in subject' in str(response.data)
 
 
-def test_remove_subject__no_stream(client):
+def test_remove_subject__no_stream(client: FlaskClient) -> None:
     """Test case for add_subject
 
     Request to remove a subject from an Event Stream, but when there's no event stream for the client id given
@@ -197,7 +201,7 @@ def test_remove_subject__no_stream(client):
     assert StreamDoesNotExist().message in str(response.data)
 
 
-def test_stream_post(client, new_stream):
+def test_stream_post(client, new_stream: Stream) -> None:
     """Test case for stream_post
 
     Request to update the configuration of an event stream
@@ -232,25 +236,27 @@ def test_stream_post(client, new_stream):
     expected_delivered.pop()
     assert updated_stream.config.events_delivered == expected_delivered
 
-    assert "/poll" in updated_stream.config.delivery.endpoint_url
 
-
-def test_stream_post__no_stream(client):
+def test_stream_post__no_stream(client: FlaskClient) -> None:
     """Test case for stream_post
 
     Request to update the configuration of an event stream, but the event stream doesn't exist.
     """
     bad_client_id = 'IncorrectClientId'
+    new_config = StreamConfiguration(
+        events_requested=SUPPORTED_EVENTS.copy(),
+        delivery=PollDeliveryMethod(endpoint_url=None)
+    )
     response = client.post(
         '/stream',
-        json={},
+        json=new_config.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
     assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
     assert StreamDoesNotExist().message in str(response.data)
 
 
-def test_stream_delete(client, new_stream):
+def test_stream_delete(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for stream_delete
 
     Request to remove the configuration of an event stream
@@ -263,7 +269,7 @@ def test_stream_delete(client, new_stream):
     assert new_stream.client_id not in db.STREAMS
 
 
-def test_stream_delete__no_stream(client):
+def test_stream_delete__no_stream(client: FlaskClient) -> None:
     """Test case for stream_delete
 
     Request to remove the configuration of an event stream, passes even if there's no stream
@@ -274,7 +280,7 @@ def test_stream_delete__no_stream(client):
     assert response.status_code == 200, 'Incorrect response code' + response.data.decode('utf-8')
 
 
-def test_stream_get(client, new_stream):
+def test_stream_get(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for stream_get
 
     Request to retrieve the configuration of an event stream
@@ -289,7 +295,7 @@ def test_stream_get(client, new_stream):
                    'Response body is : ' + response.data.decode('utf-8')
 
 
-def test_stream_get__no_stream(client):
+def test_stream_get__no_stream(client: FlaskClient) -> None:
     """Test case for stream_get
 
     Request to retrieve the configuration of an event stream, but when there's no event stream for the client id given
@@ -315,12 +321,14 @@ def test_stream_get__no_stream(client):
     Status.paused,
     Status.disabled,
 ])
-def test_update_status__subject(client, new_stream, subject, status):
+def test_update_status__subject(client: FlaskClient, new_stream: Stream,
+                                subject: Subject, status: Status) -> None:
     """Test case for update_status
 
     Request to update an Event Stream's status
     """
     simple_subj = get_simple_subject(subject, Email)
+    assert simple_subj is not None
     email_address = simple_subj.email
     new_stream.add_subject(email_address)
 
@@ -347,7 +355,7 @@ def test_update_status__subject(client, new_stream, subject, status):
     Status.paused,
     Status.disabled,
 ])
-def test_update_status__no_subject(client, new_stream, status):
+def test_update_status__no_subject(client: FlaskClient, new_stream: Stream, status: Status) -> None:
     """Test case for update_status
 
     Request to update an Event Stream's status
@@ -375,7 +383,8 @@ def test_update_status__no_subject(client, new_stream, status):
         "someArbitraryString"
     ]
 )
-def test_verification_request__polling(client, new_stream, state):
+def test_verification_request__polling(client: FlaskClient, new_stream: Stream, 
+                                       state: Optional[str]) -> None:
     """Test case for verification_request
 
     Request that a verification event be sent over an Event Stream
@@ -402,7 +411,7 @@ def test_verification_request__polling(client, new_stream, state):
         assert 'state' not in verification_event
 
 
-def test_verification_request__pushing__no_response(client, new_stream):
+def test_verification_request__pushing__no_response(client: FlaskClient, new_stream: Stream) -> None:
     """Test case for verification_request
 
     Request that a verification event be sent over an Event Stream with Push delivery method,
@@ -426,9 +435,10 @@ def test_verification_request__pushing__no_response(client, new_stream):
 
 
 @pytest.mark.parametrize(
-    "auth_header", [ None,"test-auth-header" ]
+    "auth_header", [ None, "test-auth-header" ]
 )
-def test_verification_request__pushing(client, new_stream, auth_header):
+def test_verification_request__pushing(client: FlaskClient, new_stream: Stream, 
+                                       auth_header: Optional[str]) -> None:
     """Test case for verification_request
 
     Request that a verification event be sent over an Event Stream with Push delivery method
@@ -438,6 +448,7 @@ def test_verification_request__pushing(client, new_stream, auth_header):
         endpoint_url=push_url, 
         authorization_header=auth_header
     )
+    config = new_stream.config.dict()
 
     state = "test state"
     body = VerificationParameters(state=state)
@@ -455,7 +466,7 @@ def test_verification_request__pushing(client, new_stream, auth_header):
 
     args = post_mock.call_args
 
-    assert push_url in args.args[0]
+    assert push_url == str(args.args[0])
 
     if auth_header:
         assert 'headers' in args.kwargs
@@ -466,15 +477,18 @@ def test_verification_request__pushing(client, new_stream, auth_header):
     assert 'data' in args.kwargs
 
     jwks = client.get('/jwks.json').json
-    iss = new_stream.config.iss
-    aud = new_stream.config.aud
+    iss = config['iss']
+    aud = config['aud']
+    assert jwks is not None
+    assert iss is not None
+    assert aud is not None
 
     event = jwt_encode.decode_set(args.kwargs['data'], jwks, iss, aud)
     assert VERIFICATION_EVENT_TYPE in event['events']
     assert event['events'][VERIFICATION_EVENT_TYPE]['state'] == state
 
 
-def test_verification_request__no_stream(client):
+def test_verification_request__no_stream(client: FlaskClient) -> None:
     """Test case for verification_request
 
     Request that a verification event be sent over an Event Stream, but when there's no event stream for the client id given
@@ -493,7 +507,7 @@ def test_verification_request__no_stream(client):
     assert StreamDoesNotExist().message in str(response.data)
 
 
-def test_well_known_sse_configuration_get(client):
+def test_well_known_sse_configuration_get(client: FlaskClient) -> None:
     """Test case for well_known_sse_configuration_get
 
     Transmitter Configuration Request (without path)
@@ -502,7 +516,7 @@ def test_well_known_sse_configuration_get(client):
     assert response.status_code == 200, "Incorrect response code: {}".format(response.status_code)
 
 
-def test_well_known_sse_configuration_issuer_get(client):
+def test_well_known_sse_configuration_issuer_get(client: FlaskClient) -> None:
     """Test case for well_known_sse_configuration_issuer_get
 
     Transmitter Configuration Request (with path)
