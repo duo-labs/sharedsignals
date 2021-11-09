@@ -62,7 +62,8 @@ requests.post("http://localhost:8080", data=encoded_jwt, headers={
 ```
 
 In a full implementation, the transmitter must share its `jwks.json` file with the receiver
-and encode each JWT. This process is omitted from this example -- see the full transmitter
+and encode each JWT. This process is omitted from this example -- see
+[the full transmitter](https://github.com/duo-labs/py-openid-sse/tree/main/examples/transmitter)
 example in this repository to learn how SETs can be encoded using the ES256 algorithm
 
 
