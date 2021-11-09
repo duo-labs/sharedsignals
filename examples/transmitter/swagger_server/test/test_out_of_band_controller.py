@@ -5,11 +5,13 @@
 
 import json
 
+from flask.testing import FlaskClient
+
 from swagger_server import db
 from swagger_server.models import RegisterParameters
 
 
-def test_register(client):
+def test_register(client: FlaskClient) -> None:
     """Test case for add_subject
 
     Request to add a subject to an Event Stream

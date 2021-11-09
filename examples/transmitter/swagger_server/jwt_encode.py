@@ -6,7 +6,7 @@
 from functools import lru_cache
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Union
+from typing import Any, Dict, List, Mapping, Optional, Union
 
 from jwcrypto.jwk import JWK, JWKSet
 import jwt
@@ -37,7 +37,7 @@ def add_jwk_to_jwks(jwk: JWK, jwks: JWKSet) -> JWKSet:
     return jwks
 
 
-def make_jwks(key_ids: Union[List[str], None] = None) -> JWKSet:
+def make_jwks(key_ids: Optional[List[str]] = None) -> JWKSet:
     """Makes a JSON Web Key Set with the key_ids passed in"""
     key_ids = [] if key_ids is None else key_ids
 
@@ -94,8 +94,8 @@ def encode_set(security_event_token: Dict[str, Any]) -> str:
 # TODO: make annotation for the SET a pydantic model
 def decode_set(jwt_value: str,
                jwks: Mapping[str, Any],
-               iss: str,
-               aud: str) -> Dict[str, Any]:
+               iss: Optional[str],
+               aud: Union[str, List[str], None]) -> Dict[str, Any]:
     """This runs on the receiver. Decodes a SET intended from a specific issuer
     and for a specific audience
     """

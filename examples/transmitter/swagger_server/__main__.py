@@ -14,7 +14,7 @@ from swagger_server.errors import register_error_handlers
 from logging.config import dictConfig
 
 
-def _init_logging():
+def _init_logging() -> None:
     dictConfig({
         'version': 1,
         'formatters': {'default': {
@@ -32,7 +32,7 @@ def _init_logging():
     })
 
 
-def main():
+def main() -> None:
     _init_logging()
 
     make_keys()
