@@ -1,0 +1,4 @@
+jwcrypto==1.0
+pyjwt==2.2.0
+requests==2.26.0
+typing-extensions==3.10.0.2
