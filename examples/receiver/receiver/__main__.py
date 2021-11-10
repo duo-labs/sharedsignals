@@ -124,6 +124,8 @@ def load_jwks() -> JWKSet:
 
 
 def main():
+    time.sleep(5)  # Wait for transmitter
+
     hostname = socket.gethostname()
     parser = argparse.ArgumentParser()
     parser.add_argument(
