@@ -7,7 +7,7 @@ import logging
 import time
 import uuid
 from typing import List, Optional, Tuple, Union, Dict, Any
-
+import connexion
 import requests
 
 import swagger_server.db as db
@@ -155,11 +155,11 @@ def push_events(stream: Stream) -> None:
             )
         except:
             continue
-        
+
     stream.event_queue = []
 
 
-def _well_known_sse_configuration_get(url_root: str, 
+def _well_known_sse_configuration_get(url_root: str,
                                       issuer: Optional[str] = None) -> TransmitterConfiguration:
     return TransmitterConfiguration(
         issuer=TRANSMITTER_ISSUER + (issuer if issuer else ''),
@@ -188,7 +188,8 @@ def poll_request(max_events: Optional[int],
 
     if acks:
         acks_set = set(acks)
-        stream.event_queue = [event for event in stream.event_queue if event['jti'] not in acks_set]
+        stream.event_queue = [
+            event for event in stream.event_queue if event['jti'] not in acks_set]
 
     if max_events is None:
         max_events = len(stream.event_queue)
@@ -201,8 +202,8 @@ def poll_request(max_events: Optional[int],
 def register(audience: Union[str, List[str]]) -> Dict[str, str]:
     for stream in db.STREAMS.values():
         if stream.config.aud == audience:
-            return { 'token': stream.client_id }
+            return {'token': stream.client_id}
 
     client_id = uuid.uuid4().hex
     Stream(client_id, audience)
-    return { 'token': client_id }
+    return {'token': client_id}

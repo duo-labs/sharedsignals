@@ -16,4 +16,4 @@ EXPOSE 5003
 
 ENTRYPOINT ["python3"]
 
-CMD ["-m", "receiver", "--xmit", "transmitter", "--unsafe"]
+CMD ["-m", "receiver"]
