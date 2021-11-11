@@ -20,7 +20,3 @@ services:
       # The key ID of the JSON Web Key Set that is currently in use
       # update this if we want to rotate keys
       - JWK_KEY_ID=transmitter-ES256-001
-
-volumes:
-  # we will store our JWKS file here so that it is persistent between builds
-  keys-volume:
