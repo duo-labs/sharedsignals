@@ -67,7 +67,10 @@ class Stream:
 
     def update_config(self, new_config: StreamConfiguration) -> Stream:
         config = self.config.dict()
+        if isinstance(new_config.delivery, PollDeliveryMethod):
+            new_config.delivery.endpoint_url = POLL_ENDPOINT
         _new_config = new_config.dict()
+
         for key in READ_ONLY_CONFIG_FIELDS:
             _new_config.pop(key, None)
         config.update(_new_config)

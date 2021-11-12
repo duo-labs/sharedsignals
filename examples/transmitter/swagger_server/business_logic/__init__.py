@@ -12,7 +12,7 @@ import requests
 
 import swagger_server.db as db
 from swagger_server.business_logic.const import (
-    TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE
+    TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE, POLL_ENDPOINT
 )
 from swagger_server import jwt_encode
 from swagger_server.business_logic.stream import Stream
@@ -72,9 +72,6 @@ def remove_subject(subject: Subject, client_id: str) -> None:
 def stream_post(stream_configuration: StreamConfiguration,
                 client_id: str) -> StreamConfiguration:
     stream = Stream.load(client_id)
-
-    if isinstance(stream_configuration.delivery, PollDeliveryMethod):
-        stream_configuration.delivery.endpoint_url = None
 
     stream = stream.update_config(stream_configuration)
     return stream.config
