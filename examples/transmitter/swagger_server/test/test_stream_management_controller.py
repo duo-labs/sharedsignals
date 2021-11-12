@@ -12,7 +12,7 @@ from flask.testing import FlaskClient
 import pytest
 import requests
 
-from swagger_server.business_logic.const import VERIFICATION_EVENT_TYPE
+from swagger_server.business_logic.const import VERIFICATION_EVENT_TYPE, POLL_ENDPOINT
 from swagger_server.business_logic.event import SUPPORTED_EVENTS
 from swagger_server.business_logic.stream import Stream
 from swagger_server.errors import StreamDoesNotExist
@@ -231,6 +231,7 @@ def test_stream_post(client, new_stream: Stream) -> None:
     assert updated_stream.config.aud == old_config.aud
     assert updated_stream.config.events_supported == old_config.events_supported
     assert updated_stream.config.events_requested == requested_events
+    assert updated_stream.config.delivery.endpoint_url == POLL_ENDPOINT
 
     expected_delivered = SUPPORTED_EVENTS.copy()
     expected_delivered.pop()

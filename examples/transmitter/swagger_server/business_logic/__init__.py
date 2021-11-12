@@ -73,9 +73,6 @@ def stream_post(stream_configuration: StreamConfiguration,
                 client_id: str) -> StreamConfiguration:
     stream = Stream.load(client_id)
 
-    if isinstance(stream_configuration.delivery, PollDeliveryMethod):
-        stream_configuration.delivery.endpoint_url = None
-
     stream = stream.update_config(stream_configuration)
     return stream.config
 

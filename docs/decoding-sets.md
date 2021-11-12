@@ -17,12 +17,12 @@ An example of what `jwks` might look like:
 jwks = {
   "keys": [
     {
-      "kty": "EC",
-      "crv": "P-256",
       "alg": "ES256",
+      "crv": "P-256",
       "kid": "transmitter-ES256-001",
-      "x": "Js-Hzhls17UL1JI2EL0AB6Ta2B282me2niBGc0s1-Lo",
-      "y": "PCsSWYCixwZgEyYKbGDFpzaooP6_Z-4CEfV62cbNBQw"
+      "kty": "EC",
+      "x": "YJ0AaXbOH8wcB1FLXiqXj2zGSfciIb_-x-i9B5Ica7Q",
+      "y": "bll4Myk4oui5P8kCzaMzgxlEV9q7tECVcpcVACJzWNU"
     }
   ]
  }
@@ -39,7 +39,7 @@ events = {
   "sets": {
     # The key is the JTI of the event -- a unique identifier
     # The value is an encoded event body
-    "9e668e802d0311eca8830242ac120005": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI5ZTY2OGU4MDJkMDMxMWVjYTg4MzAyNDJhYzEyMDAwNSIsImlhdCI6MTYzNDIyNTQxMCwiaXNzIjoiaHR0cHM6Ly90cmFuc21pdHRlci5tb3N0LXNlY3VyZS5jb20vIiwiYXVkIjoiaHR0cHM6Ly9wb3B1bGFyLWFwcC5jb20iLCJldmVudHMiOnsiaHR0cHM6Ly9zY2hlbWFzLm9wZW5pZC5uZXQvc2VjZXZlbnQvc3NlL2V2ZW50LXR5cGUvdmVyaWZpY2F0aW9uIjp7InN0YXRlIjoiVkdocGN5QnBjeUJoYmlCbGVHIn19fQ.7FsbAXOXJgwkwPLNIlnff1bgshWBLHq9-m8VGc6KjWQ"
+     "1767b10443e511eca7740242ac120002": "eyJ0eXAiOiJzZWNldmVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6InRyYW5zbWl0dGVyLUVTMjU2LTAwMSJ9.eyJqdGkiOiIxNzY3YjEwNDQzZTUxMWVjYTc3NDAyNDJhYzEyMDAwMiIsImlhdCI6MTYzNjc0MTE3NiwiaXNzIjoiaHR0cHM6Ly9tb3N0LXNlY3VyZS5jb20vIiwiYXVkIjoiaHR0cHM6Ly9wb3B1bGFyLWFwcC5jb20iLCJldmVudHMiOnsiaHR0cHM6Ly9zY2hlbWFzLm9wZW5pZC5uZXQvc2VjZXZlbnQvc3NlL2V2ZW50LXR5cGUvdmVyaWZpY2F0aW9uIjp7InN0YXRlIjoiVkdocGN5QnBjeUJoYmlCbGVHIn19fQ.eNBqxZ5YmUrWMzDxBJa2_AMMh7aiUp4-35Ipc4_q2B3kIjwWZk7Qh1nDNmw_i06u11SOYJnxM9iN6xfi752cLg"
   },
   "moreAvailable": false
 }
@@ -78,8 +78,8 @@ decoded_set = jwt.decode(
 Success! Here's the decoded event:
 ```json5
 {
-  "jti": "bd28254a35a511ecbca20242ac1c0002",
-  "iat": 1634225410,
+  "jti": "1767b10443e511eca7740242ac120002",
+  "iat": 1636741176,
   "iss": "https://most-secure.com/",
   "aud": "https://popular-app.com",
   "events": {
