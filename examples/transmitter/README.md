@@ -71,7 +71,7 @@ https://localhost/ui/
 Your Swagger definition lives here:
 
 ```
-https://localhost/swagger.json
+https://localhost/openapi.json
 ```
 
 Note that because this is a local environment, your browser will warn you that
