@@ -27,7 +27,7 @@ To run the server on a Docker container, please execute the following from the `
 docker build -f Dockerfile -t transmitter .
 
 # starting up a container
-docker run -p 80:80 -v "${PWD}":/usr/src/app transmitter
+docker run -p 443:443 -v "${PWD}":/usr/src/app transmitter
 ```
 
 You can also run tests with docker, if you'd like:
@@ -44,21 +44,38 @@ To run the server, please execute the following from the `examples/transmitter` 
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
-python3 -m swagger_server
+JWKS_PATH=jwks.json JWK_KEY_ID=key-id python3 -m swagger_server
 ```
+
+## Environment variables
+There are a few environment variables you can set to control how the transmitter
+works:
+
+- `FLASK_ENV=development` This will cause the flask server to hot-reload if you change
+any code while it is running.
+- `JWKS_PATH=/path/to/jwks.json` This specifies where your `jwks.json` file lives.
+If you want to use a specific set of keys, you can add them this way. This value
+will default to `/usr/keys/jwks.json` and will auto-create a new set of keys on
+every run.
+- `JWK_KEY_ID=key-id` This specifies which key id in the JWKS you want to use to
+encode the SETs. Controlling it with an environment variable allows you to rotate keys
+in the JWKS if desired. By default, this will be `transmitter-ES256-001`.
 
 ## Usage
 To view the Swagger UI open your browser to here:
 
 ```
-http://localhost:8080/ui/
+https://localhost/ui/
 ```
 
 Your Swagger definition lives here:
 
 ```
-http://localhost:8080/swagger.json
+https://localhost/openapi.json
 ```
+
+Note that because this is a local environment, your browser will warn you that
+the https connection is unsafe. You can ignore that warning.
 
 ## Development
 To launch the integration tests, use tox:

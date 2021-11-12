@@ -5,6 +5,9 @@
 
 FROM python:3.9
 
+ENV JWKS_PATH /usr/keys/jwks.json
+ENV JWK_KEY_ID transmitter-ES256-001
+
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
