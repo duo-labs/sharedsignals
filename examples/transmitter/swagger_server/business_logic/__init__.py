@@ -12,7 +12,7 @@ import requests
 
 import swagger_server.db as db
 from swagger_server.business_logic.const import (
-    TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE, POLL_ENDPOINT
+    TRANSMITTER_ISSUER, VERIFICATION_EVENT_TYPE
 )
 from swagger_server import jwt_encode
 from swagger_server.business_logic.stream import Stream
