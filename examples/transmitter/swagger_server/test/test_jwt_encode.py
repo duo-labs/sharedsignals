@@ -7,8 +7,9 @@ from pathlib import Path
 import uuid
 
 from jwcrypto.jwk import JWK, JWKSet
+
+from py._path.local import LocalPath
 import pytest
-import py
 from _pytest.monkeypatch import MonkeyPatch
 
 from swagger_server import jwt_encode
@@ -128,14 +129,17 @@ class TestGetJWKSPath:
 
 
 class TestSaveJWKS:
-    def test_makes_file(self) -> None:
+    def test_makes_file(self, monkeypatch: MonkeyPatch, tmpdir: LocalPath) -> None:
         """Ensures we are able to save a JWKS file to disk"""
+        temp_base = tmpdir.mkdir("mock")
+        monkeypatch.setenv("JWKS_PATH", f"{temp_base}/foo/bar/jwks.json")
+
         assert not jwt_encode.get_jwks_path().exists()
         mock_jwks = jwt_encode.make_jwks(["foo", "bar"])
         jwt_encode.save_jwks(mock_jwks)
         assert jwt_encode.get_jwks_path().exists()
 
-    def test_makes_needed_directories(self, monkeypatch: MonkeyPatch, tmpdir: py.path.local) -> None:
+    def test_makes_needed_directories(self, monkeypatch: MonkeyPatch, tmpdir: LocalPath) -> None:
         """Ensures the saving process creates all needed directories"""
         temp_base = tmpdir.mkdir("mock")
         monkeypatch.setenv("JWKS_PATH", f"{temp_base}/foo/bar/jwks.json")
@@ -147,8 +151,11 @@ class TestSaveJWKS:
 
 
 class TestLoadJWKS:
-    def test_loads_jwks(self) -> None:
+    def test_loads_jwks(self, monkeypatch: MonkeyPatch, tmpdir: LocalPath) -> None:
         """Ensures we are able to load a JWKS file from disk"""
+        temp_base = tmpdir.mkdir("mock")
+        monkeypatch.setenv("JWKS_PATH", f"{temp_base}/foo/bar/jwks.json")
+
         mock_jwks = jwt_encode.make_jwks(["foo", "bar"])
         jwt_encode.save_jwks(mock_jwks)
 
