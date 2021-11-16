@@ -13,6 +13,7 @@ import time
 import requests
 import threading
 import os
+import uuid
 from pathlib import Path
 from typing import Any
 import jwt
@@ -23,7 +24,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 class TransmitterInfo:
     """A class that holds the transmitter endpoint information"""
 
-    def __init__(self, info: dict[str, Any], unsafe: bool, hostname: str):
+    def __init__(self, info: dict[str, Any], unsafe: bool, audience: str, token: str):
         # FIXME get issuer information
         self.unsafe = unsafe
         self.add_subject_endpoint = info['add_subject_endpoint']
@@ -35,93 +36,15 @@ class TransmitterInfo:
         self.supported_methods = info['delivery_methods_supported']
         self.jwks = JWKSet.from_json(requests.get(
             self.jwks_uri, verify=not unsafe).text)
-        self.audience = "http://example_receiver"
-        reg = requests.post(f"https://{hostname}/register",
-                            verify=not unsafe,
-                            json={"audience": self.audience})
-        self.known_client_id = reg.json()["token"]
+        self.audience = audience
+        self.token = token
 
-    def __repr__(self):
-        return self.__str__()
-
-    def __str__(self):
-        return f"TransmitterInfo(add_subject_endpoint={self.add_subject_endpoint}, configuration_endpoint={self.configuration_endpoint}, jwks_uri={self.jwks_uri}, remove_subject_endpoint={self.remove_subject_endpoint}, status_endpoint={self.status_endpoint}, verification_endpoint={self.verification_endpoint}, supported_methods={self.supported_methods}, unsafe={self.unsafe}, jwks={self.jwks})"
-
-    def supports_push(self) -> bool:
-        """Does the endpoint support push methods?"""
-        for v in self.supported_methods:
-            if v == 'https://schemas.openid.net/secevent/risc/delivery-method/push':
-                return True
-        return False
-
-    def supports_push(self) -> bool:
-        """Does the endpoint support poll methods?"""
-        for v in self.supported_methods:
-            if v == 'https://schemas.openid.net/secevent/risc/delivery-method/poll':
-                return True
-        return False
-
-    def build_auth(self) -> dict[str, str]:
+    @property
+    def auth(self) -> dict[str, str]:
         """Build the 'Authorization' line for the HTTP header"""
-
         return {
-            'Authorization': f"Bearer {self.known_client_id}",
+            'Authorization': f"Bearer {self.token}",
         }
-
-
-def make_poll_request(info: TransmitterInfo, hostname: str):
-    """Make a poll request on the demo transmitter... not called, but 
-    good for example purposes"""
-
-    poll_data = requests.post(
-        url=info.configuration_endpoint,
-        verify=not info.unsafe,
-        json={
-            'delivery': {
-                'method': 'https://schemas.openid.net/secevent/risc/delivery-method/poll',
-                'endpoint_url': None
-            },
-            'events_requested': [
-
-                'https://schemas.openid.net/secevent/risc/event-type/credential-compromise',
-            ]
-        },
-        headers=info.build_auth()
-    )
-
-    poll_body = poll_data.json()
-
-    verification_response = requests.post(
-        url=info.verification_endpoint,
-        verify=not info.unsafe,
-        json={
-            'state': 'VGhpcyBpcyBhbiBleG'
-        },
-        headers=info.build_auth()
-    )
-
-    add_subject_response = requests.post(
-        url=info.add_subject_endpoint,
-        verify=not info.unsafe,
-        json={
-            'subject': {
-                'format': 'email',
-                'email': '*'
-            }
-        },
-        headers=info.build_auth())
-
-    # Do a polling request before registering for push events
-    polling_response = requests.post(
-        url=poll_body['delivery']['endpoint_url'],
-        verify=not info.unsafe,
-        json={
-            "maxEvents": 1,
-            "returnImmediately": True
-        },
-        headers=info.build_auth()
-    )
-    events = polling_response.json()
 
 
 def make_requests(info: TransmitterInfo, hostname: str):
@@ -129,12 +52,8 @@ def make_requests(info: TransmitterInfo, hostname: str):
     # Pause to allow the http server that receives push commands to start
     time.sleep(1)
 
-    if not info.supports_push():
-        logging.warning("The Transmitter does not support push, exiting")
-        sys.exit(1)
-
     # Set up push requests
-    push = requests.post(
+    config_response = requests.post(
         url=info.configuration_endpoint,
         verify=not info.unsafe,
         json={
@@ -146,8 +65,11 @@ def make_requests(info: TransmitterInfo, hostname: str):
                 'https://schemas.openid.net/secevent/risc/event-type/credential-compromise',
             ]
         },
-        headers=info.build_auth()
+        headers=info.auth,
     )
+    if not config_response.ok:
+        logging.error("Error configuring push receiver -- exiting")
+        config_response.raise_for_status()
 
     add_subject_response = requests.post(
         url=info.add_subject_endpoint,
@@ -158,16 +80,16 @@ def make_requests(info: TransmitterInfo, hostname: str):
                 'email': '*'
             }
         },
-        headers=info.build_auth())
+        headers=info.auth)
 
     while True:
         verification_response = requests.post(
             url=info.verification_endpoint,
             verify=not info.unsafe,
             json={
-                'state': 'VGhpcyBpcyBhbiBleG'
+                'state': uuid.uuid4().hex,
             },
-            headers=info.build_auth()
+            headers=info.auth,
         )
         time.sleep(2)
 
@@ -178,6 +100,7 @@ def main():
 
     # Get this instance's hostname
     hostname = socket.gethostname()
+    audience = f"http://{hostname}"
 
     # Parse command line arguments
     parser = argparse.ArgumentParser()
@@ -194,11 +117,17 @@ def main():
     # Use env-vars or CLI for the "unsafe" flag
     args.unsafe = args.unsafe or (os.environ["UNSAFE_TLS"] == "True")
 
+    # Register stream
+    reg = requests.post(f"https://{args.xmit}/register",
+                        verify=not args.unsafe,
+                        json={"audience": audience})
+    token = reg.json()["token"]
+
     # Get the transmitter's endpoints
     r = requests.get(
         f"https://{args.xmit}/.well-known/sse-configuration", verify=not args.unsafe)
 
-    info = TransmitterInfo(r.json(), args.unsafe, args.xmit)
+    info = TransmitterInfo(r.json(), args.unsafe, audience, token)
 
     # Define a class that handles the "push requests"
     class Handler(BaseHTTPRequestHandler):
@@ -214,7 +143,7 @@ def main():
                 algorithms=["ES256"],
                 audience=info.audience
             )
-            logging.warning(f"Got message: {decoded}")
+            logging.info(f"Got message: {decoded}")
             self.send_response(202)
             self.end_headers()
 
