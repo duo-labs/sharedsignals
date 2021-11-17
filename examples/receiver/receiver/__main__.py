@@ -25,6 +25,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from logging.config import dictConfig
 
 
+# borrowed + adapted from https://github.com/clarketm/wait-for-it
 async def wait_until_available(host, port):
     while True:
         try:
@@ -54,7 +55,7 @@ class TransmitterClient:
             json={
                 'delivery': {
                     'method': 'https://schemas.openid.net/secevent/risc/delivery-method/push',
-                    'endpoint_url': f"http://{socket.gethostname()}:5003/event"
+                    'endpoint_url': "http://receiver:5003/event"
                 },
                 'events_requested': [
                     'https://schemas.openid.net/secevent/risc/event-type/credential-compromise',
@@ -62,9 +63,7 @@ class TransmitterClient:
             },
             headers=self.auth,
         )
-        if not config_response.ok:
-            logging.error("Error configuring push receiver -- exiting")
-            config_response.raise_for_status()
+        config_response.raise_for_status()
 
         add_subject_response = requests.post(
             url=self.sse_config["add_subject_endpoint"],
@@ -79,14 +78,12 @@ class TransmitterClient:
 
     def request_verification(self):
         """Make requests on the demo transmitter"""
-        verification_response = requests.post(
+        return requests.post(
             url=self.sse_config["verification_endpoint"],
             verify=self.verify,
             json={'state': uuid.uuid4().hex},
             headers=self.auth,
         )
-        verification_response.raise_for_status()
-        return verification_response
 
 
 async def main():
