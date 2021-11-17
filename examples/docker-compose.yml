@@ -22,6 +22,8 @@ services:
       - JWK_KEY_ID=transmitter-ES256-001
 
   receiver:
+    depends_on:
+      - transmitter
     build:
       context: ./receiver
       dockerfile: Dockerfile
