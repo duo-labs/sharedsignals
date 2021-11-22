@@ -31,13 +31,7 @@ services:
       - "5003:5003"
     volumes:
       - ./receiver:/usr/src/app
-      - keys-volume:/usr/keys
     environment:
-      # Path to our JWKS file
-      - JWKS_PATH=/usr/keys/jwks.json
-      # The key ID of the JSON Web Key Set that is currently in use
-      # update this if we want to rotate keys
-      - JWK_KEY_ID=transmitter-ES256-001
       # Allow TLS without verifying cert
       - UNSAFE_TLS=True
 
