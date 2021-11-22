@@ -74,7 +74,9 @@ class TransmitterClient:
                     'email': '*'
                 }
             },
-            headers=self.auth)
+            headers=self.auth
+        )
+        return config_response.json()
 
     def request_verification(self):
         """Make requests on the demo transmitter"""
@@ -117,7 +119,7 @@ async def main():
     jwks = JWKSet.from_json(jwks_json)
 
     client = TransmitterClient(sse_config, not args.unsafe, audience, auth)
-    client.configure_stream()
+    config = client.configure_stream()
 
     # Define a flask app that handles the push requests
     dictConfig({
@@ -148,7 +150,7 @@ async def main():
             jwt=body,
             key=key,
             algorithms=["ES256"],
-            # issuer=info.issuer,
+            issuer=config["iss"],
             audience=audience,
         )
         app.logger.info(json.dumps(decoded, indent=2))
