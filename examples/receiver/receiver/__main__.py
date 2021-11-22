@@ -6,7 +6,6 @@
 #
 
 import asyncio
-import argparse
 import sys
 import logging
 import socket
@@ -14,7 +13,6 @@ import time
 import requests
 import threading
 import os
-import uuid
 import json
 from pathlib import Path
 from typing import Any
@@ -23,6 +21,7 @@ import jwt
 from jwcrypto.jwk import JWKSet
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from logging.config import dictConfig
+from .client import TransmitterClient
 
 
 # borrowed + adapted from https://github.com/clarketm/wait-for-it
@@ -38,108 +37,49 @@ async def wait_until_available(host, port):
         await asyncio.sleep(1)
 
 
-class TransmitterClient:
-    """A class that holds information for interacting with the transmitter"""
-
-    def __init__(self, sse_config: dict[str, str], verify: bool, audience: str, auth: str):
-        # FIXME get issuer information
-        self.sse_config = sse_config
-        self.verify = verify
-        self.audience = audience
-        self.auth = auth
-
-    def configure_stream(self):
-        """ Configure stream and return the current config """
-        config_response = requests.post(
-            url=self.sse_config["configuration_endpoint"],
-            verify=self.verify,
-            json={
-                'delivery': {
-                    'method': 'https://schemas.openid.net/secevent/risc/delivery-method/push',
-                    'endpoint_url': "http://receiver:5003/event"
-                },
-                'events_requested': [
-                    'https://schemas.openid.net/secevent/risc/event-type/credential-compromise',
-                ]
-            },
-            headers=self.auth,
-        )
-        config_response.raise_for_status()
-
-        requests.post(
-            url=self.sse_config["add_subject_endpoint"],
-            verify=self.verify,
-            json={
-                'subject': {
-                    'format': 'email',
-                    'email': '*'
-                }
-            },
-            headers=self.auth
-        )
-        return config_response.json()
-
-    def request_verification(self):
-        """ Request a single verification event """
-        return requests.post(
-            url=self.sse_config["verification_endpoint"],
-            verify=self.verify,
-            json={'state': uuid.uuid4().hex},
-            headers=self.auth,
-        )
-
-
 async def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-x", "--xmit", default="transmitter",
-        help="Set the hostname of the Shared Signals Transmitter",
-    )
-    parser.add_argument(
-        "--unsafe", action="store_true",
-        default=os.environ.get("UNSAFE_TLS", True),
-        help="connect to server ignoring TLS certificate",
-    )
-    args = parser.parse_args()
-
-    # Wait for transmitter to be available
-    await wait_until_available(args.xmit, 443)
-
-    # Register stream
-    audience = "http://example_receiver"
-    reg = requests.post(f"https://{args.xmit}/register",
-                        verify=not args.unsafe,
-                        json={"audience": audience})
-    auth = {'Authorization': f"Bearer {reg.json()['token']}"}
-
-    # Get the transmitter's endpoints and setup jwks
-    sse_config_response = requests.get(
-        f"https://{args.xmit}/.well-known/sse-configuration", verify=not args.unsafe)
-    sse_config = sse_config_response.json()
-    jwks_json = requests.get(sse_config['jwks_uri'], verify=not args.unsafe).text
-    jwks = JWKSet.from_json(jwks_json)
-
-    client = TransmitterClient(sse_config, not args.unsafe, audience, auth)
-    config = client.configure_stream()
-
     # Define a flask app that handles the push requests
     dictConfig({
-        'version': 1,
-        'formatters': {'default': {
-            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        "version": 1,
+        "formatters": {"default": {
+            "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s",
         }},
-        'handlers': {'wsgi': {
-            'class': 'logging.StreamHandler',
-            'stream': 'ext://flask.logging.wsgi_errors_stream',
-            'formatter': 'default'
+        "handlers": {"wsgi": {
+            "class": "logging.StreamHandler",
+            "stream": "ext://flask.logging.wsgi_errors_stream",
+            "formatter": "default"
         }},
-        'root': {
-            'level': 'INFO',
-            'handlers': ['wsgi']
+        "root": {
+            "level": "INFO",
+            "handlers": ["wsgi"]
         }
     })
 
     app = Flask(__name__)
+    app.config.from_pyfile("config.cfg")
+    app.logger.info(app.config)
+    verify = app.config.get("VERIFY", True)
+
+    # Wait for transmitter to be available
+    await wait_until_available(app.config["TRANSMITTER_HOSTNAME"], 443)
+
+    bearer = app.config.get('BEARER')
+    if not bearer:
+        # Register stream
+        reg = requests.post(f"https://{app.config['TRANSMITTER_HOSTNAME']}/register",
+                            verify=verify,
+                            json={"audience": app.config["AUDIENCE"]})
+        bearer = reg.json()["token"]
+
+    # Get the transmitter's endpoints and setup jwks
+    sse_config_response = requests.get(
+        f"https://{app.config['TRANSMITTER_HOSTNAME']}/.well-known/sse-configuration", verify=verify)
+    sse_config = sse_config_response.json()
+    jwks_json = requests.get(sse_config["jwks_uri"], verify=verify).text
+    jwks = JWKSet.from_json(jwks_json)
+
+    client = TransmitterClient(sse_config, verify, app.config["AUDIENCE"], bearer)
+    stream_config = client.configure_stream()
 
     @app.route('/event', methods=['POST'])
     def receive_event():
@@ -151,8 +91,8 @@ async def main():
             jwt=body,
             key=key,
             algorithms=["ES256"],
-            issuer=config["iss"],
-            audience=audience,
+            issuer=stream_config["iss"],
+            audience=app.config["AUDIENCE"],
         )
         app.logger.info(json.dumps(decoded, indent=2))
         return "", 202

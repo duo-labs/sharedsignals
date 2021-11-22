@@ -31,9 +31,6 @@ services:
       - "5003:5003"
     volumes:
       - ./receiver:/usr/src/app
-    environment:
-      # Allow TLS without verifying cert
-      - UNSAFE_TLS=True
 
 volumes:
   # we will store our JWKS file here so that it is persistent between builds
