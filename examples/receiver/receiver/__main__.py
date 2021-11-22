@@ -49,6 +49,7 @@ class TransmitterClient:
         self.auth = auth
 
     def configure_stream(self):
+        """ Configure stream and return the current config """
         config_response = requests.post(
             url=self.sse_config["configuration_endpoint"],
             verify=self.verify,
@@ -65,7 +66,7 @@ class TransmitterClient:
         )
         config_response.raise_for_status()
 
-        add_subject_response = requests.post(
+        requests.post(
             url=self.sse_config["add_subject_endpoint"],
             verify=self.verify,
             json={
@@ -79,7 +80,7 @@ class TransmitterClient:
         return config_response.json()
 
     def request_verification(self):
-        """Make requests on the demo transmitter"""
+        """ Request a single verification event """
         return requests.post(
             url=self.sse_config["verification_endpoint"],
             verify=self.verify,
