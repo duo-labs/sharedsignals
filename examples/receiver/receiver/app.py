@@ -76,7 +76,7 @@ def create_app():
     jwks = JWKSet.from_json(jwks_json)
 
     client = TransmitterClient(sse_config, verify, app.config["AUDIENCE"], bearer)
-    stream_config = client.configure_stream()
+    stream_config = client.configure_stream(app.config["ENDPOINT_URL"])
 
     @app.route('/event', methods=['POST'])
     def receive_event():

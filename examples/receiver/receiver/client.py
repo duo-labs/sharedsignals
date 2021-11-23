@@ -17,7 +17,7 @@ class TransmitterClient:
         self.audience = audience
         self.auth = {"Authorization": f"Bearer {bearer}"}
 
-    def configure_stream(self):
+    def configure_stream(self, endpoint_url: str):
         """ Configure stream and return the current config """
         config_response = requests.post(
             url=self.sse_config["configuration_endpoint"],
@@ -25,7 +25,7 @@ class TransmitterClient:
             json={
                 'delivery': {
                     'method': 'https://schemas.openid.net/secevent/risc/delivery-method/push',
-                    'endpoint_url': "http://receiver:5003/event"
+                    'endpoint_url': endpoint_url,
                 },
                 'events_requested': [
                     'https://schemas.openid.net/secevent/risc/event-type/credential-compromise',
