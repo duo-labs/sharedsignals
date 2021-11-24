@@ -12,11 +12,10 @@ import requests
 import threading
 import os
 import json
+import urllib
 from pathlib import Path
 from typing import Any
 from flask import Flask, request
-import jwt
-from jwcrypto.jwk import JWKSet
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from logging.config import dictConfig
 from .client import TransmitterClient
@@ -35,7 +34,7 @@ async def wait_until_available(host, port):
         await asyncio.sleep(1)
 
 
-def create_app():
+def create_app(config_filename: str = "config.cfg"):
     # Define a flask app that handles the push requests
     dictConfig({
         "version": 1,
@@ -54,44 +53,33 @@ def create_app():
     })
 
     app = Flask(__name__)
-    app.config.from_pyfile("config.cfg")
+    app.config.from_pyfile(config_filename)
     verify = app.config.get("VERIFY", True)
 
     # Wait for transmitter to be available
-    asyncio.run(wait_until_available(app.config["TRANSMITTER_HOSTNAME"], 443))
+    transmitter_url = app.config["TRANSMITTER_URL"]
+    asyncio.run(wait_until_available(urllib.parse.urlparse(transmitter_url).netloc, 443))
 
     bearer = app.config.get('BEARER')
     if not bearer:
         # Register stream
-        reg = requests.post(f"https://{app.config['TRANSMITTER_HOSTNAME']}/register",
+        reg = requests.post(f"{transmitter_url}/register",
                             verify=verify,
                             json={"audience": app.config["AUDIENCE"]})
         bearer = reg.json()["token"]
 
-    # Get the transmitter's endpoints and setup jwks
-    sse_config_response = requests.get(
-        f"https://{app.config['TRANSMITTER_HOSTNAME']}/.well-known/sse-configuration", verify=verify)
-    sse_config = sse_config_response.json()
-    jwks_json = requests.get(sse_config["jwks_uri"], verify=verify).text
-    jwks = JWKSet.from_json(jwks_json)
-
-    client = TransmitterClient(sse_config, verify, app.config["AUDIENCE"], bearer)
-    stream_config = client.configure_stream(app.config["ENDPOINT_URL"])
+    client = TransmitterClient(transmitter_url, app.config["AUDIENCE"], bearer, verify)
+    client.get_endpoints()
+    client.get_jwks()
+    stream_config = client.configure_stream(f"{app.config['RECEIVER_URL']}/event")
+    for subject in app.config["SUBJECTS"]:
+        client.add_subject(subject)
 
     @app.route('/event', methods=['POST'])
     def receive_event():
         body = request.get_data()
-        kid = jwt.get_unverified_header(body)["kid"]
-        jwk = jwks.get_key(kid)
-        key = jwt.PyJWK(jwk).key
-        decoded = jwt.decode(
-            jwt=body,
-            key=key,
-            algorithms=["ES256"],
-            issuer=stream_config["iss"],
-            audience=app.config["AUDIENCE"],
-        )
-        app.logger.info(json.dumps(decoded, indent=2))
+        event = client.decode_body(body)
+        app.logger.info(json.dumps(event, indent=2))
         return "", 202
 
     @app.route('/request_verification')

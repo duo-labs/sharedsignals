@@ -5,9 +5,10 @@
 # that can be found in the LICENSE file.
 #
 import asyncio
+import os
 from .app import create_app
 
 
 # Run a debug Flask server if invoked from the command line
-app = create_app()
+app = create_app(os.environ.get("CONFIG_FILENAME", "config.cfg"))
 app.run("0.0.0.0", 5003)
