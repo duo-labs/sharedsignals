@@ -37,8 +37,8 @@ class TransmitterClient:
         return jwt.decode(
             jwt=body,
             key=key,
-            algorithms=["ES256"],
-            issuer=self.stream_config["iss"],
+            algorithms=[jwk["alg"]],
+            issuer=self.sse_config["issuer"],
             audience=self.audience,
         )
 
