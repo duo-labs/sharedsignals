@@ -71,7 +71,7 @@ def create_app(config_filename: str = "config.cfg"):
     client = TransmitterClient(transmitter_url, app.config["AUDIENCE"], bearer, verify)
     client.get_endpoints()
     client.get_jwks()
-    stream_config = client.configure_stream(f"{app.config['RECEIVER_URL']}/event")
+    client.configure_stream(f"{app.config['RECEIVER_URL']}/event")
     for subject in app.config["SUBJECTS"]:
         client.add_subject(subject)
 

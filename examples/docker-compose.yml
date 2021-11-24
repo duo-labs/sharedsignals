@@ -31,6 +31,8 @@ services:
       - "5003:5003"
     volumes:
       - ./receiver:/usr/src/app
+    environment:
+      - CONFIG_FILENAME=config.cfg
 
 volumes:
   # we will store our JWKS file here so that it is persistent between builds
