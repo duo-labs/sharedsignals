@@ -21,6 +21,19 @@ services:
       # update this if we want to rotate keys
       - JWK_KEY_ID=transmitter-ES256-001
 
+  receiver:
+    depends_on:
+      - transmitter
+    build:
+      context: ./receiver
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5003"
+    volumes:
+      - ./receiver:/usr/src/app
+    environment:
+      - CONFIG_FILENAME=config.cfg
+
 volumes:
   # we will store our JWKS file here so that it is persistent between builds
   keys-volume:
