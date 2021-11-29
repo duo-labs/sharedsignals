@@ -19,7 +19,7 @@ unnecessary.
 
 ## Receiver
 In order to test out the PUSH delivery method of the SSE spec, we have created a
-recevier service that will spin up, configure the stream, and then host an
+receiver service that will spin up, configure the stream, and then host an
 endpoint where the transmitter can push events. Those events will be logged to
 std out. This service also has a `/request_verification` endpoint which, when
 called (via the browser or other method), will cause the receiver to request a

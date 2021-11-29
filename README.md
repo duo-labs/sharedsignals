@@ -14,7 +14,7 @@ The [examples](examples) folder contains python-based, Dockerized examples
 of a transmitter and receiver, as well as a working example of the code demonstrated
 on the [https://sharedsignals.guide](https://sharedsignals.guide) website.
 
-Please note that the transmitter and recevier examples here are for education
+Please note that the transmitter and receiver examples here are for education
 only and should not be used as production-level code.
 
 ## Openapi
