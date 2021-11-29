@@ -10,7 +10,7 @@ explanation of what the main concepts are and why you might want to use this
 technology, please see our accompanying site [https://sharedsignals.guide](https://sharedsignals.guide).
 
 ## Examples
-The [examples](examples/README.md) folder contains python-based, Dockerized examples
+The [examples](examples) folder contains python-based, Dockerized examples
 of a transmitter and receiver, as well as a working example of the code demonstrated
 on the [https://sharedsignals.guide](https://sharedsignals.guide) website.
 
@@ -31,8 +31,9 @@ That will output the bundled openapi spec to stdout. You can redirect that outpu
 to a new file if desired.
 
 ## Contributing
-We recognize that this code is still rough around the edges and we welcome
-contributions from the open source community. Please check the [Issues](https://github.com/duo-labs/sharedsignals/issues)
+The work provided here is intended as educational material and as a proof-of-concept.
+We welcome further contributions from the open source community.
+Please check the [Issues](https://github.com/duo-labs/sharedsignals/issues)
 section for ideas about where to start.
 
 ### Adding License Headers
