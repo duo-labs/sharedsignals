@@ -3,6 +3,11 @@
 Tools for working with OpenID's
 [Shared Signals and Events Framework](https://openid.net/specs/openid-sse-framework-1_0.html).
 
+Please note: The information in this repository reflects the Shared Signals spec
+as of November 2021. However, the spec is still evolving. We will continue to make
+updates here as the spec changes. Once it is finalized, we will indicate what
+version of the spec this code supports.
+
 ## sharedsignals.guide
 For detailed information about how to work with the transmitters and receivers
 described by the Shared Signals and Events Framework, as well as a high level
@@ -39,8 +44,6 @@ section for ideas about where to start.
 ### Adding License Headers
 The content in this repository and the accompanying sharedsignals.guide website
 was initially created by engineers at Cisco Systems, Inc.
-
-[QUESTION FOR BRIAN -- CAN WE GET RID OF THIS REQUIREMENT NOW THAT WE ARE OPEN SOURCING IT?]
 
 Use https://github.com/google/addlicense to automatically add license headers.
 This tool is open sourced with Apache 2.0 license.
