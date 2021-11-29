@@ -33,6 +33,7 @@ services:
       - ./receiver:/usr/src/app
     environment:
       - CONFIG_FILENAME=config.cfg
+      - FLASK_ENV=development
 
 volumes:
   # we will store our JWKS file here so that it is persistent between builds
