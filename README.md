@@ -42,8 +42,10 @@ Please check the [Issues](https://github.com/duo-labs/sharedsignals/issues)
 section for ideas about where to start.
 
 ### Adding License Headers
-The content in this repository and the accompanying sharedsignals.guide website
-was initially created by engineers at Cisco Systems, Inc.
+The content in this repository was initially created by engineers at
+Cisco Systems, Inc. which holds the copyright for all files and licenses them for
+use under the BSD 3-Clause License. Please be sure to add our [LICENSEHEADER](LICENSEHEADER)
+to any new files you add.
 
 Use https://github.com/google/addlicense to automatically add license headers.
 This tool is open sourced with Apache 2.0 license.
