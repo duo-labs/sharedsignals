@@ -14,6 +14,9 @@ described by the Shared Signals and Events Framework, as well as a high level
 explanation of what the main concepts are and why you might want to use this
 technology, please see our accompanying site [https://sharedsignals.guide](https://sharedsignals.guide).
 
+## Shared Signals and Events Communication Sequence
+To understand the communication sequence for SSE, refer to this [document](docs/push-and-poll-events.md).
+
 ## Examples
 The [examples](examples) folder contains python-based, Dockerized examples
 of a transmitter and receiver, as well as a working example of the code demonstrated

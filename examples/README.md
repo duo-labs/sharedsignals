@@ -4,7 +4,11 @@ to work. We do not recommend using this code in production, although you are wel
 to start from this code and build a more production-ready system.
 
 ## Running the examples
-To run the `transmitter` and `receiver` examples, please run `docker compose up`
+To run the `transmitter` and `receiver` examples, please run 
+```
+docker-compose build
+docker-compose up
+```
 from this directory.
 
 ## Transmitter
