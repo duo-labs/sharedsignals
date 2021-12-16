@@ -10,12 +10,20 @@ https://connexion.readthedocs.io/en/latest/security.html
 
 from typing import Dict, Any
 
+from werkzeug.exceptions import Unauthorized
+
+from swagger_server import db
+from swagger_server.errors import StreamDoesNotExist
+
 
 def check_BearerAuth(token: str) -> Dict[str, Any]:
-    # For now, we accept any token and we let the client ID be equal
-    # to the token value.
-    # TODO: actually set up clients and use encoding to check these things
-    return dict(
-        active=True,
-        client_id=token
-    )
+    """Get the client ID from the dict of known tokens. Raise an error if
+    token is unknown
+    """
+    if not db.stream_exists(token):
+        raise StreamDoesNotExist()
+
+    return {
+        'client_id': token,
+        'active': True,
+    }

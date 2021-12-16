@@ -7,8 +7,10 @@ FROM python:3.9
 
 ENV JWKS_PATH /usr/keys/jwks.json
 ENV JWK_KEY_ID transmitter-ES256-001
+ENV DB_PATH /usr/database/cta.db
 
 RUN mkdir -p /usr/src/app
+RUN mkdir -p /usr/database
 WORKDIR /usr/src/app
 
 COPY requirements.txt /usr/src/app/

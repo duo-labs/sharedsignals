@@ -26,7 +26,7 @@ def test_register(client: FlaskClient) -> None:
     assert response.status_code == 200, "Incorrect response code: {}".format(response.status_code)
     response_json = json.loads(response.data.decode('utf-8'))
     assert 'token' in response_json
-    assert response_json['token'] in db.STREAMS
+    assert db.stream_exists(response_json['token'])
 
 
 if __name__ == '__main__':

@@ -7,16 +7,16 @@ from pathlib import Path
 import uuid
 
 from jwcrypto.jwk import JWK, JWKSet
-
-from py._path.local import LocalPath
 import pytest
-from _pytest.monkeypatch import MonkeyPatch
 
-from swagger_server import jwt_encode
+from swagger_server.events import (
+    Events, SecurityEvent, VerificationEvent
+)
+import swagger_server.jwt_encode as jwt_encode
 
 
 @pytest.fixture(autouse=True)
-def clear_cache() -> None:
+def clear_cache():
     """The function we use to load keys uses LRU Caching to avoid hitting
     the disk too often. We need to clear it before running any unit tests.
     """
@@ -64,7 +64,7 @@ class TestAddJWKToJWKS:
         jwt_encode.add_jwk_to_jwks(jwk=jwk, jwks=jwks)
         assert isinstance(jwks.get_key(key_id), JWK)
 
-    def test_adds_to_non_empty_jwks(self) -> None:
+    def test_adds_to_non_empty_jwks(self):
         """Ensures we can add a JWK to an empty JWKSet"""
         key_ids = [uuid.uuid1().hex for _ in range(3)]
         jwks = jwt_encode.make_jwks(key_ids)
@@ -129,9 +129,9 @@ class TestGetJWKSPath:
 
 
 class TestSaveJWKS:
-    def test_makes_file(self, monkeypatch: MonkeyPatch, tmpdir: LocalPath) -> None:
+    def test_makes_file(self, monkeypatch, tmpdir) -> None:
         """Ensures we are able to save a JWKS file to disk"""
-        temp_base = tmpdir.mkdir("mock")
+        temp_base = tmpdir.mkdir(uuid.uuid1().hex)
         monkeypatch.setenv("JWKS_PATH", f"{temp_base}/foo/bar/jwks.json")
 
         assert not jwt_encode.get_jwks_path().exists()
@@ -139,9 +139,9 @@ class TestSaveJWKS:
         jwt_encode.save_jwks(mock_jwks)
         assert jwt_encode.get_jwks_path().exists()
 
-    def test_makes_needed_directories(self, monkeypatch: MonkeyPatch, tmpdir: LocalPath) -> None:
+    def test_makes_needed_directories(self, monkeypatch, tmpdir) -> None:
         """Ensures the saving process creates all needed directories"""
-        temp_base = tmpdir.mkdir("mock")
+        temp_base = tmpdir.mkdir(uuid.uuid1().hex)
         monkeypatch.setenv("JWKS_PATH", f"{temp_base}/foo/bar/jwks.json")
 
         assert not jwt_encode.get_jwks_path().exists()
@@ -151,15 +151,19 @@ class TestSaveJWKS:
 
 
 class TestLoadJWKS:
-    def test_loads_jwks(self, monkeypatch: MonkeyPatch, tmpdir: LocalPath) -> None:
+    def test_loads_jwks(self, monkeypatch, tmpdir) -> None:
         """Ensures we are able to load a JWKS file from disk"""
-        temp_base = tmpdir.mkdir("mock")
+        temp_base = tmpdir.mkdir(uuid.uuid1().hex)
         monkeypatch.setenv("JWKS_PATH", f"{temp_base}/foo/bar/jwks.json")
 
         mock_jwks = jwt_encode.make_jwks(["foo", "bar"])
         jwt_encode.save_jwks(mock_jwks)
 
         actual = jwt_encode.load_jwks()
+
+        # trying to debug a flaky test
+        print(jwt_encode.load_jwks.cache_info())
+
         assert actual.export() == mock_jwks.export()
 
 
@@ -167,13 +171,10 @@ class TestEncodeSet:
     def test_makes_string(self, with_jwks: None) -> None:
         """Ensures we can encode the SET"""
 
-        SET = dict(
-            iss="foo",
-            aud="bar",
-            jti="1234",
-            events={
-                "https://fake.event.com/account-forgotten": {}
-            }
+        SET = SecurityEvent(
+            iss="http://foo.com",
+            aud="http://bar.com",
+            events=Events(verification=VerificationEvent())
         )
 
         JWT = jwt_encode.encode_set(SET)
@@ -184,20 +185,20 @@ class TestDecodeSet:
     def test_decodes_encoded_set(self, with_jwks: None) -> None:
         jwks = jwt_encode.load_jwks()
 
-        issuer = "foo"
-        audience = "bar"
+        issuer = "http://foo.com"
+        audience = "http://bar.com"
 
-        SET = dict(
+        SET = SecurityEvent(
             iss=issuer,
             aud=audience,
-            jti="1234",
-            events={
-                "https://fake.event.com/account-forgotten": {}
-            }
+            events=Events(verification=VerificationEvent())
         )
 
         JWT = jwt_encode.encode_set(SET)
 
         actual = jwt_encode.decode_set(JWT, jwks, issuer, audience)
 
-        assert actual == SET
+        for key in ["iss", "aud", "jti", "iat"]:
+            assert actual[key] == getattr(SET, key)
+
+        assert actual["events"][VerificationEvent.__uri__] == {}

@@ -15,6 +15,7 @@ import py
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
+from swagger_server import db
 from swagger_server.business_logic.stream import Stream
 from swagger_server.encoder import JSONEncoder
 from swagger_server.errors import register_error_handlers
@@ -22,7 +23,15 @@ from swagger_server import jwt_encode
 
 
 @pytest.fixture
-def client() -> Iterator[FlaskClient]:
+def temp_db(monkeypatch, tmpdir) -> None:
+    db_id = uuid.uuid1().hex
+    db_path = tmpdir.join(f"{db_id}.db")
+    monkeypatch.setenv("DB_PATH", str(db_path))
+    db.create()
+
+
+@pytest.fixture
+def client(temp_db) -> Iterator[FlaskClient]:
     app = create_app({ 'TESTING': True })
 
     with app.test_client() as client:
@@ -34,7 +43,7 @@ def new_stream() -> Iterator[Stream]:
     client_id = uuid.uuid4().hex
     stream = Stream(client_id, "https://test-case.popular-app.com")
     yield stream
-    Stream.delete(client_id)
+    stream.delete()
 
 
 def create_app(self) -> Flask:
