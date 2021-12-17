@@ -65,7 +65,7 @@ def create(drop=False):
     if drop:
         logging.warning("Dropping database")
         db_path = Path(os.environ["DB_PATH"])
-        db_path.unlink()
+        db_path.unlink(missing_ok=True)
 
     logging.info("Creating database")
     with connection() as conn:

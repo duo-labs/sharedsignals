@@ -16,7 +16,7 @@ import swagger_server.jwt_encode as jwt_encode
 
 
 @pytest.fixture(autouse=True)
-def clear_cache():
+def clear_cache() -> None:
     """The function we use to load keys uses LRU Caching to avoid hitting
     the disk too often. We need to clear it before running any unit tests.
     """
@@ -160,9 +160,6 @@ class TestLoadJWKS:
         jwt_encode.save_jwks(mock_jwks)
 
         actual = jwt_encode.load_jwks()
-
-        # trying to debug a flaky test
-        print(jwt_encode.load_jwks.cache_info())
 
         assert actual.export() == mock_jwks.export()
 

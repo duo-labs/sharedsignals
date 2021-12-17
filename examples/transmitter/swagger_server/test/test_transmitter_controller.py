@@ -14,6 +14,7 @@ from swagger_server.errors import StreamDoesNotExist
 from swagger_server.business_logic.stream import Stream
 from swagger_server import jwt_encode
 from swagger_server.models import PollParameters
+from .test_utils import assert_status_code
 
 
 def test_poll_events__no_events(client: FlaskClient, new_stream: Stream) -> None:
@@ -31,9 +32,8 @@ def test_poll_events__no_events(client: FlaskClient, new_stream: Stream) -> None
         json=body.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
-    response_data = response.data.decode('utf-8')
-    assert response.status_code == 200, 'Response body is : ' + response_data
-    assert {'sets': {}, 'moreAvailable': False} == json.loads(response_data)
+    assert_status_code(response, 200)
+    assert {'sets': {}, 'moreAvailable': False} == json.loads(response.data.decode('utf-8'))
 
 
 def test_poll_events__one_event(client: FlaskClient, new_stream: Stream, with_jwks: None) -> None:
@@ -66,9 +66,9 @@ def test_poll_events__one_event(client: FlaskClient, new_stream: Stream, with_jw
         json=body.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
-    response_data = response.data.decode('utf-8')
-    assert response.status_code == 200, 'Response body is : ' + response_data
-    response_json = json.loads(response_data)
+    assert_status_code(response, 200)
+
+    response_json = json.loads(response.data.decode('utf-8'))
     assert 'moreAvailable' in response_json
     assert not response_json['moreAvailable']
     assert jti in response_json['sets']
@@ -118,9 +118,9 @@ def test_poll_events__more_available(client: FlaskClient, new_stream: Stream) ->
         json=body.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
-    response_data = response.data.decode('utf-8')
-    assert response.status_code == 200, 'Response body is : ' + response_data
-    response_json = json.loads(response_data)
+    assert_status_code(response, 200)
+
+    response_json = json.loads(response.data.decode('utf-8'))
     assert 'moreAvailable' in response_json
     assert response_json['moreAvailable'] == True
     assert 'sets' in response_json
@@ -154,9 +154,9 @@ def test_poll_events__acks(client: FlaskClient, new_stream: Stream) -> None:
         json=body.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
-    response_data = response.data.decode('utf-8')
-    assert response.status_code == 200, 'Response body is : ' + response_data
-    assert {'sets': {}, 'moreAvailable': False} == json.loads(response_data)
+    assert_status_code(response, 200)
+
+    assert {'sets': {}, 'moreAvailable': False} == json.loads(response.data.decode('utf-8'))
     assert 0 == new_stream.count_SETs()
 
 
@@ -175,7 +175,7 @@ def test_poll_events__no_stream(client: FlaskClient, new_stream: Stream) -> None
         json=body.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
-    assert response.status_code == 404, "Incorrect response code: {}".format(response.status_code)
+    assert_status_code(response, 404)
     assert StreamDoesNotExist().message in str(response.data)
 
 
@@ -185,8 +185,7 @@ def test_jwks_json(client: FlaskClient, with_jwks: None) -> None:
     Request to add a subject to an Event Stream
     """
     response = client.get('/jwks.json')
-    err_msg = "Incorrect response code: {}".format(response.status_code)
-    assert response.status_code == 200, err_msg
+    assert_status_code(response, 200)
 
 
 if __name__ == '__main__':

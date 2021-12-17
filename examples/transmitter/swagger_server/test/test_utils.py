@@ -70,3 +70,10 @@ def test_get_simple_subject(
         subject: Subject
     ) -> None:
     assert get_simple_subject(subject, class_to_search) == expected_result
+
+
+def assert_status_code(response, expected_code: int):
+    assert response.status_code == expected_code, (
+        f"Incorrect response code: {response.status_code}, "
+        f"Response body: {response.data.decode('utf-8')}"
+    )

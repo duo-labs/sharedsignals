@@ -177,10 +177,3 @@ class Stream:
 
     def ack_SETs(self, jtis: List[str]) -> None:
         db.delete_SETs(self.client_id, jtis)
-
-
-# Add a stream for https://popular-app.com automatically on startup
-# Stream(
-#     client_id='49e5e7785e4e4f688aa49e2585970370',
-#     aud='https://popular-app.com',
-# )
