@@ -6,8 +6,7 @@ to start from this code and build a more production-ready system.
 ## Running the examples
 To run the `transmitter` and `receiver` examples, please run 
 ```
-docker-compose build
-docker-compose up
+docker-compose up --build
 ```
 from this directory.
 
