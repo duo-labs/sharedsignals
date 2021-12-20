@@ -9,7 +9,7 @@ from flask.testing import FlaskClient
 
 from swagger_server import db
 from swagger_server.models import RegisterParameters
-from .test_utils import assert_status_code
+from swagger_server.test.conftest import assert_status_code
 
 
 def test_register(client: FlaskClient) -> None:

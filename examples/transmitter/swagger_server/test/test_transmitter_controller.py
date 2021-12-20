@@ -14,7 +14,7 @@ from swagger_server.errors import StreamDoesNotExist
 from swagger_server.business_logic.stream import Stream
 from swagger_server import jwt_encode
 from swagger_server.models import PollParameters
-from .test_utils import assert_status_code
+from swagger_server.test.conftest import assert_status_code
 
 
 def test_poll_events__no_events(client: FlaskClient, new_stream: Stream) -> None:

@@ -74,3 +74,10 @@ def with_jwks(jwks_path: str) -> None:
     """Sets up the JWKS file so that it is present during testing"""
     key_id = os.environ["JWK_KEY_ID"]
     jwt_encode.save_jwks(jwt_encode.make_jwks([key_id]))
+
+
+def assert_status_code(response, expected_code: int):
+    assert response.status_code == expected_code, (
+        f"Incorrect response code: {response.status_code}, "
+        f"Response body: {response.data.decode('utf-8')}"
+    )

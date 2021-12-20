@@ -32,7 +32,7 @@ from swagger_server.models import UpdateStreamStatus
 from swagger_server.models import VerificationParameters
 from swagger_server import jwt_encode
 from swagger_server.utils import get_simple_subject
-from .test_utils import assert_status_code
+from swagger_server.test.conftest import assert_status_code
 
 
 def test_add_subject(client: FlaskClient, new_stream: Stream) -> None:
