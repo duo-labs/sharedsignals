@@ -12,6 +12,7 @@ from jwcrypto.jwk import JWK, JWKSet
 import jwt
 
 from swagger_server.encoder import JSONEncoder
+from swagger_server.events import SecurityEvent
 
 
 def make_jwk(key_id: str) -> JWK:
@@ -70,7 +71,7 @@ def load_jwks() -> JWKSet:
 
 
 # TODO: make annotation for the SET a pydantic model
-def encode_set(security_event_token: Dict[str, Any]) -> str:
+def encode_set(security_event_token: SecurityEvent) -> str:
     """This runs on the transmitter. Encodes a SET using EC256"""
     # get the key id of the JWK we want to use
     key_id = os.environ["JWK_KEY_ID"]
@@ -80,7 +81,7 @@ def encode_set(security_event_token: Dict[str, Any]) -> str:
     private_key = jwk.export_to_pem(private_key=True, password=None)
 
     return jwt.encode(
-        payload=security_event_token,
+        payload=security_event_token.dict(exclude_none=True, by_alias=True),
         key=private_key,
         algorithm=jwk.alg,
         headers=dict(

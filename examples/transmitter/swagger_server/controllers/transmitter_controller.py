@@ -23,7 +23,7 @@ def poll_events(token_info: Dict[str, str]) -> Tuple[Dict[str, Any], int]:
 
     set_events = {
         'sets': {
-            event['jti']: jwt_encode.encode_set(event) for event in events
+            event.jti: jwt_encode.encode_set(event) for event in events
         },
         'moreAvailable': more_available
     }

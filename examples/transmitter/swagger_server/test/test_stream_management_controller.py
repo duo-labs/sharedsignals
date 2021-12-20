@@ -13,9 +13,9 @@ import pytest
 import requests
 
 from swagger_server.business_logic.const import VERIFICATION_EVENT_TYPE, POLL_ENDPOINT
-from swagger_server.business_logic.event import SUPPORTED_EVENTS
+from swagger_server.events import SUPPORTED_EVENTS, SecurityEvent, Events, VerificationEvent
 from swagger_server.business_logic.stream import Stream
-from swagger_server.errors import StreamDoesNotExist
+from swagger_server.errors import StreamDoesNotExist, SubjectNotInStream
 import swagger_server.db as db
 from swagger_server.models import AddSubjectParameters
 from swagger_server.models import Email
@@ -32,6 +32,7 @@ from swagger_server.models import UpdateStreamStatus
 from swagger_server.models import VerificationParameters
 from swagger_server import jwt_encode
 from swagger_server.utils import get_simple_subject
+from swagger_server.test.conftest import assert_status_code
 
 
 def test_add_subject(client: FlaskClient, new_stream: Stream) -> None:
@@ -47,7 +48,7 @@ def test_add_subject(client: FlaskClient, new_stream: Stream) -> None:
     )
     assert response.status_code == 200, 'Incorrect response code' + response.data.decode('utf-8')
 
-    assert new_stream._subjects['new_subject@test.com'] == Status.enabled
+    assert new_stream.get_subject_status('new_subject@test.com') == Status.enabled
 
 
 def test_add_subject__without_email(client: FlaskClient, new_stream: Stream) -> None:
@@ -61,7 +62,7 @@ def test_add_subject__without_email(client: FlaskClient, new_stream: Stream) -> 
         json=body,
         headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
-    assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
+    assert_status_code(response, 404)
     assert 'Email not found in subject' in str(response.data)
 
 
@@ -77,7 +78,7 @@ def test_add_subject__no_stream(client: FlaskClient) -> None:
         json=body,
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
-    assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
+    assert_status_code(response, 404)
     assert StreamDoesNotExist().message in str(response.data)
 
 
@@ -92,12 +93,13 @@ def test_get_status__no_subject(client: FlaskClient, new_stream: Stream, status:
     Request to get the status of an Event Stream (no subject)
     """
     new_stream.status = status
+    new_stream.save()
 
     response = client.get(
         '/status',
         query_string={},
         headers={'Authorization': f'Bearer {new_stream.client_id}'})
-    assert response.status_code == 200, 'Incorrect response code: ' + response.data.decode('utf-8')
+    assert_status_code(response, 200)
     assert StreamStatus.parse_obj(json.loads(response.data.decode('utf-8'))) == \
         StreamStatus(status=status)
 
@@ -128,7 +130,7 @@ def test_get_status__subject(client: FlaskClient, new_stream: Stream,
         '/status',
         query_string={'subject': subject.json()} if subject else None,
         headers={'Authorization': f'Bearer {new_stream.client_id}'})
-    assert response.status_code == 200, 'Incorrect response code: ' + response.data.decode('utf-8')
+    assert_status_code(response, 200)
     assert StreamStatus.parse_obj(json.loads(response.data.decode('utf-8'))) == \
         StreamStatus(
             status=status,
@@ -146,7 +148,7 @@ def test_get_status__no_stream(client: FlaskClient) -> None:
         '/status',
         query_string=None,
         headers={'Authorization': f'Bearer {bad_client_id}'})
-    assert response.status_code == 404, 'Incorrect response code: ' + response.data.decode('utf-8')
+    assert_status_code(response, 404)
     assert StreamDoesNotExist().message in str(response.data)
 
 
@@ -155,18 +157,20 @@ def test_remove_subject(client: FlaskClient, new_stream: Stream) -> None:
 
     Request to remove a subject from an Event Stream
     """
-    new_stream._subjects['old_subject@test.com'] = Status.enabled
+    email = "old_subject@test.com"
+    new_stream.add_subject(email)
 
-    body = RemoveSubjectParameters(subject=Email(email="old_subject@test.com"))
+    body = RemoveSubjectParameters(subject=Email(email=email))
     response = client.post(
         '/remove-subject',
         json=body,
         headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
 
-    assert response.status_code == 204, 'Incorrect response code' + response.data.decode('utf-8')
+    assert_status_code(response, 204)
 
-    assert "old_subject@test.com" not in new_stream._subjects
+    with pytest.raises(SubjectNotInStream):
+        new_stream.get_subject_status(email)
 
 
 def test_remove_subject__without_email(client: FlaskClient, new_stream: Stream) -> None:
@@ -181,7 +185,7 @@ def test_remove_subject__without_email(client: FlaskClient, new_stream: Stream) 
         headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
 
-    assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
+    assert_status_code(response, 404)
     assert 'Email not found in subject' in str(response.data)
 
 
@@ -197,7 +201,7 @@ def test_remove_subject__no_stream(client: FlaskClient) -> None:
         json=body,
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
-    assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
+    assert_status_code(response, 404)
     assert StreamDoesNotExist().message in str(response.data)
 
 
@@ -221,8 +225,7 @@ def test_stream_post(client, new_stream: Stream) -> None:
         json=new_config.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
-    assert response.status_code == 200, \
-                   'Response body is : ' + response.data.decode('utf-8')
+    assert_status_code(response, 200)
 
     updated_stream = Stream.load(new_stream.client_id)
 
@@ -231,7 +234,6 @@ def test_stream_post(client, new_stream: Stream) -> None:
     assert updated_stream.config.aud == old_config.aud
     assert updated_stream.config.events_supported == old_config.events_supported
     assert updated_stream.config.events_requested == requested_events
-    assert updated_stream.config.delivery.endpoint_url == POLL_ENDPOINT
 
     expected_delivered = SUPPORTED_EVENTS.copy()
     expected_delivered.pop()
@@ -253,7 +255,7 @@ def test_stream_post__no_stream(client: FlaskClient) -> None:
         json=new_config.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
-    assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
+    assert_status_code(response, 404)
     assert StreamDoesNotExist().message in str(response.data)
 
 
@@ -262,23 +264,41 @@ def test_stream_delete(client: FlaskClient, new_stream: Stream) -> None:
 
     Request to remove the configuration of an event stream
     """
+    # add a subject
+    email = "foo@bar.com"
+    new_stream.add_subject(email)
+    assert new_stream.get_subject_status(email) == Status.enabled
+
+    # add a SET
+    SET = SecurityEvent(
+        events=Events(verification=VerificationEvent())
+    )
+    new_stream.queue_SET(SET)
+    assert new_stream.count_SETs() == 1
+
+    # update the config
+    new_config = StreamConfiguration(
+        format="opaque",
+        events_requested=SUPPORTED_EVENTS.copy(),
+        delivery=PollDeliveryMethod(endpoint_url=None)
+    )
+    assert new_stream.config.format is None
+    new_stream.update_config(new_config)
+    assert new_stream.config.format == "opaque"
+
     response = client.delete(
         '/stream', headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
-    assert response.status_code == 200, 'Incorrect response code' + response.data.decode('utf-8')
+    assert_status_code(response, 200)
 
-    assert new_stream.client_id not in db.STREAMS
+    # show that the SETs and subjects have been erased
+    updated_stream = Stream.load(new_stream.client_id)
+    assert updated_stream.count_SETs() == 0
+    with pytest.raises(SubjectNotInStream):
+        updated_stream.get_subject_status(email)
 
-
-def test_stream_delete__no_stream(client: FlaskClient) -> None:
-    """Test case for stream_delete
-
-    Request to remove the configuration of an event stream, passes even if there's no stream
-    """
-    bad_client_id = 'IncorrectClientId'
-    response = client.delete('/stream', headers={'Authorization': f'Bearer {bad_client_id}'}
-    )
-    assert response.status_code == 200, 'Incorrect response code' + response.data.decode('utf-8')
+    # show that the stream's config has been reset
+    assert updated_stream.config.format is None
 
 
 def test_stream_get(client: FlaskClient, new_stream: Stream) -> None:
@@ -292,8 +312,7 @@ def test_stream_get(client: FlaskClient, new_stream: Stream) -> None:
         method='GET',
         headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
-    assert response.status_code == 200, \
-                   'Response body is : ' + response.data.decode('utf-8')
+    assert_status_code(response, 200)
 
 
 def test_stream_get__no_stream(client: FlaskClient) -> None:
@@ -308,7 +327,7 @@ def test_stream_get__no_stream(client: FlaskClient) -> None:
         method='GET',
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
-    assert response.status_code == 404, 'Incorrect response code' + response.data.decode('utf-8')
+    assert_status_code(response, 404)
     assert StreamDoesNotExist().message in str(response.data)
 
 
@@ -342,7 +361,7 @@ def test_update_status__subject(client: FlaskClient, new_stream: Stream,
         '/status',
         json=body.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {new_stream.client_id}'})
-    assert response.status_code == 200, 'Incorrect response code' + response.data.decode('utf-8')
+    assert_status_code(response, 200)
     assert StreamStatus.parse_obj(json.loads(response.data.decode('utf-8'))) == \
         StreamStatus(
             status=status,
@@ -369,13 +388,14 @@ def test_update_status__no_subject(client: FlaskClient, new_stream: Stream, stat
         '/status',
         json=body.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {new_stream.client_id}'})
-    assert response.status_code == 200, 'Incorrect response code' + response.data.decode('utf-8')
+    assert_status_code(response, 200)
     assert StreamStatus.parse_obj(json.loads(response.data.decode('utf-8'))) == \
         StreamStatus(
             status=status,
             subject=body.subject,
         )
-    assert new_stream.status == status
+    updated_stream = Stream.load(new_stream.client_id)
+    assert updated_stream.status == status
 
 
 @pytest.mark.parametrize(
@@ -398,18 +418,18 @@ def test_verification_request__polling(client: FlaskClient, new_stream: Stream,
         json=body.dict(exclude_none=True),
         headers={'Authorization': f'Bearer {new_stream.client_id}'}
     )
-    assert response.status_code == 204, "Incorrect response code: {}".format(response.status_code)
+    assert_status_code(response, 204)
 
-    assert len(new_stream.event_queue) == 1, "Incorrect queue size: {}".format(new_stream.event_queue)
-    events = new_stream.event_queue[0]
+    n_SETs = new_stream.count_SETs()
+    assert n_SETs == 1, f"Incorrect queue size: {n_SETs}"
+    SETs = new_stream.get_SETs()
 
-    assert VERIFICATION_EVENT_TYPE in events['events']
-    verification_event = events['events'][VERIFICATION_EVENT_TYPE]
+    verification_event = SETs[0].events.verification
 
     if state:
-        assert verification_event['state'] == state, verification_event
+        assert verification_event.state == state, verification_event
     else:
-        assert 'state' not in verification_event
+        assert verification_event.state is None
 
 
 def test_verification_request__pushing__no_response(client: FlaskClient, new_stream: Stream) -> None:
@@ -420,6 +440,7 @@ def test_verification_request__pushing__no_response(client: FlaskClient, new_str
     """
     push_url = "https://test-case.popular-app.com/push"
     new_stream.config.delivery = PushDeliveryMethod(endpoint_url=push_url)
+    new_stream.save()
 
     body = VerificationParameters(state=None)
 
@@ -430,7 +451,7 @@ def test_verification_request__pushing__no_response(client: FlaskClient, new_str
             headers={'Authorization': f'Bearer {new_stream.client_id}'}
         )
 
-    assert response.status_code == 204, "Incorrect response code: {}".format(response.status_code)
+    assert_status_code(response, 204)
 
     post_mock.assert_called_once()
 
@@ -449,7 +470,7 @@ def test_verification_request__pushing(client: FlaskClient, new_stream: Stream,
         endpoint_url=push_url, 
         authorization_header=auth_header
     )
-    config = new_stream.config.dict()
+    new_stream.save()
 
     state = "test state"
     body = VerificationParameters(state=state)
@@ -461,7 +482,7 @@ def test_verification_request__pushing(client: FlaskClient, new_stream: Stream,
             headers={'Authorization': f'Bearer {new_stream.client_id}'}
         )
 
-    assert response.status_code == 204, "Incorrect response code: {}".format(response.status_code)
+    assert_status_code(response, 204)
 
     post_mock.assert_called_once()
 
@@ -478,11 +499,8 @@ def test_verification_request__pushing(client: FlaskClient, new_stream: Stream,
     assert 'data' in args.kwargs
 
     jwks = client.get('/jwks.json').json
-    iss = config['iss']
-    aud = config['aud']
-    assert jwks is not None
-    assert iss is not None
-    assert aud is not None
+    iss = new_stream.config.iss
+    aud = new_stream.config.aud
 
     event = jwt_encode.decode_set(args.kwargs['data'], jwks, iss, aud)
     assert VERIFICATION_EVENT_TYPE in event['events']
@@ -504,7 +522,7 @@ def test_verification_request__no_stream(client: FlaskClient) -> None:
         json=body,
         headers={'Authorization': f'Bearer {bad_client_id}'}
     )
-    assert response.status_code == 404, "Incorrect response code: {}".format(response.status_code)
+    assert_status_code(response, 404)
     assert StreamDoesNotExist().message in str(response.data)
 
 
@@ -514,7 +532,7 @@ def test_well_known_sse_configuration_get(client: FlaskClient) -> None:
     Transmitter Configuration Request (without path)
     """
     response = client.get('/.well-known/sse-configuration')
-    assert response.status_code == 200, "Incorrect response code: {}".format(response.status_code)
+    assert_status_code(response, 200)
 
 
 def test_well_known_sse_configuration_issuer_get(client: FlaskClient) -> None:
@@ -523,7 +541,7 @@ def test_well_known_sse_configuration_issuer_get(client: FlaskClient) -> None:
     Transmitter Configuration Request (with path)
     """
     response = client.get('/.well-known/sse-configuration/{issuer}'.format(issuer='issuer_example'))
-    assert response.status_code == 200, "Incorrect response code: {}".format(response.status_code)
+    assert_status_code(response, 200)
     config = TransmitterConfiguration.parse_obj(json.loads(response.data.decode('utf-8')))
     assert config.issuer.split("/")[-1] == "issuer_example", "Incorrect issuer: {}".format(config.issuer)
 

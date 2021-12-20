@@ -9,6 +9,7 @@ import os
 import connexion
 
 from swagger_server import encoder
+from swagger_server import db
 from swagger_server import jwt_encode
 from swagger_server.errors import register_error_handlers
 from logging.config import dictConfig
@@ -34,6 +35,8 @@ def _init_logging() -> None:
 
 def main() -> None:
     _init_logging()
+
+    db.create(drop=False)
 
     make_keys()
 

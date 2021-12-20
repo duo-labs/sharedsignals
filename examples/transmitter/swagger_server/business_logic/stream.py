@@ -4,14 +4,21 @@
 # that can be found in the LICENSE file.
 
 from __future__ import annotations
-from typing import Dict, List, Union, Any
+from typing import Dict, List, Union, Any, Optional
+import json
+import logging
+
+import requests
+from requests.exceptions import RequestException
 
 from swagger_server.business_logic.const import (
     MIN_VERIFICATION_INTERVAL, POLL_ENDPOINT, TRANSMITTER_ISSUER
 )
-from swagger_server.business_logic.event import SUPPORTED_EVENTS
-from swagger_server.errors import StreamDoesNotExist, SubjectNotInStream
+from swagger_server.events import (
+    SecurityEvent, SUPPORTED_EVENTS
+)
 import swagger_server.db as db
+from swagger_server import jwt_encode
 from swagger_server.models import PollDeliveryMethod, PushDeliveryMethod
 from swagger_server.models import StreamConfiguration
 from swagger_server.models import Status
@@ -40,35 +47,52 @@ class Stream:
     def __init__(self,
                  client_id: str,
                  aud: Union[str, List[str]],
-                 status: Status = Status.enabled) -> None:
+                 status: Status = Status.enabled,
+                 save: bool = True) -> None:
         self.client_id = client_id
         self.config = DEFAULT_CONFIG.copy(update={ 'aud': aud })
         self.status = status
 
-        # Map of subject identifier -> status
-        self._subjects: Dict[str, Status] = {}
-        self.event_queue: List[Dict[str, Any]] = []
+        if save:
+            self.save()
 
-        self._save()
-
-    def _save(self) -> None:
-        db.STREAMS[self.client_id] = self
+    def save(self) -> None:
+        stream_data = dict(
+            client_id=self.client_id,
+            config=self.config.dict(),
+            status=self.status.value
+        )
+        db.save_stream(self.client_id, json.dumps(stream_data))
 
     @classmethod
     def load(cls, client_id: str) -> Stream:
-        if client_id in db.STREAMS:
-            return db.STREAMS[client_id]
-        else:
-            raise StreamDoesNotExist()
+        stream_data = db.load_stream(client_id)
+        new_stream = cls(
+            client_id=stream_data["client_id"],
+            aud=stream_data["config"]["aud"],
+            status=Status(stream_data["status"]),
+            save=False
+        )
+        new_stream.update_config(
+            StreamConfiguration(**stream_data["config"]),
+            save=False
+        )
+        return new_stream
 
-    @classmethod
-    def delete(cls, client_id: str) -> None:
-        db.STREAMS.pop(client_id, None)
+    def delete(self) -> None:
+        """Wipe out any subjects or SETs and revert the config to the default"""
+        db.delete_SETs(self.client_id)
+        db.delete_subjects(self.client_id)
 
-    def update_config(self, new_config: StreamConfiguration) -> Stream:
+        # revert the stream to the default config
+        audience = self.config.aud
+        self.config = DEFAULT_CONFIG.copy(
+            update={ 'aud': audience }
+        )
+        self.save()
+
+    def update_config(self, new_config: StreamConfiguration, save: bool=True) -> Stream:
         config = self.config.dict()
-        if isinstance(new_config.delivery, PollDeliveryMethod):
-            new_config.delivery.endpoint_url = POLL_ENDPOINT
         _new_config = new_config.dict()
 
         for key in READ_ONLY_CONFIG_FIELDS:
@@ -80,37 +104,76 @@ class Stream:
 
         config['events_delivered'] = list(supported.intersection(requested))
         self.config = StreamConfiguration.parse_obj(config)
+        if save:
+            self.save()
         return self
 
     def get_subject_status(self, email_address: str) -> Status:
-        if email_address not in self._subjects:
-            raise SubjectNotInStream(email_address)
-
-        return self._subjects[email_address]
+        return db.get_subject_status(self.client_id, email_address)
 
     def set_subject_status(self, email_address: str, status: Status) -> None:
-        if email_address not in self._subjects:
-            raise SubjectNotInStream(email_address)
-
-        self._subjects[email_address] = status
+        db.set_subject_status(self.client_id, email_address, status)
 
     def add_subject(self, email_address: str) -> None:
-        if email_address not in self._subjects:
-            # When adding a subject, default them to enabled.
-            # This isn't required by the SSE spec,
-            # but is default behavior we thought made sense.
-            self._subjects[email_address] = Status.enabled
+        db.add_subject(self.client_id, email_address)
 
     def remove_subject(self, email_address: str) -> None:
-        if email_address in self._subjects:
-            self._subjects.pop(email_address)
+        db.remove_subject(self.client_id, email_address)
 
-    def queue_event(self, event: Dict[str, Any]) -> None:
-        self.event_queue.append(event)
+    def process_SET(self, SET: SecurityEvent) -> None:
+        """Either push the SET or add it to the queue"""
+        # make sure the SET is appropriate for this stream
+        SET = SET.copy(deep=True)
+        SET.iss = self.config.iss
+        SET.aud = self.config.aud
 
+        # push or add to queue
+        if isinstance(self.config.delivery, PushDeliveryMethod):
+            self.push(SET)
+        else:
+            self.queue_SET(SET)
 
-# Add a stream for https://popular-app.com automatically on startup
-Stream(
-    client_id='49e5e7785e4e4f688aa49e2585970370',
-    aud='https://popular-app.com',
-)
+    def push(self, SET: SecurityEvent, save_on_error=True) -> bool:
+        """Push a SET to the push endpoint. If error pushing and save_on_error
+        is True, send SET to queue to be pushed by scheduled job
+        """
+
+        headers = {
+            "Content-Type": "application/secevent+jwt",
+            "Accept": "application/json"
+        }
+
+        if self.config.delivery.authorization_header:
+            headers["Authorization"] = self.config.delivery.authorization_header
+
+        try:
+            response = requests.post(
+                self.config.delivery.endpoint_url,
+                data=jwt_encode.encode_set(SET),
+                headers=headers
+            )
+
+            response.raise_for_status()
+            return True
+        except RequestException as err:
+            logging.error(
+                f"Error pushing SET {SET.jti} to "
+                f"{self.config.delivery.endpoint_url}: {err}."
+                f"Queuing SET to be picked up by scheduled job instead."
+            )
+            if save_on_error:
+                self.queue_SET(SET)
+
+            return False
+
+    def queue_SET(self, SET: SecurityEvent) -> None:
+        db.add_set(self.client_id, SET)
+
+    def get_SETs(self, max_events: Optional[int]=None) -> List[SecurityEvent]:
+        return db.get_SETs(self.client_id, max_events)
+
+    def count_SETs(self) -> int:
+        return db.count_SETs(self.client_id)
+
+    def ack_SETs(self, jtis: List[str]) -> None:
+        db.delete_SETs(self.client_id, jtis)
