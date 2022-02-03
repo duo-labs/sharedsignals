@@ -212,11 +212,11 @@ def test_stream_post(client, new_stream: Stream) -> None:
     """
     old_config = new_stream.config.copy()
     requested_events = SUPPORTED_EVENTS.copy()
-    requested_events.pop()  # remove session revoked
     requested_events.append('https://schemas.openid.net/fake-event')
     new_config = StreamConfiguration(
         iss='http://pets.com',  # this should not update
-        events_requested=requested_events,
+        # request: [verification_event,fake_event]
+        events_requested=[requested_events[0],requested_events[-1]],
         delivery=PollDeliveryMethod(endpoint_url=None)
     )
 
@@ -233,11 +233,12 @@ def test_stream_post(client, new_stream: Stream) -> None:
     assert updated_stream.config.iss != new_config.iss
     assert updated_stream.config.aud == old_config.aud
     assert updated_stream.config.events_supported == old_config.events_supported
-    assert updated_stream.config.events_requested == requested_events
+    # check config update for requested events: [verification_event,fake_event]
+    assert updated_stream.config.events_requested == [requested_events[0],requested_events[-1]]
 
     expected_delivered = SUPPORTED_EVENTS.copy()
-    expected_delivered.pop()
-    assert updated_stream.config.events_delivered == expected_delivered
+    # check config update for events_delivered: [verification_event]
+    assert updated_stream.config.events_delivered == [expected_delivered[0]]
 
 
 def test_stream_post__no_stream(client: FlaskClient) -> None:

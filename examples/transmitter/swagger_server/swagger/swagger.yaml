@@ -544,6 +544,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegisterResponse'
       x-openapi-router-controller: swagger_server.controllers.out_of_band_controller
+  /trigger-event:
+    post:
+      tags:
+      - OutOfBand
+      summary: Request the transmitter to create a SSE event of certain type and subject
+        and send it to the (streams)receivers that care about the subject.
+      description: "This endpoint is not part of the spec, but rather a quick-and-dirty\
+        \ way to  test out sample security events other than verification."
+      operationId: trigger_event
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerEventParameters'
+        required: true
+      responses:
+        "200":
+          description: "On successful creation of an event, it will be sent out as\
+            \ per SSE spec (i.e. push or poll)."
+      x-openapi-router-controller: swagger_server.controllers.out_of_band_controller
 components:
   schemas:
     StreamStatus:
@@ -840,6 +860,31 @@ components:
             Stream Management API calls that require authorization.
       example:
         token: 49e5e7785e4e4f688aa49e2585970370
+    TriggerEventParameters:
+      title: Trigger Event Parameters
+      required:
+      - event_type
+      - subject
+      type: object
+      properties:
+        event_type:
+          type: string
+          description: "Read-Write.\nSupports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html)\
+            \ and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html)\
+            \ event types.      "
+          example: credential-compromise
+        subject:
+          allOf:
+          - $ref: '#/components/schemas/Subject'
+          - description: REQUIRED. SHOULD be same as subjects receiver cares about
+              (config.cfg). A Subject claim identifying the subject to be added.
+      description: "JSON Object describing request to create a security event to test\
+        \ SSE receiver/transmitter \n"
+      example:
+        event_type: session-revoked
+        subject:
+          format: email
+          email: user@example.com
     AddSubjectParameters:
       required:
       - subject

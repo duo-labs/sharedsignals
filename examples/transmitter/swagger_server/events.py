@@ -29,10 +29,38 @@ class CAEPEvent(Event):
     initiating_entity: Optional[str]
     reason_admin: Optional[Dict[str, str]]
     reason_user: Optional[Dict[str, str]]
+    __uri__ = "https://schemas.openid.net/secevent/caep/event-type/"
 
 
 class SessionRevoked(CAEPEvent):
-    __uri__ = "https://schemas.openid.net/secevent/caep/event-type/session-revoked"
+    pass
+    # CAEPEvent.__uri__ += "session-revoked"
+    # initiating_entity: str
+    
+class TokenClaimsChange(CAEPEvent):
+    claims: Dict[str, str]
+    # CAEPEvent.__uri__ += "token-claims-change"
+
+class CredentialChange(CAEPEvent):
+    credential_type: str
+    change_type: str
+    friendly_name: Optional[str]
+    x509_issuer: Optional[str]
+    x509_serial: Optional[str]
+    fido2_aaguid: Optional[str]
+    # CAEPEvent.__uri__ +=  ""
+        
+
+class AssuranceLevelChange(CAEPEvent):
+    current_level: str
+    previous_level: str
+    change_direction: str
+    # CAEPEvent.__uri__ += "assurance-level-change"
+    
+class DeviceComplianceChange(CAEPEvent):
+    current_status: str
+    previous_status: str
+    # CAEPEvent.__uri__ += "device-compliance-change"
 
 
 class Events(BaseModel):
@@ -40,7 +68,13 @@ class Events(BaseModel):
     verification: Optional[VerificationEvent] = Field(alias=VerificationEvent.__uri__)
 
     # CAEP
-    session_revoked: Optional[SessionRevoked] = Field(alias=SessionRevoked.__uri__)
+    CAEP_event: Optional[CAEPEvent] = Field(alias=CAEPEvent.__uri__)
+    session_revoked: Optional[SessionRevoked] = Field(alias=CAEPEvent.__uri__+"session-revoked")
+    token_claims_change: Optional[TokenClaimsChange] = Field(alias=CAEPEvent.__uri__+"token-claims-change")
+    credential_change: Optional[CredentialChange] = Field(alias=CAEPEvent.__uri__+"credential-change")
+    assurance_level_change: Optional[AssuranceLevelChange] = Field(alias=CAEPEvent.__uri__+"assurance-level-change")
+    device_compliance_change: Optional[DeviceComplianceChange] = Field(alias=CAEPEvent.__uri__+"device-compliance-change")
+    
 
     class Config:
         allow_population_by_field_name = True
@@ -56,5 +90,9 @@ class SecurityEvent(BaseModel):
 
 SUPPORTED_EVENTS = [
     VerificationEvent.__uri__,
-    SessionRevoked.__uri__
+    CAEPEvent.__uri__+"session-revoked",
+    CAEPEvent.__uri__+"token-claims-change",
+    CAEPEvent.__uri__+"credential-change",
+    CAEPEvent.__uri__+"assurance-level-change",
+    CAEPEvent.__uri__+"device-compliance-change"
 ]

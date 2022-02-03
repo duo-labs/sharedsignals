@@ -19,10 +19,13 @@ from swagger_server.events import (
 )
 import swagger_server.db as db
 from swagger_server import jwt_encode
-from swagger_server.models import PollDeliveryMethod, PushDeliveryMethod
-from swagger_server.models import StreamConfiguration
-from swagger_server.models import Status
+from swagger_server.models import (
+    Email, PollDeliveryMethod, PushDeliveryMethod,
+    StreamConfiguration, Status, Subject
+)
+from swagger_server.errors import EmailSubjectNotFound, SubjectNotInStream
 
+from swagger_server.utils import get_simple_subject
 
 DEFAULT_CONFIG = StreamConfiguration(
     iss=TRANSMITTER_ISSUER,
@@ -177,3 +180,48 @@ class Stream:
 
     def ack_SETs(self, jtis: List[str]) -> None:
         db.delete_SETs(self.client_id, jtis)
+
+    @staticmethod
+    def broadcast_SET(SET: SecurityEvent) -> None:
+        """Send an event to every stream"""
+        # these cannot be verification events
+        if SET.events.verification is not None:
+            raise ValueError("Cannot broadcast Verification Events")
+
+        # assume this is a session revoked SET (the only other one we support)
+        # TODO: change this to support all CAEP and RISC
+        if SET.events.session_revoked:
+            subject = SET.events.session_revoked.subject
+        elif SET.events.token_claims_change:
+            subject = SET.events.token_claims_change.subject
+        elif SET.events.credential_change:
+            subject = SET.events.credential_change.subject
+        elif SET.events.assurance_level_change:
+            subject = SET.events.assurance_level_change.subject
+        elif SET.events.device_compliance_change:
+            subject = SET.events.device_compliance_change.subject
+        else:
+            # handle error
+             subject = Subject()
+
+        simple_subj = get_simple_subject(subject, Email)
+        if not simple_subj:
+            raise EmailSubjectNotFound(subject)
+
+        # broadcast to each stream
+        for client_id in db.get_stream_ids():
+            _stream = Stream.load(client_id)
+
+            # only transmit if the stream and subject are both enabled
+            if _stream.status != Status.enabled:
+                continue
+
+            try:
+                subject_status = _stream.get_subject_status(simple_subj.email)
+            except SubjectNotInStream:
+                subject_status = Status.disabled
+
+            if subject_status != Status.enabled:
+                continue
+
+            _stream.process_SET(SET)

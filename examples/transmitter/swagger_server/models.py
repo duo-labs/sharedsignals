@@ -463,6 +463,20 @@ class UpdateStreamStatus(StreamStatus):
     )
 
 
+class TriggerEventParameters(BaseModel):
+    """
+    JSON Object describing request to create a security event to test SSE receiver/transmitter
+
+    """
+
+    event_type: str = Field(
+        ...,
+        description='Read-Write.\nSupports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.      ',
+        example='credential-compromise',
+    )
+    subject: Subject
+
+
 class AddSubjectParameters(BaseModel):
     subject: Subject
     verified: Optional[bool] = Field(

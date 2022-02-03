@@ -37,6 +37,8 @@ paths:
     $ref: './paths/poll.yaml'
   /register:
     $ref: './paths/register.yaml'
+  /trigger-event:
+    $ref: './paths/trigger-event.yaml'
 
 components:
   securitySchemes:
@@ -67,6 +69,8 @@ components:
 
     RegisterResponse:
       $ref: './schemas/RegisterResponse.yaml'
+    TriggerEventParameters:
+      $ref: './schemas/TriggerEventParameters.yaml'
 
     # Request Body params
     AddSubjectParameters:

@@ -1,0 +1,22 @@
+# Copyright (c) 2021 Cisco Systems, Inc. and its affiliates
+# All rights reserved.
+# Use of this source code is governed by a BSD 3-Clause License
+# that can be found in the LICENSE file.
+
+post:
+  tags:
+    - OutOfBand
+  summary: Request the transmitter to create a SSE event of certain type and subject and send it to the (streams)receivers that care about the subject.
+  description: |-
+    This endpoint is not part of the spec, but rather a quick-and-dirty way to  test out sample security events other than verification.
+  operationId: trigger_event
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../openapi.yaml#/components/schemas/TriggerEventParameters"
+  responses:
+    200:
+      description: |-
+        On successful creation of an event, it will be sent out as per SSE spec (i.e. push or poll).
