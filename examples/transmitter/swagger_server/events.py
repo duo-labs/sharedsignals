@@ -34,12 +34,11 @@ class CAEPEvent(Event):
 
 class SessionRevoked(CAEPEvent):
     pass
-    # CAEPEvent.__uri__ += "session-revoked"
-    # initiating_entity: str
+    
     
 class TokenClaimsChange(CAEPEvent):
     claims: Dict[str, str]
-    # CAEPEvent.__uri__ += "token-claims-change"
+
 
 class CredentialChange(CAEPEvent):
     credential_type: str
@@ -48,19 +47,17 @@ class CredentialChange(CAEPEvent):
     x509_issuer: Optional[str]
     x509_serial: Optional[str]
     fido2_aaguid: Optional[str]
-    # CAEPEvent.__uri__ +=  ""
         
 
 class AssuranceLevelChange(CAEPEvent):
     current_level: str
     previous_level: str
     change_direction: str
-    # CAEPEvent.__uri__ += "assurance-level-change"
+
     
 class DeviceComplianceChange(CAEPEvent):
     current_status: str
     previous_status: str
-    # CAEPEvent.__uri__ += "device-compliance-change"
 
 
 class Events(BaseModel):

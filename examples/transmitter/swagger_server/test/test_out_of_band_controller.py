@@ -12,7 +12,7 @@ import pytest
 from swagger_server import db
 from swagger_server.models import (
     RegisterParameters, Subject, TriggerEventParameters,
-    PollDeliveryMethod, StreamConfiguration
+    PollDeliveryMethod, StreamConfiguration, AddSubjectParameters
 )
 from swagger_server.test.conftest import assert_status_code
 
@@ -63,18 +63,31 @@ def test_trigger_event(client: FlaskClient, subject: Subject, event_type:str) ->
     register_response_json = json.loads(register_response.data.decode('utf-8'))
     assert db.stream_exists(register_response_json['token'])
     
-    # # Set stream to poll
-    # new_config = StreamConfiguration(
-    #     iss='http://pets.com',  # this should not update
-    #     events_requested=[],
-    #     delivery=PollDeliveryMethod(endpoint_url=None)
-    # )
+    # Set stream to poll
+    new_config = StreamConfiguration(
+        iss='http://pets.com',  # this should not update
+        events_requested=[],
+        delivery=PollDeliveryMethod(endpoint_url="http://transmitter.com/polling"),
+        subject=subject
+    )
 
-    # response = client.post(
-    #     '/stream',
-    #     json=new_config.dict(exclude_none=True),
-    #     headers={'Authorization': f'Bearer {register_response_json["token"]}'}
-    # )
+    response = client.post(
+        '/stream',
+        json=new_config.dict(exclude_none=True),
+        headers={'Authorization': f'Bearer {register_response_json["token"]}'}
+    )
+    assert_status_code(response, 200)
+
+    
+    # add subject
+    body = AddSubjectParameters(subject=subject, verified=False)
+    response = client.post(
+        '/add-subject',
+        json=body,
+        headers={'Authorization': f'Bearer {register_response_json["token"]}'}
+    )
+    assert response.status_code == 200
+    
     
     # trigger event
     body = TriggerEventParameters(
@@ -87,8 +100,8 @@ def test_trigger_event(client: FlaskClient, subject: Subject, event_type:str) ->
     )
     assert_status_code(response, 200)
     # # check if event is queued
-    # num_SETs = db.count_SETs(register_response_json["token"])
-    # assert num_SETs
+    num_SETs = db.count_SETs(client_id=register_response_json["token"])
+    assert num_SETs
 
 
 @pytest.mark.parametrize("subject", [

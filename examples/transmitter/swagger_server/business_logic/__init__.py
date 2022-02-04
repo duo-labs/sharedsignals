@@ -4,14 +4,11 @@
 # that can be found in the LICENSE file.
 
 import logging
-import time
 import uuid
-from typing import List, Optional, Tuple, Union, Dict, Any
-
-import requests
+from typing import List, Optional, Tuple, Union, Dict
 
 from swagger_server.events import (
-    Events, SecurityEvent, VerificationEvent, SessionRevoked
+    Events, SecurityEvent, VerificationEvent
 )
 from swagger_server.business_logic.const import TRANSMITTER_ISSUER
 from swagger_server.business_logic.stream import Stream
@@ -19,14 +16,10 @@ from swagger_server.business_logic.generate_event import GenerateEvent
 from swagger_server.errors import (
 EmailSubjectNotFound, LongPollingNotSupported, TransmitterError
 )
-from swagger_server.models import StreamConfiguration
-from swagger_server.models import StreamStatus
-from swagger_server.models import Subject
-from swagger_server.models import Status
-from swagger_server.models import Email
-
-from swagger_server.models import TransmitterConfiguration  # noqa: E501
-
+from swagger_server.models import (
+   Email, Status, StreamConfiguration, StreamStatus, 
+   Subject, TransmitterConfiguration
+)
 from swagger_server.utils import get_simple_subject
 
 log = logging.getLogger(__name__)
@@ -170,8 +163,7 @@ def register(audience: Union[str, List[str]]) -> Dict[str, str]:
 
 def trigger_event(event_type:str,subject: Subject)->None:
     # TODO: 2. allocate a GenerateEvent only once
-    # TODO: 3. All fields of the SET should be populated
-    # TODO: 4. Some fields of the SET should be pseudo-random
+
     ge = GenerateEvent()
     security_event = ge.generate_security_event(event_type,subject)
     if security_event is None:
