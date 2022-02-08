@@ -53,7 +53,7 @@ class Stream:
                  status: Status = Status.enabled,
                  save: bool = True) -> None:
         self.client_id = client_id
-        self.config = DEFAULT_CONFIG.copy(update={ 'aud': aud })
+        self.config = DEFAULT_CONFIG.copy(update={'aud': aud})
         self.status = status
 
         if save:
@@ -83,18 +83,22 @@ class Stream:
         return new_stream
 
     def delete(self) -> None:
-        """Wipe out any subjects or SETs and revert the config to the default"""
+        """
+        Wipe out any subjects or SETs and
+        revert the config to the default
+        """
         db.delete_SETs(self.client_id)
         db.delete_subjects(self.client_id)
 
         # revert the stream to the default config
         audience = self.config.aud
         self.config = DEFAULT_CONFIG.copy(
-            update={ 'aud': audience }
+            update={'aud': audience}
         )
         self.save()
 
-    def update_config(self, new_config: StreamConfiguration, save: bool=True) -> Stream:
+    def update_config(self, new_config: StreamConfiguration,
+                      save: bool = True) -> Stream:
         config = self.config.dict()
         _new_config = new_config.dict()
 
@@ -147,7 +151,8 @@ class Stream:
         }
 
         if self.config.delivery.authorization_header:
-            headers["Authorization"] = self.config.delivery.authorization_header
+            headers["Authorization"] = \
+                self.config.delivery.authorization_header
 
         try:
             response = requests.post(
@@ -172,7 +177,8 @@ class Stream:
     def queue_SET(self, SET: SecurityEvent) -> None:
         db.add_set(self.client_id, SET)
 
-    def get_SETs(self, max_events: Optional[int]=None) -> List[SecurityEvent]:
+    def get_SETs(self,
+                 max_events: Optional[int] = None) -> List[SecurityEvent]:
         return db.get_SETs(self.client_id, max_events)
 
     def count_SETs(self) -> int:
@@ -202,7 +208,7 @@ class Stream:
             subject = SET.events.device_compliance_change.subject
         else:
             # handle error
-             subject = Subject()
+            subject = Subject()
 
         simple_subj = get_simple_subject(subject, Email)
         if not simple_subj:

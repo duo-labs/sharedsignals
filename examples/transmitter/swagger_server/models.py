@@ -471,7 +471,7 @@ class TriggerEventParameters(BaseModel):
 
     event_type: str = Field(
         ...,
-        description='Read-Write.\nSupports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.      ',
+        description='Supports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.',
         example='credential-compromise',
     )
     subject: Subject

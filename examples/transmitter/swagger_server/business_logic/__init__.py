@@ -14,10 +14,10 @@ from swagger_server.business_logic.const import TRANSMITTER_ISSUER
 from swagger_server.business_logic.stream import Stream
 from swagger_server.business_logic.generate_event import GenerateEvent
 from swagger_server.errors import (
-EmailSubjectNotFound, LongPollingNotSupported, TransmitterError
+    EmailSubjectNotFound, LongPollingNotSupported, TransmitterError
 )
 from swagger_server.models import (
-   Email, Status, StreamConfiguration, StreamStatus, 
+   Email, Status, StreamConfiguration, StreamStatus,
    Subject, TransmitterConfiguration
 )
 from swagger_server.utils import get_simple_subject
@@ -114,8 +114,9 @@ def verification_request(state: Optional[str], client_id: str) -> None:
     stream.process_SET(security_event)
 
 
-def _well_known_sse_configuration_get(url_root: str, 
-                                      issuer: Optional[str] = None) -> TransmitterConfiguration:
+def _well_known_sse_configuration_get(url_root: str,
+                                      issuer: Optional[str] =
+                                      None) -> TransmitterConfiguration:
     return TransmitterConfiguration(
         issuer=TRANSMITTER_ISSUER + (issuer if issuer else ''),
         jwks_uri=url_root + 'jwks.json',
@@ -158,15 +159,17 @@ def poll_request(max_events: Optional[int],
 def register(audience: Union[str, List[str]]) -> Dict[str, str]:
     client_id = uuid.uuid4().hex
     Stream(client_id, audience)
-    return { 'token': client_id }
+    return {'token': client_id}
 
 
-def trigger_event(event_type:str,subject: Subject)->None:
+def trigger_event(event_type: str, subject: Subject) -> None:
     # TODO: 2. allocate a GenerateEvent only once
 
     ge = GenerateEvent()
-    security_event = ge.generate_security_event(event_type,subject)
+    security_event = ge.generate_security_event(event_type, subject)
     if security_event is None:
-        raise TransmitterError(code=500,message=f"invalid event_type:{event_type} (only RISC and CAEP supported)")
+        raise TransmitterError(code=500,
+                               message=f"invalid event_type:{event_type}"
+                               + "(only RISC and CAEP supported)")
     # and broadcast it
     Stream.broadcast_SET(security_event)

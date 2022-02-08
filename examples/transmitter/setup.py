@@ -25,7 +25,8 @@ setup(
     description="Stream Management API for OpenID Shared Security Events",
     author_email="",
     url="",
-    keywords=["Swagger", "Stream Management API for OpenID Shared Security Events"],
+    keywords=["Swagger",
+              "Stream Management API for OpenID Shared Security Events"],
     install_requires=REQUIRES,
     packages=find_packages(),
     package_data={'': ['swagger/swagger.yaml']},
@@ -33,6 +34,10 @@ setup(
     entry_points={
         'console_scripts': ['swagger_server=swagger_server.__main__:main']},
     long_description="""\
-    [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0.html#management)  HTTP API to be implemented by Event Transmitters. This API can be used by Event Receivers to query and update the Event Stream configuration and status, to add and remove subjects, and to trigger verification. 
+    [OpenID Spec](https://openid.net/specs/openid-sse-framework-1_0.
+    html#management)  HTTP API to be implemented by Event Transmitters. This
+    API can be used by Event Receivers to query and update the Event Stream
+    configuration and status, to add and remove subjects, and to trigger
+    verification.
     """
 )

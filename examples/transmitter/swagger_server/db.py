@@ -133,13 +133,12 @@ def set_subject_status(client_id: str, email: str, status: Status) -> None:
         with conn:
             conn.execute("""
                 UPDATE subjects
-                SET 
+                SET
                     status = ?
                 WHERE
                     client_id = ? AND
                     email = ?
-                """,
-                (status.value, client_id, email)
+                """, (status.value, client_id, email)
             )
         if conn.total_changes != 1:
             raise SubjectNotInStream(email)
@@ -189,7 +188,7 @@ def add_set(client_id: str, SET: SecurityEvent) -> None:
             )
 
 
-def delete_SETs(client_id: str, jtis: Optional[List[str]]=None) -> None:
+def delete_SETs(client_id: str, jtis: Optional[List[str]] = None) -> None:
     """Delete SETs from the stream, based on their jtis"""
     sql = "DELETE FROM SETs WHERE client_id=?"
     if jtis:
@@ -210,7 +209,8 @@ def count_SETs(client_id: str) -> int:
         ).fetchone()[0]
 
 
-def get_SETs(client_id: str, max_events: Optional[int]=None) -> List[SecurityEvent]:
+def get_SETs(client_id: str,
+             max_events: Optional[int] = None) -> List[SecurityEvent]:
     """Get up to max_events SETs from the stream"""
     if max_events is not None and max_events <= 0:
         return []

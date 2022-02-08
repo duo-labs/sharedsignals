@@ -86,7 +86,8 @@ def encode_set(security_event_token: SecurityEvent) -> str:
         algorithm=jwk.alg,
         headers=dict(
             kid=key_id,
-            typ="secevent+jwt"  # https://www.rfc-editor.org/rfc/rfc8417.html#section-2.3
+            typ="secevent+jwt"
+            # https://www.rfc-editor.org/rfc/rfc8417.html#section-2.3
         ),
         json_encoder=JSONEncoder
     )

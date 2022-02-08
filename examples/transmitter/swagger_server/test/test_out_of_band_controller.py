@@ -38,7 +38,8 @@ def test_register(client: FlaskClient) -> None:
 @pytest.mark.parametrize("subject", [
     Subject.parse_obj({"user": {"format": "email", "email": "foo@bar.com"}}),
     Subject.parse_obj({"format": "email", "email": "foo@bar.com"}),
-    Subject.parse_obj({"identifiers": [{"format": "email", "email": "user@example.com"}]})
+    Subject.parse_obj({"identifiers": [{"format": "email",
+                                        "email": "user@example.com"}]})
 ])
 @pytest.mark.parametrize("event_type", [
     "session-revoked",
@@ -47,7 +48,8 @@ def test_register(client: FlaskClient) -> None:
     "assurance-level-change",
     "device-compliance-change"
 ])
-def test_trigger_event(client: FlaskClient, subject: Subject, event_type:str) -> None:
+def test_trigger_event(client: FlaskClient, subject: Subject,
+                       event_type: str) -> None:
     """Test case for trigger_event
 
     Request to generate a security event other than verification
@@ -62,12 +64,13 @@ def test_trigger_event(client: FlaskClient, subject: Subject, event_type:str) ->
     )
     register_response_json = json.loads(register_response.data.decode('utf-8'))
     assert db.stream_exists(register_response_json['token'])
-    
+
     # Set stream to poll
     new_config = StreamConfiguration(
         iss='http://pets.com',  # this should not update
         events_requested=[],
-        delivery=PollDeliveryMethod(endpoint_url="http://transmitter.com/polling"),
+        delivery=PollDeliveryMethod(
+            endpoint_url="http://transmitter.com/polling"),
         subject=subject
     )
 
@@ -78,7 +81,6 @@ def test_trigger_event(client: FlaskClient, subject: Subject, event_type:str) ->
     )
     assert_status_code(response, 200)
 
-    
     # add subject
     body = AddSubjectParameters(subject=subject, verified=False)
     response = client.post(
@@ -87,8 +89,7 @@ def test_trigger_event(client: FlaskClient, subject: Subject, event_type:str) ->
         headers={'Authorization': f'Bearer {register_response_json["token"]}'}
     )
     assert response.status_code == 200
-    
-    
+
     # trigger event
     body = TriggerEventParameters(
         event_type=event_type,
@@ -107,12 +108,14 @@ def test_trigger_event(client: FlaskClient, subject: Subject, event_type:str) ->
 @pytest.mark.parametrize("subject", [
     Subject.parse_obj({"user": {"format": "email", "email": "foo@bar.com"}}),
     Subject.parse_obj({"format": "email", "email": "foo@bar.com"}),
-    Subject.parse_obj({"identifiers": [{"format": "email", "email": "user@example.com"}]})
+    Subject.parse_obj({"identifiers": [{"format": "email",
+                                        "email": "user@example.com"}]})
 ])
 @pytest.mark.parametrize("event_type", [
     "invalid-event-type"
 ])
-def test_trigger_invalid_event(client: FlaskClient, subject: Subject, event_type:str) -> None:
+def test_trigger_invalid_event(client: FlaskClient, subject: Subject,
+                               event_type: str) -> None:
     """Test case for trigger_event
 
     Request to generate a security event other than verification

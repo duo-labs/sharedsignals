@@ -433,11 +433,13 @@ def test_verification_request__polling(client: FlaskClient, new_stream: Stream,
         assert verification_event.state is None
 
 
-def test_verification_request__pushing__no_response(client: FlaskClient, new_stream: Stream) -> None:
+def test_verification_request__pushing__no_response(client: FlaskClient,
+                                                    new_stream: Stream) -> None:
     """Test case for verification_request
 
-    Request that a verification event be sent over an Event Stream with Push delivery method,
-    but the push delivery fails, the response to the request must still return 204
+    Request that a verification event be sent over an Event Stream with
+    Push delivery method, but the push delivery fails, the response to 
+    the request must still return 204
     """
     push_url = "https://test-case.popular-app.com/push"
     new_stream.config.delivery = PushDeliveryMethod(endpoint_url=push_url)

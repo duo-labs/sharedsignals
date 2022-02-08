@@ -44,12 +44,13 @@ def get_status(token_info: Dict[str, str],
     [Spec](https://openid.net/specs/openid-sse-framework-1_0.html#reading-a-streams-status)  An Event Receiver checks the current status of an event stream by making an HTTP GET request to the stream’s Status Endpoint. # noqa: E50
     """
     client_id = token_info['client_id']
-    
+
     subject_parsed = None
     if subject:
         subject_parsed = Subject.parse_raw(subject)
 
-    return business_logic.get_status(subject=subject_parsed, client_id=client_id), 200
+    return business_logic.get_status(subject=subject_parsed,
+                                     client_id=client_id), 200
 
 
 def remove_subject(token_info: Dict[str, str]) -> Tuple[Any, int]:  # noqa: E501

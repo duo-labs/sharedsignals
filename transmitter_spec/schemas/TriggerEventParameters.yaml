@@ -19,10 +19,12 @@ properties:
   event_type:
     type: string
     description: |-
-      Read-Write.
-      Supports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.      
+      Supports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.
     example: credential-compromise
   subject:
     allOf:
       - $ref: "../openapi.yaml#/components/schemas/Subject"
-      - description: "REQUIRED. SHOULD be same as subjects receiver cares about (config.cfg). A Subject claim identifying the subject to be added."
+      - description: |
+          REQUIRED. ONLY EMAIL format supported currently.
+          SHOULD be same as subjects receiver cares about.
+          A Subject claim identifying the subject of the event to be generated.

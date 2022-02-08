@@ -8,11 +8,12 @@ from typing import Dict
 
 from swagger_server.events import (
     Events, SecurityEvent,
-    SessionRevoked,TokenClaimsChange, CredentialChange,
+    SessionRevoked, TokenClaimsChange, CredentialChange,
     AssuranceLevelChange, DeviceComplianceChange
 )
 
 from swagger_server.models import Subject
+
 
 # TODO: 1. Support RISC
 class GenerateEvent:
@@ -24,69 +25,42 @@ class GenerateEvent:
             "assurance-level-change": self.assurance_level_change_event,
             "device-compliance-change": self.device_compliance_change_event
         }
-        self.subject:Subject
-        self.event_type:str
+        self.subject: Subject
+        self.event_type: str
 
-    
-    def session_revoked_event(self)->SecurityEvent:
-        session_revoked = SessionRevoked( subject=self.subject,
-                        event_timestamp=self.gen_timestamp(),
-                        initiating_entity="Duo policy",
-                        reason_admin=self.gen_admin_msg(),
-                        reason_user=self.gen_user_msg())
+    def session_revoked_event(self) -> SecurityEvent:
+        session_revoked = SessionRevoked(subject=self.subject)
         return SecurityEvent(
-        events=Events(session_revoked=session_revoked)
-    )
-    
-    def token_claims_change_event(self)->SecurityEvent:
-        token_claims_change = TokenClaimsChange( subject=self.subject,
-                        event_timestamp=self.gen_timestamp(),
-                        initiating_entity="Duo policy",
-                        reason_admin=self.gen_admin_msg(),
-                        reason_user=self.gen_user_msg(),
-                        claims={"trusted_network": "false"})
+                events=Events(session_revoked=session_revoked)
+                )
+
+    def token_claims_change_event(self) -> SecurityEvent:
+        token_claims_change = TokenClaimsChange(subject=self.subject)
         return SecurityEvent(
-        events=Events(token_claims_change=token_claims_change)
-    )
-        
-    def credential_change_event(self)->SecurityEvent:
-        credential_change = CredentialChange( subject=self.subject,
-                        event_timestamp=self.gen_timestamp(),
-                        initiating_entity="Duo policy",
-                        reason_admin=self.gen_admin_msg(),
-                        reason_user=self.gen_user_msg(),
-                        credential_type="fido2-roaming",
-                        change_type="create")
+                events=Events(token_claims_change=token_claims_change)
+            )
+
+    def credential_change_event(self) -> SecurityEvent:
+        credential_change = CredentialChange(subject=self.subject)
         return SecurityEvent(
-        events=Events(credential_change=credential_change)
-    )
-        
-    def assurance_level_change_event(self)->SecurityEvent:
-        assurance_level_change = AssuranceLevelChange( subject=self.subject,
-                        event_timestamp=self.gen_timestamp(),
-                        initiating_entity="Duo policy",
-                        reason_admin=self.gen_admin_msg(),
-                        reason_user=self.gen_user_msg(),
-                        current_level="nist-aal2",
-                        previous_level="nist-aal1",
-                        change_direction="increase")
+                events=Events(credential_change=credential_change)
+            )
+
+    def assurance_level_change_event(self) -> SecurityEvent:
+        assurance_level_change = AssuranceLevelChange(subject=self.subject)
         return SecurityEvent(
-        events=Events(assurance_level_change=assurance_level_change)
-    )
-        
-    def device_compliance_change_event(self)->SecurityEvent:
-        device_compliance_change = DeviceComplianceChange( subject=self.subject,
-                        event_timestamp=self.gen_timestamp(),
-                        initiating_entity="Duo policy",
-                        reason_admin=self.gen_admin_msg(),
-                        reason_user=self.gen_user_msg(),
-                        current_status="compliant",
-                        previous_status="not-compliant")
+                events=Events(assurance_level_change=assurance_level_change)
+            )
+
+    def device_compliance_change_event(self) -> SecurityEvent:
+        device_compliance_change = DeviceComplianceChange(subject=self.subject)
         return SecurityEvent(
-        events=Events(device_compliance_change=device_compliance_change)
-    )
-        
-    def generate_security_event(self,event_type:str,subject:Subject)->SecurityEvent:
+                events=Events(device_compliance_change=
+                              device_compliance_change)
+            )
+
+    def generate_security_event(self, event_type: str,
+                                subject: Subject) -> SecurityEvent:
         if event_type not in self.event_generation_map:
             return None
 
@@ -94,13 +68,3 @@ class GenerateEvent:
         event_generation_function = self.event_generation_map[event_type]
         self.subject = subject
         return event_generation_function()
-    
-    @staticmethod
-    def gen_timestamp()->int:
-        return time.time() #returns the unix timestamp
-    
-    def gen_admin_msg(self)->Dict[str,str]:
-        return dict(en=f"{self.event_type} admin message")
-    
-    def gen_user_msg(self)->Dict[str,str]:
-        return dict(en=f"{self.event_type} user message")
