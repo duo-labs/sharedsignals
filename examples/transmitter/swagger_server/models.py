@@ -137,6 +137,18 @@ class EventType(Enum):
     credential_change = 'credential-change'
     assurance_level_change = 'assurance-level-change'
     device_compliance_change = 'device-compliance-change'
+    account_purged = 'account-purged'
+    account_disabled = 'account-disabled'
+    account_enabled = 'account-enabled'
+    identifier_changed = 'identifier-changed'
+    identifier_recycled = 'identifier-recycled'
+    opt_in = 'opt-in'
+    opt_out_initiated = 'opt-out-initiated'
+    opt_out_cancelled = 'opt-out-cancelled'
+    opt_out_effective = 'opt-out-effective'
+    recovery_activated = 'recovery-activated'
+    recovery_information_changed = 'recovery-information-changed'
+    RISC_sessions_revoked = 'RISC-sessions-revoked'
 
 
 class PollParameters(BaseModel):

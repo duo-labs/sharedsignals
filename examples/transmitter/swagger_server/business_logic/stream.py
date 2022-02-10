@@ -194,8 +194,9 @@ class Stream:
         if SET.events.verification is not None:
             raise ValueError("Cannot broadcast Verification Events")
 
-        # assume this is a session revoked SET (the only other one we support)
-        # TODO: change this to support all CAEP and RISC
+        # TODO: Is there a better way than using this huge ladder?
+        # Supports all CAEP and RISC
+        # CAEP
         if SET.events.session_revoked:
             subject = SET.events.session_revoked.subject
         elif SET.events.token_claims_change:
@@ -206,9 +207,37 @@ class Stream:
             subject = SET.events.assurance_level_change.subject
         elif SET.events.device_compliance_change:
             subject = SET.events.device_compliance_change.subject
+        # RISC
+        elif SET.events.account_credential_change_required:
+            subject = SET.events.account_credential_change_required.subject
+        elif SET.events.account_purged:
+            subject = SET.events.account_purged.subject
+        elif SET.events.account_disabled:
+            subject = SET.events.account_disabled.subject
+        elif SET.events.account_enabled:
+            subject = SET.events.account_enabled.subject
+        elif SET.events.identifier_changed:
+            subject = SET.events.identifier_changed.subject
+        elif SET.events.identifier_recycled:
+            subject = SET.events.identifier_recycled.subject
+        elif SET.events.opt_in:
+            subject = SET.events.opt_in.subject
+        elif SET.events.opt_out_initiated:
+            subject = SET.events.opt_out_initiated.subject
+        elif SET.events.opt_out_cancelled:
+            subject = SET.events.opt_out_cancelled.subject
+        elif SET.events.opt_out_effective:
+            subject = SET.events.opt_out_effective.subject
+        elif SET.events.recovery_activated:
+            subject = SET.events.recovery_activated.subject
+        elif SET.events.recovery_information_changed:
+            subject = SET.events.recovery_information_changed.subject
+        elif SET.events.RISC_sessions_revoked:
+            subject = SET.events.RISC_sessions_revoked.subject
         else:
             # handle error
             subject = Subject()
+            logging.error(f"subject empty for given event")
 
         simple_subj = get_simple_subject(subject, Email)
         if not simple_subj:

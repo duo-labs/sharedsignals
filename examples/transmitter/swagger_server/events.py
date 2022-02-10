@@ -12,9 +12,10 @@ from pydantic import AnyUrl, BaseModel, Field
 from swagger_server.models import Subject
 
 CAEP_BASE_URI = "https://schemas.openid.net/secevent/caep/event-type"
-
+RISC_BASE_URI = "https://schemas.openid.net/secevent/risc/event-type"
 
 # Enums
+
 
 class AssuranceLevel(Enum):
     nist_aal1 = 'nist-aal1'
@@ -52,6 +53,11 @@ class DeviceStatus(Enum):
     not_compliant = 'not-compliant'
 
 
+class AccountDisabledReason(Enum):
+    hijacking = 'hijacking'
+    bulk_account = 'bulk-account'
+
+
 # Models
 
 class Event(BaseModel):
@@ -64,6 +70,65 @@ class Event(BaseModel):
 class VerificationEvent(Event):
     __uri__ = "https://schemas.openid.net/secevent/sse/event-type/verification"
     state: Optional[str]
+
+
+class RISCEvent(Event):
+    subject: Subject
+
+
+class AccountCredentialChangeRequired(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/account-credential-change-required"
+
+
+class AccountPurged(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/account-purged"
+
+
+class AccountDisabled(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/account-disabled"
+    # optional and enum
+    reason: Optional[AccountDisabledReason] = AccountDisabledReason.hijacking
+
+
+class AccountEnabled(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/account-enabled"
+
+
+class IdentifierChanged(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/identifier-changed"
+    new_value: Optional[str]  # optional and string?
+
+
+class IdentifierRecycled(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/identifier-recycled"
+
+
+class OptIn(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/opt-in"
+
+
+class OptOutInitiated(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/opt-out-initiated"
+
+
+class OptOutCancelled(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/opt-out-cancelled"
+
+
+class OptOutEffective(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/opt-out-effective"
+
+
+class RecoveryActivated(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/recovery-activated"
+
+
+class RecoveryInformationChanged(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/recovery-information-changed"
+
+
+class RISCSessionsRevoked(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/sessions-revoked"
 
 
 class CAEPEvent(Event):
@@ -132,6 +197,34 @@ class Events(BaseModel):
     device_compliance_change: Optional[DeviceComplianceChange] = Field(
         alias=DeviceComplianceChange.__uri__)
 
+    # RISC
+    account_credential_change_required: Optional[AccountCredentialChangeRequired] = Field(
+        alias=AccountCredentialChangeRequired.__uri__)
+    account_purged: Optional[AccountPurged] = Field(
+        alias=AccountPurged.__uri__)
+    account_disabled: Optional[AccountDisabled] = Field(
+        alias=AccountDisabled.__uri__)
+    account_enabled: Optional[AccountEnabled] = Field(
+        alias=AccountEnabled.__uri__)
+    identifier_changed: Optional[IdentifierChanged] = Field(
+        alias=IdentifierChanged.__uri__)
+    identifier_recycled: Optional[IdentifierRecycled] = Field(
+        alias=IdentifierRecycled.__uri__)
+    opt_in: Optional[OptIn] = Field(
+        alias=OptIn.__uri__)
+    opt_out_initiated: Optional[OptOutInitiated] = Field(
+        alias=OptOutInitiated.__uri__)
+    opt_out_cancelled: Optional[OptOutCancelled] = Field(
+        alias=OptOutCancelled.__uri__)
+    opt_out_effective: Optional[OptOutEffective] = Field(
+        alias=OptOutEffective.__uri__)
+    recovery_activated: Optional[RecoveryActivated] = Field(
+        alias=RecoveryActivated.__uri__)
+    recovery_information_changed: Optional[RecoveryInformationChanged] = Field(
+        alias=RecoveryInformationChanged.__uri__)
+    RISC_sessions_revoked: Optional[RISCSessionsRevoked] = Field(
+        alias=RISCSessionsRevoked.__uri__)
+
     class Config:
         allow_population_by_field_name = True
 
@@ -150,5 +243,18 @@ SUPPORTED_EVENTS = [
     TokenClaimsChange.__uri__,
     CredentialChange.__uri__,
     AssuranceLevelChange.__uri__,
-    DeviceComplianceChange.__uri__
+    DeviceComplianceChange.__uri__,
+    AccountCredentialChangeRequired.__uri__,
+    AccountPurged.__uri__,
+    AccountDisabled.__uri__,
+    AccountEnabled.__uri__,
+    IdentifierChanged.__uri__,
+    IdentifierRecycled.__uri__,
+    OptIn.__uri__,
+    OptOutInitiated.__uri__,
+    OptOutCancelled.__uri__,
+    OptOutEffective.__uri__,
+    RecoveryActivated.__uri__,
+    RecoveryInformationChanged.__uri__,
+    RISCSessionsRevoked.__uri__,
 ]

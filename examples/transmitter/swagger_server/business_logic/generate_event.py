@@ -3,23 +3,39 @@
 # Use of this source code is governed by a BSD 3-Clause License
 # that can be found in the LICENSE file.
 
+
 from swagger_server.events import (
     SecurityEvent,
     SessionRevoked, TokenClaimsChange, CredentialChange,
-    AssuranceLevelChange, DeviceComplianceChange
+    AssuranceLevelChange, DeviceComplianceChange,
+    AccountDisabled, AccountEnabled, AccountPurged, IdentifierChanged,
+    IdentifierRecycled, OptIn, OptOutCancelled, OptOutEffective,
+    OptOutInitiated, RISCSessionsRevoked, RecoveryActivated,
+    RecoveryInformationChanged
 )
 from swagger_server.models import (
    Subject, EventType
 )
 
 
-# TODO: 1. Support RISC
 event_type_map = {
     EventType.session_revoked: SessionRevoked,
     EventType.token_claims_change: TokenClaimsChange,
     EventType.credential_change: CredentialChange,
     EventType.assurance_level_change: AssuranceLevelChange,
-    EventType.device_compliance_change: DeviceComplianceChange
+    EventType.device_compliance_change: DeviceComplianceChange,
+    EventType.account_purged: AccountPurged,
+    EventType.account_disabled: AccountDisabled,
+    EventType.account_enabled: AccountEnabled,
+    EventType.identifier_changed: IdentifierChanged,
+    EventType.identifier_recycled: IdentifierRecycled,
+    EventType.opt_in: OptIn,
+    EventType.opt_out_initiated: OptOutInitiated,
+    EventType.opt_out_cancelled: OptOutCancelled,
+    EventType.opt_out_effective: OptOutEffective,
+    EventType.recovery_activated: RecoveryActivated,
+    EventType.recovery_information_changed: RecoveryInformationChanged,
+    EventType.RISC_sessions_revoked: RISCSessionsRevoked,
 }
 
 

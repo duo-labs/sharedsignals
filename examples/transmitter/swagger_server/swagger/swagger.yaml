@@ -879,6 +879,18 @@ components:
           - credential-change
           - assurance-level-change
           - device-compliance-change
+          - account-purged
+          - account-disabled
+          - account-enabled
+          - identifier-changed
+          - identifier-recycled
+          - opt-in
+          - opt-out-initiated
+          - opt-out-cancelled
+          - opt-out-effective
+          - recovery-activated
+          - recovery-information-changed
+          - RISC-sessions-revoked
         subject:
           allOf:
           - $ref: '#/components/schemas/Subject'
