@@ -11,8 +11,9 @@ import pytest
 
 from swagger_server import db
 from swagger_server.models import (
-    RegisterParameters, Subject, TriggerEventParameters,
-    PollDeliveryMethod, StreamConfiguration, AddSubjectParameters
+    AddSubjectParameters, EventType, PollDeliveryMethod,
+    RegisterParameters, StreamConfiguration,
+    Subject, TriggerEventParameters
 )
 from swagger_server.test.conftest import assert_status_code
 
@@ -42,14 +43,14 @@ def test_register(client: FlaskClient) -> None:
                                         "email": "user@example.com"}]})
 ])
 @pytest.mark.parametrize("event_type", [
-    "session-revoked",
-    "token-claims-change",
-    "credential-change",
-    "assurance-level-change",
-    "device-compliance-change"
+    EventType.session_revoked,
+    EventType.token_claims_change,
+    EventType.credential_change,
+    EventType.assurance_level_change,
+    EventType.device_compliance_change
 ])
 def test_trigger_event(client: FlaskClient, subject: Subject,
-                       event_type: str) -> None:
+                       event_type: EventType) -> None:
     """Test case for trigger_event
 
     Request to generate a security event other than verification
@@ -103,32 +104,6 @@ def test_trigger_event(client: FlaskClient, subject: Subject,
     # # check if event is queued
     num_SETs = db.count_SETs(client_id=register_response_json["token"])
     assert num_SETs
-
-
-@pytest.mark.parametrize("subject", [
-    Subject.parse_obj({"user": {"format": "email", "email": "foo@bar.com"}}),
-    Subject.parse_obj({"format": "email", "email": "foo@bar.com"}),
-    Subject.parse_obj({"identifiers": [{"format": "email",
-                                        "email": "user@example.com"}]})
-])
-@pytest.mark.parametrize("event_type", [
-    "invalid-event-type"
-])
-def test_trigger_invalid_event(client: FlaskClient, subject: Subject,
-                               event_type: str) -> None:
-    """Test case for trigger_event
-
-    Request to generate a security event other than verification
-    """
-    body = TriggerEventParameters(
-        event_type=event_type,
-        subject=subject
-    )
-    response = client.post(
-        '/trigger-event',
-        json=body
-    )
-    assert_status_code(response, 500)
 
 
 if __name__ == '__main__':

@@ -873,6 +873,12 @@ components:
             \ and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html)\
             \ event types."
           example: credential-compromise
+          enum:
+          - session-revoked
+          - token-claims-change
+          - credential-change
+          - assurance-level-change
+          - device-compliance-change
         subject:
           allOf:
           - $ref: '#/components/schemas/Subject'

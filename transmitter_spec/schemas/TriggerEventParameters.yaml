@@ -18,6 +18,7 @@ required:
 properties:
   event_type:
     type: string
+    enum: [session-revoked, token-claims-change, credential-change, assurance-level-change, device-compliance-change]
     description: |-
       Supports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.
     example: credential-compromise

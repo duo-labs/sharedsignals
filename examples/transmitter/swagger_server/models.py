@@ -127,6 +127,18 @@ class RegisterResponse(BaseModel):
     )
 
 
+class EventType(Enum):
+    """
+    Supports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.
+    """
+
+    session_revoked = 'session-revoked'
+    token_claims_change = 'token-claims-change'
+    credential_change = 'credential-change'
+    assurance_level_change = 'assurance-level-change'
+    device_compliance_change = 'device-compliance-change'
+
+
 class PollParameters(BaseModel):
     maxEvents: Optional[int] = Field(
         None,
@@ -469,7 +481,7 @@ class TriggerEventParameters(BaseModel):
 
     """
 
-    event_type: str = Field(
+    event_type: EventType = Field(
         ...,
         description='Supports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.',
         example='credential-compromise',

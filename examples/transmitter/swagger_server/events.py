@@ -16,25 +16,25 @@ CAEP_BASE_URI = "https://schemas.openid.net/secevent/caep/event-type"
 
 # Enums
 
-class AssuranceLevels(Enum):
+class AssuranceLevel(Enum):
     nist_aal1 = 'nist-aal1'
     nist_aal2 = 'nist-aal2'
     nist_aal3 = 'nist-aal3'
 
 
-class AssuranceDirections(Enum):
+class AssuranceDirection(Enum):
     increase = 'increase'
     decrease = 'decrease'
 
 
-class CredentialChangeTypes(Enum):
+class CredentialChangeType(Enum):
     create = 'create'
     revoke = 'revoke'
     update = 'update'
     delete = 'delete'
 
 
-class CredentialTypes(Enum):
+class CredentialType(Enum):
     password = 'password'
     pin = 'pin'
     x509 = 'x509'
@@ -47,7 +47,7 @@ class CredentialTypes(Enum):
     app = 'app'
 
 
-class DeviceStatuses(Enum):
+class DeviceStatus(Enum):
     compliant = 'compliant'
     not_compliant = 'not-compliant'
 
@@ -92,8 +92,8 @@ class TokenClaimsChange(CAEPEvent):
 class CredentialChange(CAEPEvent):
     # class variable shared by all instances
     __uri__ = f"{CAEP_BASE_URI}/credential-change"
-    credential_type: CredentialTypes = CredentialTypes.fido2_roaming
-    change_type: CredentialChangeTypes = CredentialChangeTypes.create
+    credential_type: CredentialType = CredentialType.fido2_roaming
+    change_type: CredentialChangeType = CredentialChangeType.create
     friendly_name: Optional[str]
     x509_issuer: Optional[str]
     x509_serial: Optional[str]
@@ -103,16 +103,16 @@ class CredentialChange(CAEPEvent):
 class AssuranceLevelChange(CAEPEvent):
     # class variable shared by all instances
     __uri__ = f"{CAEP_BASE_URI}/assurance-level-change"
-    current_level: AssuranceLevels = AssuranceLevels.nist_aal2
-    previous_level: AssuranceLevels = AssuranceLevels.nist_aal1
-    change_direction: AssuranceDirections = AssuranceDirections.increase
+    current_level: AssuranceLevel = AssuranceLevel.nist_aal2
+    previous_level: AssuranceLevel = AssuranceLevel.nist_aal1
+    change_direction: AssuranceDirection = AssuranceDirection.increase
 
 
 class DeviceComplianceChange(CAEPEvent):
     # class variable shared by all instances
     __uri__ = f"{CAEP_BASE_URI}/device-compliance-change"
-    current_status: DeviceStatuses = DeviceStatuses.compliant
-    previous_status: DeviceStatuses = DeviceStatuses.not_compliant
+    current_status: DeviceStatus = DeviceStatus.compliant
+    previous_status: DeviceStatus = DeviceStatus.not_compliant
 
 
 class Events(BaseModel):
