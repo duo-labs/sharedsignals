@@ -129,7 +129,7 @@ class RegisterResponse(BaseModel):
 
 class EventType(Enum):
     """
-    Supports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.
+    Supports all  (not yet supported)[RISC](https://github.com/openid/sse/blob/main/openid-risc-profile-specification-1_0.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.
     """
 
     session_revoked = 'session-revoked'
@@ -142,13 +142,13 @@ class EventType(Enum):
     account_enabled = 'account-enabled'
     identifier_changed = 'identifier-changed'
     identifier_recycled = 'identifier-recycled'
+    credential_compromise = 'credential-compromise'
     opt_in = 'opt-in'
     opt_out_initiated = 'opt-out-initiated'
     opt_out_cancelled = 'opt-out-cancelled'
     opt_out_effective = 'opt-out-effective'
     recovery_activated = 'recovery-activated'
     recovery_information_changed = 'recovery-information-changed'
-    RISC_sessions_revoked = 'RISC-sessions-revoked'
 
 
 class PollParameters(BaseModel):
@@ -495,7 +495,7 @@ class TriggerEventParameters(BaseModel):
 
     event_type: EventType = Field(
         ...,
-        description='Supports all  (not yet supported)[RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.',
+        description='Supports all  (not yet supported)[RISC](https://github.com/openid/sse/blob/main/openid-risc-profile-specification-1_0.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.',
         example='credential-compromise',
     )
     subject: Subject

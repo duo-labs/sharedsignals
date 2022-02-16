@@ -9,8 +9,8 @@ from swagger_server.events import (
     SessionRevoked, TokenClaimsChange, CredentialChange,
     AssuranceLevelChange, DeviceComplianceChange,
     AccountDisabled, AccountEnabled, AccountPurged, IdentifierChanged,
-    IdentifierRecycled, OptIn, OptOutCancelled, OptOutEffective,
-    OptOutInitiated, RISCSessionsRevoked, RecoveryActivated,
+    IdentifierRecycled, CredentialCompromise, OptIn, OptOutCancelled,
+    OptOutEffective, OptOutInitiated, RecoveryActivated,
     RecoveryInformationChanged
 )
 from swagger_server.models import (
@@ -29,20 +29,20 @@ event_type_map = {
     EventType.account_enabled: AccountEnabled,
     EventType.identifier_changed: IdentifierChanged,
     EventType.identifier_recycled: IdentifierRecycled,
+    EventType.credential_compromise: CredentialCompromise,
     EventType.opt_in: OptIn,
     EventType.opt_out_initiated: OptOutInitiated,
     EventType.opt_out_cancelled: OptOutCancelled,
     EventType.opt_out_effective: OptOutEffective,
     EventType.recovery_activated: RecoveryActivated,
     EventType.recovery_information_changed: RecoveryInformationChanged,
-    EventType.RISC_sessions_revoked: RISCSessionsRevoked,
 }
 
 
 def generate_security_event(event_type: EventType,
                             subject: Subject) -> SecurityEvent:
     event_class = event_type_map[event_type]
-    event_attribute_name = event_type.value.replace("-", "_")
+    event_attribute_name = event_type.name
     security_event = {
         "events": {
             event_attribute_name: event_class(subject=subject),

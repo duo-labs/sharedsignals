@@ -53,13 +53,13 @@ def test_register(client: FlaskClient) -> None:
     EventType.account_enabled,
     EventType.identifier_changed,
     EventType.identifier_recycled,
+    EventType.credential_compromise,
     EventType.opt_in,
     EventType.opt_out_initiated,
     EventType.opt_out_cancelled,
     EventType.opt_out_effective,
     EventType.recovery_activated,
     EventType.recovery_information_changed,
-    EventType.RISC_sessions_revoked
 ])
 def test_trigger_event(client: FlaskClient, subject: Subject,
                        event_type: EventType) -> None:

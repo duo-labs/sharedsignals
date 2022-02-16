@@ -103,6 +103,15 @@ class IdentifierRecycled(RISCEvent):
     __uri__ = f"{RISC_BASE_URI}/identifier-recycled"
 
 
+class CredentialCompromise(RISCEvent):
+    __uri__ = f"{RISC_BASE_URI}/credential-compromise"
+    credential_type: CredentialType = CredentialType.fido2_roaming
+    event_timestamp: Optional[int] = Field(
+        default_factory=lambda: int(time.time()))
+    reason_admin: Optional[Dict[str, str]]
+    reason_user: Optional[Dict[str, str]]
+
+
 class OptIn(RISCEvent):
     __uri__ = f"{RISC_BASE_URI}/opt-in"
 
@@ -125,10 +134,6 @@ class RecoveryActivated(RISCEvent):
 
 class RecoveryInformationChanged(RISCEvent):
     __uri__ = f"{RISC_BASE_URI}/recovery-information-changed"
-
-
-class RISCSessionsRevoked(RISCEvent):
-    __uri__ = f"{RISC_BASE_URI}/sessions-revoked"
 
 
 class CAEPEvent(Event):
@@ -210,6 +215,8 @@ class Events(BaseModel):
         alias=IdentifierChanged.__uri__)
     identifier_recycled: Optional[IdentifierRecycled] = Field(
         alias=IdentifierRecycled.__uri__)
+    credential_compromise: Optional[CredentialCompromise] = Field(
+        alias=CredentialCompromise.__uri__)
     opt_in: Optional[OptIn] = Field(
         alias=OptIn.__uri__)
     opt_out_initiated: Optional[OptOutInitiated] = Field(
@@ -222,8 +229,18 @@ class Events(BaseModel):
         alias=RecoveryActivated.__uri__)
     recovery_information_changed: Optional[RecoveryInformationChanged] = Field(
         alias=RecoveryInformationChanged.__uri__)
-    RISC_sessions_revoked: Optional[RISCSessionsRevoked] = Field(
-        alias=RISCSessionsRevoked.__uri__)
+
+    def get_subject(self) -> Subject:
+        """
+        Retrieves the subject from
+        the first non-null event in this events object
+        """
+        list_of_events = list(self.dict(exclude_none=True).values())
+        if not list_of_events:
+            raise ValueError("No events in the Events object")
+
+        first_subject = list_of_events[0]["subject"]
+        return Subject.parse_obj(first_subject)
 
     class Config:
         allow_population_by_field_name = True
@@ -250,11 +267,11 @@ SUPPORTED_EVENTS = [
     AccountEnabled.__uri__,
     IdentifierChanged.__uri__,
     IdentifierRecycled.__uri__,
+    CredentialCompromise.__uri__,
     OptIn.__uri__,
     OptOutInitiated.__uri__,
     OptOutCancelled.__uri__,
     OptOutEffective.__uri__,
     RecoveryActivated.__uri__,
     RecoveryInformationChanged.__uri__,
-    RISCSessionsRevoked.__uri__,
 ]
