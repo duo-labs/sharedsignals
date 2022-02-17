@@ -19,10 +19,13 @@ from swagger_server.events import (
 )
 import swagger_server.db as db
 from swagger_server import jwt_encode
-from swagger_server.models import PollDeliveryMethod, PushDeliveryMethod
-from swagger_server.models import StreamConfiguration
-from swagger_server.models import Status
+from swagger_server.models import (
+    Email, PollDeliveryMethod, PushDeliveryMethod,
+    StreamConfiguration, Status, Subject
+)
+from swagger_server.errors import EmailSubjectNotFound, SubjectNotInStream
 
+from swagger_server.utils import get_simple_subject
 
 DEFAULT_CONFIG = StreamConfiguration(
     iss=TRANSMITTER_ISSUER,
@@ -50,7 +53,7 @@ class Stream:
                  status: Status = Status.enabled,
                  save: bool = True) -> None:
         self.client_id = client_id
-        self.config = DEFAULT_CONFIG.copy(update={ 'aud': aud })
+        self.config = DEFAULT_CONFIG.copy(update={'aud': aud})
         self.status = status
 
         if save:
@@ -80,18 +83,22 @@ class Stream:
         return new_stream
 
     def delete(self) -> None:
-        """Wipe out any subjects or SETs and revert the config to the default"""
+        """
+        Wipe out any subjects or SETs and
+        revert the config to the default
+        """
         db.delete_SETs(self.client_id)
         db.delete_subjects(self.client_id)
 
         # revert the stream to the default config
         audience = self.config.aud
         self.config = DEFAULT_CONFIG.copy(
-            update={ 'aud': audience }
+            update={'aud': audience}
         )
         self.save()
 
-    def update_config(self, new_config: StreamConfiguration, save: bool=True) -> Stream:
+    def update_config(self, new_config: StreamConfiguration,
+                      save: bool = True) -> Stream:
         config = self.config.dict()
         _new_config = new_config.dict()
 
@@ -144,7 +151,8 @@ class Stream:
         }
 
         if self.config.delivery.authorization_header:
-            headers["Authorization"] = self.config.delivery.authorization_header
+            headers["Authorization"] = \
+                self.config.delivery.authorization_header
 
         try:
             response = requests.post(
@@ -169,7 +177,8 @@ class Stream:
     def queue_SET(self, SET: SecurityEvent) -> None:
         db.add_set(self.client_id, SET)
 
-    def get_SETs(self, max_events: Optional[int]=None) -> List[SecurityEvent]:
+    def get_SETs(self,
+                 max_events: Optional[int] = None) -> List[SecurityEvent]:
         return db.get_SETs(self.client_id, max_events)
 
     def count_SETs(self) -> int:
@@ -177,3 +186,38 @@ class Stream:
 
     def ack_SETs(self, jtis: List[str]) -> None:
         db.delete_SETs(self.client_id, jtis)
+
+    @staticmethod
+    def broadcast_SET(SET: SecurityEvent) -> None:
+        """Send an event to every stream"""
+        # these cannot be verification events
+        if SET.events.verification is not None:
+            raise ValueError("Cannot broadcast Verification Events")
+
+        # Supports all CAEP and RISC
+        subject = SET.events.get_subject()
+        if not subject:
+            logging.error(f"subject empty for given event")
+            raise EmailSubjectNotFound(subject)
+
+        simple_subj = get_simple_subject(subject, Email)
+        if not simple_subj:
+            raise EmailSubjectNotFound(subject)
+
+        # broadcast to each stream
+        for client_id in db.get_stream_ids():
+            _stream = Stream.load(client_id)
+
+            # only transmit if the stream and subject are both enabled
+            if _stream.status != Status.enabled:
+                continue
+
+            try:
+                subject_status = _stream.get_subject_status(simple_subj.email)
+            except SubjectNotInStream:
+                subject_status = Status.disabled
+
+            if subject_status != Status.enabled:
+                continue
+
+            _stream.process_SET(SET)

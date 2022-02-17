@@ -1,0 +1,31 @@
+# Copyright (c) 2021 Cisco Systems, Inc. and its affiliates
+# All rights reserved.
+# Use of this source code is governed by a BSD 3-Clause License
+# that can be found in the LICENSE file.
+
+type: object
+title: "Trigger Event Parameters"
+description: |
+  JSON Object describing request to create a security event to test SSE receiver/transmitter 
+example:
+  event_type: session-revoked
+  subject:
+    format: email
+    email: "user@example.com"
+required:
+  - event_type
+  - subject
+properties:
+  event_type:
+    type: string
+    enum: [session-revoked, token-claims-change, credential-change, assurance-level-change, device-compliance-change, account-purged, account-disabled, account-enabled, identifier-changed, identifier-recycled, credential-compromise, opt-in, opt-out-initiated, opt-out-cancelled, opt-out-effective, recovery-activated, recovery-information-changed]
+    description: |-
+      Supports all [RISC](https://openid.net/specs/openid-risc-profile-specification-1_0-01.html) and [CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.
+    example: credential-compromise
+  subject:
+    allOf:
+      - $ref: "../openapi.yaml#/components/schemas/Subject"
+      - description: |
+          REQUIRED. ONLY EMAIL format supported currently.
+          SHOULD be same as subjects receiver cares about.
+          A Subject claim identifying the subject of the event to be generated.

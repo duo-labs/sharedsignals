@@ -544,6 +544,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegisterResponse'
       x-openapi-router-controller: swagger_server.controllers.out_of_band_controller
+  /trigger-event:
+    post:
+      tags:
+      - OutOfBand
+      summary: Request the transmitter to create a SSE event of certain type and subject
+        and send it to the (streams)receivers that care about the subject.
+      description: "This endpoint is not part of the spec, but rather a quick-and-dirty\
+        \ way to  test out sample security events other than verification."
+      operationId: trigger_event
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerEventParameters'
+        required: true
+      responses:
+        "200":
+          description: "On successful creation of an event, it will be sent out as\
+            \ per SSE spec (i.e. push or poll)."
+      x-openapi-router-controller: swagger_server.controllers.out_of_band_controller
 components:
   schemas:
     StreamStatus:
@@ -840,6 +860,51 @@ components:
             Stream Management API calls that require authorization.
       example:
         token: 49e5e7785e4e4f688aa49e2585970370
+    TriggerEventParameters:
+      title: Trigger Event Parameters
+      required:
+      - event_type
+      - subject
+      type: object
+      properties:
+        event_type:
+          type: string
+          description: "Supports all [RISC](https://openid.net/specs/openid-risc-profile-specification-1_0-01.html)\
+            \ and [CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html)\
+            \ event types."
+          example: credential-compromise
+          enum:
+          - session-revoked
+          - token-claims-change
+          - credential-change
+          - assurance-level-change
+          - device-compliance-change
+          - account-purged
+          - account-disabled
+          - account-enabled
+          - identifier-changed
+          - identifier-recycled
+          - credential-compromise
+          - opt-in
+          - opt-out-initiated
+          - opt-out-cancelled
+          - opt-out-effective
+          - recovery-activated
+          - recovery-information-changed
+        subject:
+          allOf:
+          - $ref: '#/components/schemas/Subject'
+          - description: |
+              REQUIRED. ONLY EMAIL format supported currently.
+              SHOULD be same as subjects receiver cares about.
+              A Subject claim identifying the subject of the event to be generated.
+      description: "JSON Object describing request to create a security event to test\
+        \ SSE receiver/transmitter \n"
+      example:
+        event_type: session-revoked
+        subject:
+          format: email
+          email: user@example.com
     AddSubjectParameters:
       required:
       - subject

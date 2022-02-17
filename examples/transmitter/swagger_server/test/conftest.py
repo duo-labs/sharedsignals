@@ -32,7 +32,7 @@ def temp_db(monkeypatch, tmpdir) -> None:
 
 @pytest.fixture
 def client(temp_db) -> Iterator[FlaskClient]:
-    app = create_app({ 'TESTING': True })
+    app = create_app({'TESTING': True})
 
     with app.test_client() as client:
         yield client
@@ -56,7 +56,8 @@ def create_app(self) -> Flask:
 
 
 @pytest.fixture(autouse=True)
-def jwks_path(monkeypatch: MonkeyPatch, tmpdir: py.path.local) -> Iterator[str]:
+def jwks_path(monkeypatch: MonkeyPatch,
+              tmpdir: py.path.local) -> Iterator[str]:
     """Mock out the environment variables so that we have control over them
     for testing.
     """

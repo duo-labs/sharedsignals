@@ -127,6 +127,30 @@ class RegisterResponse(BaseModel):
     )
 
 
+class EventType(Enum):
+    """
+    Supports all [RISC](https://openid.net/specs/openid-risc-profile-specification-1_0-01.html) and [CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.
+    """
+
+    session_revoked = 'session-revoked'
+    token_claims_change = 'token-claims-change'
+    credential_change = 'credential-change'
+    assurance_level_change = 'assurance-level-change'
+    device_compliance_change = 'device-compliance-change'
+    account_purged = 'account-purged'
+    account_disabled = 'account-disabled'
+    account_enabled = 'account-enabled'
+    identifier_changed = 'identifier-changed'
+    identifier_recycled = 'identifier-recycled'
+    credential_compromise = 'credential-compromise'
+    opt_in = 'opt-in'
+    opt_out_initiated = 'opt-out-initiated'
+    opt_out_cancelled = 'opt-out-cancelled'
+    opt_out_effective = 'opt-out-effective'
+    recovery_activated = 'recovery-activated'
+    recovery_information_changed = 'recovery-information-changed'
+
+
 class PollParameters(BaseModel):
     maxEvents: Optional[int] = Field(
         None,
@@ -461,6 +485,20 @@ class UpdateStreamStatus(StreamStatus):
         description='OPTIONAL. A short text description that explains the reason for the change.',
         example='Disabled by administrator action.',
     )
+
+
+class TriggerEventParameters(BaseModel):
+    """
+    JSON Object describing request to create a security event to test SSE receiver/transmitter
+
+    """
+
+    event_type: EventType = Field(
+        ...,
+        description='Supports all [RISC](https://openid.net/specs/openid-risc-profile-specification-1_0-01.html) and [CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.',
+        example='credential-compromise',
+    )
+    subject: Subject
 
 
 class AddSubjectParameters(BaseModel):

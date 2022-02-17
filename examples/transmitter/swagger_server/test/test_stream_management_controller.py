@@ -212,11 +212,11 @@ def test_stream_post(client, new_stream: Stream) -> None:
     """
     old_config = new_stream.config.copy()
     requested_events = SUPPORTED_EVENTS.copy()
-    requested_events.pop()  # remove session revoked
     requested_events.append('https://schemas.openid.net/fake-event')
     new_config = StreamConfiguration(
         iss='http://pets.com',  # this should not update
-        events_requested=requested_events,
+        # request: [verification_event,fake_event]
+        events_requested=[requested_events[0],requested_events[-1]],
         delivery=PollDeliveryMethod(endpoint_url=None)
     )
 
@@ -233,11 +233,12 @@ def test_stream_post(client, new_stream: Stream) -> None:
     assert updated_stream.config.iss != new_config.iss
     assert updated_stream.config.aud == old_config.aud
     assert updated_stream.config.events_supported == old_config.events_supported
-    assert updated_stream.config.events_requested == requested_events
+    # check config update for requested events: [verification_event,fake_event]
+    assert updated_stream.config.events_requested == [requested_events[0],requested_events[-1]]
 
     expected_delivered = SUPPORTED_EVENTS.copy()
-    expected_delivered.pop()
-    assert updated_stream.config.events_delivered == expected_delivered
+    # check config update for events_delivered: [verification_event]
+    assert updated_stream.config.events_delivered == [expected_delivered[0]]
 
 
 def test_stream_post__no_stream(client: FlaskClient) -> None:
@@ -432,11 +433,13 @@ def test_verification_request__polling(client: FlaskClient, new_stream: Stream,
         assert verification_event.state is None
 
 
-def test_verification_request__pushing__no_response(client: FlaskClient, new_stream: Stream) -> None:
+def test_verification_request__pushing__no_response(client: FlaskClient,
+                                                    new_stream: Stream) -> None:
     """Test case for verification_request
 
-    Request that a verification event be sent over an Event Stream with Push delivery method,
-    but the push delivery fails, the response to the request must still return 204
+    Request that a verification event be sent over an Event Stream with
+    Push delivery method, but the push delivery fails, the response to 
+    the request must still return 204
     """
     push_url = "https://test-case.popular-app.com/push"
     new_stream.config.delivery = PushDeliveryMethod(endpoint_url=push_url)

@@ -42,7 +42,8 @@ to a new file if desired.
 The work provided here is intended as educational material and as a proof-of-concept.
 We welcome further contributions from the open source community.
 Please check the [Issues](https://github.com/duo-labs/sharedsignals/issues)
-section for ideas about where to start.
+section for ideas about where to start. \
+Use [pycodestyle](https://pycodestyle.pycqa.org/en/latest/) to make sure that your code follows the PEP8 standard.
 
 ### Adding License Headers
 The content in this repository was initially created by engineers at

@@ -6,9 +6,10 @@
 from typing import Dict, Any, Tuple, Union, List
 
 import connexion
+from connexion import NoContent
 
 from swagger_server import business_logic
-from swagger_server.models import RegisterParameters
+from swagger_server.models import RegisterParameters, TriggerEventParameters
 
 
 def register() -> Tuple[Dict[str, str], int]:
@@ -20,3 +21,11 @@ def register() -> Tuple[Dict[str, str], int]:
 
     token_json = business_logic.register(aud)
     return token_json, 200
+
+
+def trigger_event() -> Tuple[Any, int]:
+    body = TriggerEventParameters.parse_obj(connexion.request.get_json())
+
+    business_logic.trigger_event(event_type=body.event_type,
+                                 subject=body.subject)
+    return NoContent, 200
