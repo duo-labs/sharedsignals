@@ -869,8 +869,8 @@ components:
       properties:
         event_type:
           type: string
-          description: "Supports all  (not yet supported)[RISC](https://github.com/openid/sse/blob/main/openid-risc-profile-specification-1_0.html)\
-            \ and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html)\
+          description: "Supports all [RISC](https://openid.net/specs/openid-risc-profile-specification-1_0-01.html)\
+            \ and [CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html)\
             \ event types."
           example: credential-compromise
           enum:

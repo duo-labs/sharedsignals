@@ -129,7 +129,7 @@ class RegisterResponse(BaseModel):
 
 class EventType(Enum):
     """
-    Supports all  (not yet supported)[RISC](https://github.com/openid/sse/blob/main/openid-risc-profile-specification-1_0.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.
+    Supports all [RISC](https://openid.net/specs/openid-risc-profile-specification-1_0-01.html) and [CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.
     """
 
     session_revoked = 'session-revoked'
@@ -495,7 +495,7 @@ class TriggerEventParameters(BaseModel):
 
     event_type: EventType = Field(
         ...,
-        description='Supports all  (not yet supported)[RISC](https://github.com/openid/sse/blob/main/openid-risc-profile-specification-1_0.html) and (supported)[CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.',
+        description='Supports all [RISC](https://openid.net/specs/openid-risc-profile-specification-1_0-01.html) and [CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) event types.',
         example='credential-compromise',
     )
     subject: Subject

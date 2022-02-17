@@ -33,7 +33,7 @@ to generate an event to demonstrate the PUSH capability.
 After you have the Swagger UI up, as per instructions [here](transmitter/README.md).
 You can use the out-of-band (**NOT** openid standard) transmitter endpoint `trigger-event`,
 to trigger any type of openid-sse event 
-([CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) or [RISC](https://openid.net/specs/openid-risc-event-types-1_0-ID1.html)) 
+([CAEP](https://openid.net/specs/openid-caep-specification-1_0-ID1.html) or [RISC](https://openid.net/specs/openid-risc-profile-specification-1_0-01.html)) 
 And the transmitter, as per the stream configuration, will either push it to the receiver, or it will be poll/pull'ed by the receiver
 .
 > Note: the subject should be same as the ones configured in the receiver [here](receiver/receiver/config.cfg), otherwise there won't be any stream that's interested in an arbitrary subject and the SET won't be sent.
