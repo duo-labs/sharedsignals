@@ -4,20 +4,18 @@
 # that can be found in the LICENSE file.
 
 import asyncio
+from asyncio import events
 import socket
-import sys
-import logging
 import time
-import requests
-import threading
-import os
 import json
-import urllib
-from pathlib import Path
-from typing import Any
-from flask import Flask, request
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
+from logging import Logger
 from logging.config import dictConfig
+
+import urllib
+import requests
+from flask import Flask, request
+
 from .client import TransmitterClient
 
 
@@ -32,6 +30,18 @@ async def wait_until_available(host, port):
         except (socket.gaierror, ConnectionError, OSError, TypeError):
             pass
         await asyncio.sleep(1)
+
+
+def poll_events_continuously(client: TransmitterClient, poll_url: str, logger: Logger):
+    while True:
+        more_avaliable = True
+        while more_avaliable:
+            rsp = client.poll_events(poll_url)
+            for event in rsp['sets'].values():
+                logger.info(json.dumps(event, indent=2))
+            more_avaliable = rsp['moreAvailable']
+
+        time.sleep(5)
 
 
 def create_app(config_filename: str = "config.cfg"):
@@ -57,8 +67,8 @@ def create_app(config_filename: str = "config.cfg"):
     verify = app.config.get("VERIFY", True)
 
     # Wait for transmitter to be available
-    transmitter_url = app.config["TRANSMITTER_URL"]
-    asyncio.run(wait_until_available(urllib.parse.urlparse(transmitter_url).netloc, 443))
+    transmitter_url = "https://" + app.config["TRANSMITTER_HOST"]
+    asyncio.run(wait_until_available(app.config["TRANSMITTER_HOST"], 443))
 
     bearer = app.config.get('BEARER')
     if not bearer:
@@ -71,14 +81,28 @@ def create_app(config_filename: str = "config.cfg"):
     client = TransmitterClient(transmitter_url, app.config["AUDIENCE"], bearer, verify)
     client.get_endpoints()
     client.get_jwks()
-    client.configure_stream(f"{app.config['RECEIVER_URL']}/event")
+
+    client.configure_stream(app.config['STREAM_CONFIG'])
+
     for subject in app.config["SUBJECTS"]:
         client.add_subject(subject)
+
+    if client.stream_config['delivery']['method'].endswith('poll'):
+        poll_url = client.stream_config['delivery']['endpoint_url']
+        # Need to replace domain name in endpoint_url because there are different endpoint names 
+        # for reciever and shared_signals_guide
+        poll_url_parsed = urllib.parse.urlparse(poll_url)
+        poll_url_parsed = poll_url_parsed._replace(netloc=app.config["TRANSMITTER_HOST"])
+        poll_url = poll_url_parsed.geturl()
+
+        thread = threading.Thread(target=poll_events_continuously, 
+                                  args=(client, poll_url, app.logger))
+        thread.start()
 
     @app.route('/event', methods=['POST'])
     def receive_event():
         body = request.get_data()
-        event = client.decode_body(body)
+        event = client.decode_event(body)
         app.logger.info(json.dumps(event, indent=2))
         return "", 202
 

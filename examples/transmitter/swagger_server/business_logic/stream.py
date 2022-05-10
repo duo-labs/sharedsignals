@@ -111,6 +111,10 @@ class Stream:
 
         config['events_delivered'] = list(supported.intersection(requested))
         self.config = StreamConfiguration.parse_obj(config)
+
+        if isinstance(self.config.delivery, PollDeliveryMethod):
+            self.config.delivery.endpoint_url = POLL_ENDPOINT
+
         if save:
             self.save()
         return self
