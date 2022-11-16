@@ -18,10 +18,11 @@ from jwcrypto.jwk import JWKSet
 
 def main():
     # Get jwks information from the transmitter so we can decode events
-    sse_config_response = requests.get(
-        "https://transmitter.most-secure.com/.well-known/sse-configuration")
-    sse_config = sse_config_response.json()
-    jwks_json = requests.get(sse_config['jwks_uri']).text
+    ssf_config_response = requests.get(
+        "https://transmitter.most-secure.com/.well-known/sse-configuration"
+    )
+    ssf_config = ssf_config_response.json()
+    jwks_json = requests.get(ssf_config['jwks_uri']).text
     jwks = JWKSet.from_json(jwks_json)
 
     app = Flask(__name__)
@@ -63,7 +64,7 @@ requests.post("http://localhost:8080", data=encoded_jwt, headers={
 
 In a full implementation, the transmitter must share its `jwks.json` file with the receiver
 and encode each JWT. This process is omitted from this example -- see
-[the full transmitter](https://github.com/duo-labs/py-openid-sse/tree/main/examples/transmitter)
+[the full transmitter](https://github.com/duo-labs/sharedsignals/tree/main/examples/transmitter)
 example in this repository to learn how SETs can be encoded using the ES256 algorithm
 
 

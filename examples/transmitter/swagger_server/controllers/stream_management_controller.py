@@ -129,24 +129,24 @@ def verification_request(token_info: Dict[str, str]) -> Tuple[Any, int]:  # noqa
     return NoContent, 204
 
 
-def _well_known_sse_configuration_get() -> Tuple[TransmitterConfiguration, int]:  # noqa: E501
+def _well_known_ssf_configuration_get() -> Tuple[TransmitterConfiguration, int]:  # noqa: E501
     """Transmitter Configuration Request (without path)
 
     Return Transmitter Configuration information. # noqa: E501
     """
-    config = business_logic._well_known_sse_configuration_get(
+    config = business_logic._well_known_ssf_configuration_get(
         connexion.request.url_root
     )
 
     return config, 200
 
 
-def _well_known_sse_configuration_issuer_get(issuer: str) -> Tuple[TransmitterConfiguration, int]:  # noqa: E501
+def _well_known_ssf_configuration_issuer_get(issuer: str) -> Tuple[TransmitterConfiguration, int]:  # noqa: E501
     """Transmitter Configuration Request (with path)
 
     Return Transmitter Configuration information (with support for specifying an issuer). # noqa: E501
     """
-    config = business_logic._well_known_sse_configuration_get(
+    config = business_logic._well_known_ssf_configuration_get(
         connexion.request.url_root, issuer=issuer
     )
     return config, 200

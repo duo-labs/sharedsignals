@@ -186,7 +186,7 @@ class DeviceComplianceChange(CAEPEvent):
 
 
 class Events(BaseModel):
-    # SSE
+    # SSF
     verification: Optional[VerificationEvent] = Field(
         alias=VerificationEvent.__uri__)
 

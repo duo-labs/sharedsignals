@@ -28,7 +28,7 @@ paths:
       - StreamManagement
       summary: Transmitter Configuration Request (without path)
       description: Return Transmitter Configuration information.
-      operationId: _well_known_sse_configuration_get
+      operationId: _well_known_ssf_configuration_get
       responses:
         "200":
           description: "A set of Claims about the Transmitter's configuration,\nincluding\
@@ -45,7 +45,7 @@ paths:
       summary: Transmitter Configuration Request (with path)
       description: Return Transmitter Configuration information (with support for
         specifying an issuer).
-      operationId: _well_known_sse_configuration_issuer_get
+      operationId: _well_known_ssf_configuration_issuer_get
       parameters:
       - name: issuer
         in: path
@@ -548,7 +548,7 @@ paths:
     post:
       tags:
       - OutOfBand
-      summary: Request the transmitter to create a SSE event of certain type and subject
+      summary: Request the transmitter to create a SSF event of certain type and subject
         and send it to the (streams)receivers that care about the subject.
       description: "This endpoint is not part of the spec, but rather a quick-and-dirty\
         \ way to  test out sample security events other than verification."
@@ -562,7 +562,7 @@ paths:
       responses:
         "200":
           description: "On successful creation of an event, it will be sent out as\
-            \ per SSE spec (i.e. push or poll)."
+            \ per SSF spec (i.e. push or poll)."
       x-openapi-router-controller: swagger_server.controllers.out_of_band_controller
 components:
   schemas:
@@ -899,7 +899,7 @@ components:
               SHOULD be same as subjects receiver cares about.
               A Subject claim identifying the subject of the event to be generated.
       description: "JSON Object describing request to create a security event to test\
-        \ SSE receiver/transmitter \n"
+        \ SSF receiver/transmitter \n"
       example:
         event_type: session-revoked
         subject:
@@ -1406,4 +1406,3 @@ components:
       type: http
       scheme: bearer
       x-bearerInfoFunc: swagger_server.controllers.authorization_controller.check_BearerAuth
-

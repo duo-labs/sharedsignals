@@ -1,7 +1,7 @@
 # SharedSignals
 
 Tools for working with OpenID's
-[Shared Signals and Events Framework](https://openid.net/specs/openid-sse-framework-1_0.html).
+[Shared Signals Framework](https://openid.net/specs/openid-sse-framework-1_0.html).
 
 Please note: The information in this repository reflects the Shared Signals spec
 as of November 2021. However, the spec is still evolving. We will continue to make
@@ -10,12 +10,12 @@ version of the spec this code supports.
 
 ## sharedsignals.guide
 For detailed information about how to work with the transmitters and receivers
-described by the Shared Signals and Events Framework, as well as a high level
+described by the Shared Signals Framework, as well as a high level
 explanation of what the main concepts are and why you might want to use this
 technology, please see our accompanying site [https://sharedsignals.guide](https://sharedsignals.guide).
 
-## Shared Signals and Events Communication Sequence
-To understand the communication sequence for SSE, refer to this [document](docs/push-and-poll-events.md).
+## Shared Signals Framework Communication Sequence
+To understand the communication sequence for SSF, refer to this [document](docs/push-and-poll-events.md).
 
 ## Examples
 The [examples](examples) folder contains python-based, Dockerized examples

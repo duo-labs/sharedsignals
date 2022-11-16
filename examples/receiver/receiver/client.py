@@ -20,13 +20,13 @@ class TransmitterClient:
         self.verify = verify
 
     def get_endpoints(self):
-        sse_config_response = requests.get(
+        ssf_config_response = requests.get(
             f"{self.transmitter_hostname}/.well-known/sse-configuration", verify=self.verify)
-        sse_config_response.raise_for_status()
-        self.sse_config = sse_config_response.json()
+        ssf_config_response.raise_for_status()
+        self.ssf_config = ssf_config_response.json()
 
     def get_jwks(self):
-        jwks_response = requests.get(self.sse_config["jwks_uri"], verify=self.verify)
+        jwks_response = requests.get(self.ssf_config["jwks_uri"], verify=self.verify)
         jwks_response.raise_for_status()
         self.jwks = JWKSet.from_json(jwks_response.text)
 
@@ -38,14 +38,14 @@ class TransmitterClient:
             jwt=body,
             key=key,
             algorithms=[jwk["alg"]],
-            issuer=self.sse_config["issuer"],
+            issuer=self.ssf_config["issuer"],
             audience=self.audience,
         )
 
     def configure_stream(self, endpoint_url: str):
         """ Configure stream and return the current config """
         config_response = requests.post(
-            url=self.sse_config["configuration_endpoint"],
+            url=self.ssf_config["configuration_endpoint"],
             verify=self.verify,
             json={
                 'delivery': {
@@ -63,7 +63,7 @@ class TransmitterClient:
 
     def add_subject(self, subject: dict[str: Any]):
         return requests.post(
-            url=self.sse_config["add_subject_endpoint"],
+            url=self.ssf_config["add_subject_endpoint"],
             verify=self.verify,
             json={'subject': subject},
             headers=self.auth
@@ -72,7 +72,7 @@ class TransmitterClient:
     def request_verification(self):
         """ Request a single verification event """
         return requests.post(
-            url=self.sse_config["verification_endpoint"],
+            url=self.ssf_config["verification_endpoint"],
             verify=self.verify,
             json={'state': uuid.uuid4().hex},
             headers=self.auth,
