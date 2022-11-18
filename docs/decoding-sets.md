@@ -5,10 +5,11 @@ SETs can be encoded with various different algorithms, as [described here](https
 ## Retrieving the JWKS
 To decode SETs from a transmitter, we need the transmitter's JWKS [(JSON Web Key Set)](https://datatracker.ietf.org/doc/html/rfc7517#section-5):
 ```py
-sse_config_response = requests.get(
-    'https://transmitter.most-secure.com/.well-known/sse-configuration')
-sse_config = sse_config_response.json()
-jwks_uri = sse_config['jwks_uri']  # for example, https://transmitter.most-secure.com/jwks.json
+ssf_config_response = requests.get(
+    'https://transmitter.most-secure.com/.well-known/sse-configuration'
+)
+ssf_config = ssf_config_response.json()
+jwks_uri = ssf_config['jwks_uri']  # for example, https://transmitter.most-secure.com/jwks.json
 jwks = requests.get(jwks_uri).json()
 ```
 
@@ -60,7 +61,7 @@ key = jwt.PyJWK(jwk).key
 # In order to decode the set you must prove that you know its issuer and audience.
 # This information is established upon creating a stream and can be retrieved
 # by making an authenticated request to the stream configuration endpoint:
-stream_config_endpoint = sse_config['stream_config_endpoint']
+stream_config_endpoint = ssf_config['stream_config_endpoint']
 stream_config = requests.get(
     stream_config_endpoint,
     headers={'Authorization': 'Bearer 49e5e7785e4e4f688aa49e2585970370'},

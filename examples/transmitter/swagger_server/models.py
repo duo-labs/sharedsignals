@@ -346,7 +346,7 @@ class SamlAssertionID(BaseModel):
 class SimpleSubject(BaseModel):
     __root__: Union[
         Account, DID, Email, IssSub, JwtID, Opaque, PhoneNumber, SamlAssertionID
-    ] = Field(..., title='Simple Subject')
+    ] = Field(..., discriminator={'propertyName': 'format'}, title='Simple Subject')
 
 
 class Aliases(BaseModel):
@@ -401,6 +401,7 @@ class Subject(BaseModel):
     __root__: Union[SimpleSubject, Aliases, ComplexSubject] = Field(
         ...,
         description='[Spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers#section-3)\n\nAs described in Section 1.2 of SET [RFC8417](https://datatracker.ietf.org/doc/html/rfc8417),\nsubjects related to security events may take a variety of forms,\nincluding but not limited to a JWT [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)\nprincipal, an IP address, a URL, etc. Different types of subjects may need\nto be identified in different ways. (e.g., a host might be identified by an\nIP or MAC address, while a user might be identified by an email address)\nFurthermore, even in the case where the type of the subject is known,\nthere may be multiple ways by which a given subject may be identified.\nFor example, an account may be identified by an opaque identifier, an\nemail address, a phone number, a JWT "iss" claim and "sub" claim,\netc., depending on the nature and needs of the transmitter and\nreceiver.  Even within the context of a given transmitter and\nreceiver relationship, it may be appropriate to identify different\naccounts in different ways, for example if some accounts only have\nemail addresses associated with them while others only have phone\nnumbers.  Therefore it can be necessary to indicate within a SET the\nmechanism by which a subject is being identified.\n\nTo address this problem, this specification defines Subject\nIdentifiers - JSON [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519)\nobjects containing information identifying a subject - and Identifier Formats -\nnamed sets of rules describing how to encode different kinds of subject\nidentifying information (e.g., an email address, or an issuer and subject pair)\nas a Subject Identifier.',
+        discriminator={'propertyName': 'format'},
     )
 
 
@@ -464,6 +465,7 @@ class StreamConfiguration(BaseModel):
     delivery: Union[PushDeliveryMethod, PollDeliveryMethod] = Field(
         ...,
         description='Read-Write.\nA JSON object containing a set of name/value pairs specifying configuration parameters for the SET delivery\nmethod. The actual delivery method is identified by the special key method with the value being a URI as defined\nin [Section 11.2.1](https://openid.net/specs/openid-sse-framework-1_0.html#delivery-meta).',
+        discriminator={'propertyName': 'method'},
         example={
             'method': 'https://schemas.openid.net/secevent/risc/delivery-method/poll',
             'endpoint_url': None,

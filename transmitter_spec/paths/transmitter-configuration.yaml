@@ -17,3 +17,4 @@ get:
         application/json:
           schema:
              $ref: "../openapi.yaml#/components/schemas/TransmitterConfiguration"
+  operationId: _well_known_ssf_configuration_get

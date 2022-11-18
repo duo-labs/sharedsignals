@@ -1,7 +1,7 @@
-# Subjects in the Shared Signals and Events Framework
+# Subjects in the Shared Signals Framework
 Subjects are defined in detail in the
 [Subject Identifiers for Security Event Tokens spec](https://datatracker.ietf.org/doc/html/draft-ietf-secevent-subject-identifiers),
-and the SSE Framework adds [three new subject types](https://openid.net/specs/openid-sse-framework-1_0.html#subject-principals)
+and the Shared Signals Framework adds [three new subject types](https://openid.net/specs/openid-sse-framework-1_0.html#subject-principals)
 to that list.
 
 Subject Identifiers are JSON objects and can either be

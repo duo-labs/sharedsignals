@@ -114,7 +114,7 @@ def test_get_status__no_subject(client: FlaskClient, new_stream: Stream, status:
     Status.paused,
     Status.disabled,
 ])
-def test_get_status__subject(client: FlaskClient, new_stream: Stream, 
+def test_get_status__subject(client: FlaskClient, new_stream: Stream,
                              subject: Subject, status: Status) -> None:
     """Test case for get_status (w/ a subject)
 
@@ -405,7 +405,7 @@ def test_update_status__no_subject(client: FlaskClient, new_stream: Stream, stat
         "someArbitraryString"
     ]
 )
-def test_verification_request__polling(client: FlaskClient, new_stream: Stream, 
+def test_verification_request__polling(client: FlaskClient, new_stream: Stream,
                                        state: Optional[str]) -> None:
     """Test case for verification_request
 
@@ -438,7 +438,7 @@ def test_verification_request__pushing__no_response(client: FlaskClient,
     """Test case for verification_request
 
     Request that a verification event be sent over an Event Stream with
-    Push delivery method, but the push delivery fails, the response to 
+    Push delivery method, but the push delivery fails, the response to
     the request must still return 204
     """
     push_url = "https://test-case.popular-app.com/push"
@@ -462,7 +462,7 @@ def test_verification_request__pushing__no_response(client: FlaskClient,
 @pytest.mark.parametrize(
     "auth_header", [ None, "test-auth-header" ]
 )
-def test_verification_request__pushing(client: FlaskClient, new_stream: Stream, 
+def test_verification_request__pushing(client: FlaskClient, new_stream: Stream,
                                        auth_header: Optional[str]) -> None:
     """Test case for verification_request
 
@@ -470,7 +470,7 @@ def test_verification_request__pushing(client: FlaskClient, new_stream: Stream,
     """
     push_url = "https://test-case.popular-app.com/push"
     new_stream.config.delivery = PushDeliveryMethod(
-        endpoint_url=push_url, 
+        endpoint_url=push_url,
         authorization_header=auth_header
     )
     new_stream.save()
@@ -529,8 +529,8 @@ def test_verification_request__no_stream(client: FlaskClient) -> None:
     assert StreamDoesNotExist().message in str(response.data)
 
 
-def test_well_known_sse_configuration_get(client: FlaskClient) -> None:
-    """Test case for well_known_sse_configuration_get
+def test_well_known_ssf_configuration_get(client: FlaskClient) -> None:
+    """Test case for well_known_ssf_configuration_get
 
     Transmitter Configuration Request (without path)
     """
@@ -538,8 +538,8 @@ def test_well_known_sse_configuration_get(client: FlaskClient) -> None:
     assert_status_code(response, 200)
 
 
-def test_well_known_sse_configuration_issuer_get(client: FlaskClient) -> None:
-    """Test case for well_known_sse_configuration_issuer_get
+def test_well_known_ssf_configuration_issuer_get(client: FlaskClient) -> None:
+    """Test case for well_known_ssf_configuration_issuer_get
 
     Transmitter Configuration Request (with path)
     """

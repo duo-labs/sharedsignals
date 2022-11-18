@@ -17,15 +17,15 @@ DEFAULT_TRANSMITTER = 'transmitter.most-secure.com'
 
 def main(host):
     # Step 1: Request the transmitter config from /.well-known/sse-configuration
-    sse_config_response = requests.get(
+    ssf_config_response = requests.get(
         url=f'https://{host}/.well-known/sse-configuration',
     )
-    sse_config = sse_config_response.json()
-    print('example_transmitter_config.json:', json.dumps(sse_config, indent=2))
+    ssf_config = ssf_config_response.json()
+    print('example_transmitter_config.json:', json.dumps(ssf_config, indent=2))
 
     # Step 2: Modify the stream config using the configuration_endpoint from step 1
     stream_config_response = requests.post(
-        url=sse_config['configuration_endpoint'],
+        url=ssf_config['configuration_endpoint'],
         json={
             'delivery': {
                 'method': 'https://schemas.openid.net/secevent/risc/delivery-method/poll',
@@ -45,7 +45,7 @@ def main(host):
 
     # Step 3: Add a subject to the stream using the add_subject_endpoint from step 1
     add_subject_response = requests.post(
-        url=sse_config['add_subject_endpoint'],
+        url=ssf_config['add_subject_endpoint'],
         json={
             'subject': {
                 'format': 'email',
@@ -60,7 +60,7 @@ def main(host):
 
     # Step 4: Request a verification SET using the verification_endpoint from step 1
     verification_response = requests.post(
-        url=sse_config['verification_endpoint'],
+        url=ssf_config['verification_endpoint'],
         json={
             'state': 'VGhpcyBpcyBhbiBleG'
         },
@@ -85,7 +85,7 @@ def main(host):
     print("example_polling_response.json:", json.dumps(events, indent=2))
 
     # Step 6: Get the JSON Web Key Set (JWKS) for decoding the event
-    jwks_uri = sse_config['jwks_uri']
+    jwks_uri = ssf_config['jwks_uri']
     jwks = requests.get(jwks_uri).json()
     print("example_jwks.json:", json.dumps(jwks, indent=2))
 

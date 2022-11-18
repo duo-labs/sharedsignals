@@ -116,7 +116,7 @@ def verification_request(state: Optional[str], client_id: str) -> None:
     stream.process_SET(security_event)
 
 
-def _well_known_sse_configuration_get(
+def _well_known_ssf_configuration_get(
         url_root: str,
         issuer: Optional[str] = None) -> TransmitterConfiguration:
     return TransmitterConfiguration(

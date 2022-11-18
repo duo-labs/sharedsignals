@@ -1,6 +1,6 @@
 # How to Create a Stream
 
-The Shared Signals and Events spec leaves it up to the implementer how to
+The Shared Signals spec leaves it up to the implementer how to
 actually create an Event Stream. In order to help spread understanding, this
 document will suggest some possible ways to create a stream. It is in no way an
 authoritative or complete list.
