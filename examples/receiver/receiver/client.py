@@ -4,7 +4,8 @@
 # that can be found in the LICENSE file.
 
 import uuid
-from typing import Union, Any
+from typing import Optional, Union, Any
+
 import requests
 import jwt
 from jwcrypto.jwk import JWKSet
@@ -18,6 +19,7 @@ class TransmitterClient:
         self.audience = audience
         self.auth = {"Authorization": f"Bearer {bearer}"}
         self.verify = verify
+        self.acks = []
 
     def get_endpoints(self):
         ssf_config_response = requests.get(
@@ -30,7 +32,7 @@ class TransmitterClient:
         jwks_response.raise_for_status()
         self.jwks = JWKSet.from_json(jwks_response.text)
 
-    def decode_body(self, body: Union[str, bytes]):
+    def decode_event(self, body: Union[str, bytes]):
         kid = jwt.get_unverified_header(body)["kid"]
         jwk = self.jwks.get_key(kid)
         key = jwt.PyJWK(jwk).key
@@ -42,20 +44,12 @@ class TransmitterClient:
             audience=self.audience,
         )
 
-    def configure_stream(self, endpoint_url: str):
+    def configure_stream(self, config: dict[str, Any]):
         """ Configure stream and return the current config """
         config_response = requests.post(
             url=self.ssf_config["configuration_endpoint"],
             verify=self.verify,
-            json={
-                'delivery': {
-                    'method': 'https://schemas.openid.net/secevent/risc/delivery-method/push',
-                    'endpoint_url': endpoint_url,
-                },
-                'events_requested': [
-                    'https://schemas.openid.net/secevent/risc/event-type/credential-compromise',
-                ]
-            },
+            json=config,
             headers=self.auth,
         )
         config_response.raise_for_status()
@@ -77,3 +71,22 @@ class TransmitterClient:
             json={'state': uuid.uuid4().hex},
             headers=self.auth,
         )
+
+    def poll_events(self, poll_url: str, max_events: Optional[int] = None) -> dict[str, Any]:
+        """ Poll events """
+        rsp = requests.post(
+            url=poll_url,
+            verify=self.verify,
+            json={
+                'max_events': max_events,
+                'acks': self.acks,
+            },
+            headers=self.auth,
+        )
+
+        body = rsp.json()
+        body['sets'] = { id: self.decode_event(event) for id, event in body['sets'].items() }
+
+        self.acks = [id for id in body['sets']]
+
+        return body
