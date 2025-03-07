@@ -1,9 +1,9 @@
-# Decoding SETs with ES256 Algorithm
+# Verifying SETs with ES256 Algorithm
 
-SETs can be encoded with various different algorithms, as [described here](https://datatracker.ietf.org/doc/html/rfc7518#section-3.1). We recommend using the asymmetric key [ES256 algorithm](https://datatracker.ietf.org/doc/html/rfc7518#section-3.4) as a best security practice.
+SETs can be signed with various different algorithms, as [described here](https://datatracker.ietf.org/doc/html/rfc7518#section-3.1). We recommend using the asymmetric key [ES256 algorithm](https://datatracker.ietf.org/doc/html/rfc7518#section-3.4) as a best security practice.
 
 ## Retrieving the JWKS
-To decode SETs from a transmitter, we need the transmitter's JWKS [(JSON Web Key Set)](https://datatracker.ietf.org/doc/html/rfc7517#section-5):
+To verify SETs from a transmitter, we need the transmitter's JWKS [(JSON Web Key Set)](https://datatracker.ietf.org/doc/html/rfc7517#section-5):
 ```py
 ssf_config_response = requests.get(
     'https://transmitter.most-secure.com/.well-known/sse-configuration'
@@ -29,11 +29,11 @@ jwks = {
  }
 ```
 
-This describes the public portion of the key that the transmitter uses to encode SETs.
+This describes the public portion of the key that the transmitter uses to sign SETs.
 It might be confusing to the human eye, but the PyJWT library will have no problem
 understanding how to use it!
 
-## Decoding
+## Decoding and Verification
 Now let's say we received a response from our transmitter's polling endpoint that looked like this:
 ```py
 events = {
@@ -51,6 +51,16 @@ We have the JWKS data and an encoded event to work with, now let's use PyJWT to 
 import jwt
 encoded_set = next(iter(events['sets'].values()))
 
+# If we wanted to, we could decode this SET without verifying the signature.
+# In practice, you do not want to do this because verifying the signature is
+# how you know that the data has come from a trusted source and is not corrupted.
+# We demonstrate decoding without verification here to make it clear that the
+# data is only _encoded_ not _encrypted_.
+decoded_set = jwt.decode(encoded_set, options={"verify_signature": False})
+
+# Now we will decode the SET while verifying the signature. This is the process
+# that you should follow to decode SETs in practice.
+
 # get the key id from the header of the JWT
 kid = jwt.get_unverified_header(encoded_set)["kid"]
 
@@ -58,9 +68,10 @@ kid = jwt.get_unverified_header(encoded_set)["kid"]
 jwk = [jwk for jwk in jwks["keys"] if jwk["kid"] == kid][0]
 key = jwt.PyJWK(jwk).key
 
-# In order to decode the set you must prove that you know its issuer and audience.
-# This information is established upon creating a stream and can be retrieved
-# by making an authenticated request to the stream configuration endpoint:
+# In order to decode the set with verification you must prove that you know its
+# issuer and audience. This information is established upon creating a stream
+# and can be retrieved by making an authenticated request to the stream
+# configuration endpoint:
 stream_config_endpoint = ssf_config['stream_config_endpoint']
 stream_config = requests.get(
     stream_config_endpoint,
